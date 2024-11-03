@@ -1,0 +1,4 @@
+﻿id,unitName,hp,timePerMove,armor,resist,productionCost,killReward
+1,A,10,3,0,0,10,10
+2,B,6,1,0,0,10,10
+3,C,20,6,0,0,10,10

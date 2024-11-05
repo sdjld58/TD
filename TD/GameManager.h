@@ -14,6 +14,7 @@ private:
     std::vector<UnitType> unitTypes; // 유닛 타입 리스트
     std::vector<Wave> waves;         // 웨이브 리스트
     std::vector<std::pair<int, int>> path; // 유닛 이동 경로
+    
 
     int playerLife;
     int gold;

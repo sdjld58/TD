@@ -486,7 +486,7 @@ void GameManager::startPreparationPhase()
         }
         else if (isTowerPlacementMode)      // 방향키 입력으로 커서 이동 (타워 설치 모드일 때만)
         {
-            
+
             if (input == 224 || input == -32)
             {
                 input = _getch();
@@ -499,10 +499,10 @@ void GameManager::startPreparationPhase()
                 else if (input == 77 && selectedX < mapWithUnits[0].size() - 1) // 오른쪽 방향키
                     selectedX++;
 
-                
+
                 updateAndPrintMap({});
             }
-            else if (input == 13)           // 엔터로 타워 생산(미구현)
+            else if (input == 13) // 엔터로 타워 설치
             {
 
             }

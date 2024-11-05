@@ -7,14 +7,18 @@
 #include "UnitType.h"
 #include "Wave.h"
 #include "Unit.h"
+#include "PlacedTower.h"
+#include "Tower.h"
 
-class GameManager {
+class GameManager
+{
 private:
     std::vector<std::vector<std::string>> map;
     std::vector<UnitType> unitTypes; // 유닛 타입 리스트
     std::vector<Wave> waves;         // 웨이브 리스트
     std::vector<std::pair<int, int>> path; // 유닛 이동 경로
-    
+    std::vector<Tower> towers;            // 기본 타워 속성을 저장하는 벡터
+    std::vector<PlacedTower> placedTowers; // 배치된 타워를 저장하는 벡터
 
     int playerLife;
     int gold;
@@ -34,6 +38,7 @@ public:
     void startPreparationPhase();
     void constructTower();
     void erasecursol();
+    void loadTowerData(const std::string& filename); //타워 로드
    
 };
 

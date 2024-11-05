@@ -19,6 +19,7 @@ void GameManager::run()
     loadMap("Map1.csv");
     parsePath();
     loadUnitTypes("UnitTypes.csv");
+    loadTowerData("TowerData.csv");
     loadWaves("Stage1.csv");
 
     for (const auto& wave : waves) 
@@ -28,8 +29,8 @@ void GameManager::run()
         // 웨이브 시작 전 준비 단계 시작
         startPreparationPhase();
 
-        // 1, 3, 5 웨이브만 수비 라운드로 처리
-        if (waveID == 1 || waveID == 3 || waveID == 5)
+        // getisDefence가 true인 웨이브만 수비 라운드로 처리
+        if (wave.getIsDefence())
         {
             std::cout << "\n=== 웨이브 " << waveID << " 시작 ===\n";
 
@@ -359,29 +360,22 @@ void GameManager::printUnitTypes()
     }
 }
 
-void GameManager::loadWaves(const std::string& filename) {
+void GameManager::loadTowerData(const std::string& filename)
+{
     std::ifstream file(filename);
-
-    if (!file.is_open()) {
-        std::cout << "웨이브 파일을 열 수 없습니다: " << filename << std::endl;
+    if (!file.is_open())
+    {
+        std::cout << "타워 데이터 파일을 열 수 없습니다: " << filename << std::endl;
         return;
     }
 
     std::string line;
     bool isHeader = true;
-    while (std::getline(file, line)) {
-        // UTF-8 BOM 제거
-        if (!line.empty() && (unsigned char)line[0] == 0xEF) {
-            line.erase(0, 3);
-        }
-
-        if (isHeader) {
-            isHeader = false; // 헤더는 건너뜁니다.
-            continue;
-        }
-
-        // 라인이 비어있으면 건너뜁니다.
-        if (line.empty()) {
+    while (std::getline(file, line))
+    {
+        if (isHeader)
+        {
+            isHeader = false;
             continue;
         }
 
@@ -389,11 +383,74 @@ void GameManager::loadWaves(const std::string& filename) {
         std::string item;
         std::vector<std::string> tokens;
 
-        while (std::getline(ss, item, ',')) {
+        while (std::getline(ss, item, ','))
+        {
             tokens.push_back(item);
         }
 
-        if (tokens.size() >= 5) {
+        if (tokens.size() == 9) 
+        {
+            int id = std::stoi(tokens[0]);
+            std::string towerName = tokens[1];
+            int nextTowerID = std::stoi(tokens[2]);
+            int buildCost = std::stoi(tokens[3]);
+            int attackRange = std::stoi(tokens[4]);
+            int damage = std::stoi(tokens[5]);
+            bool isMagic = std::stoi(tokens[6]) == 1;
+            int timePerAttack = std::stoi(tokens[7]);
+            int targetAmount = std::stoi(tokens[8]);
+
+            Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage, isMagic, timePerAttack, targetAmount);
+            towers.push_back(tower);
+        }
+    }
+    file.close();
+}
+
+
+void GameManager::loadWaves(const std::string& filename) 
+{
+    std::ifstream file(filename);
+
+    if (!file.is_open()) 
+    {
+        std::cout << "웨이브 파일을 열 수 없습니다: " << filename << std::endl;
+        return;
+    }
+
+    std::string line;
+    bool isHeader = true;
+    while (std::getline(file, line))
+    {
+        // UTF-8 BOM 제거
+        if (!line.empty() && (unsigned char)line[0] == 0xEF) 
+        {
+            line.erase(0, 3);
+        }
+
+        if (isHeader) 
+        {
+            isHeader = false; // 헤더는 건너뜁니다.
+            continue;
+        }
+
+        // 라인이 비어있으면 건너뜁니다.
+        if (line.empty()) 
+        {
+            continue;
+        }
+
+        std::stringstream ss(line);
+        std::string item;
+        std::vector<std::string> tokens;
+
+        while (std::getline(ss, item, ',')) 
+        {
+            tokens.push_back(item);
+        }
+
+        if (tokens.size() >= 5)
+        {
             int waveID = std::stoi(tokens[0]);
             int life = std::stoi(tokens[1]);
             bool isDefence = (tokens[2] == "1");
@@ -401,7 +458,8 @@ void GameManager::loadWaves(const std::string& filename) {
 
             // units는 tokens[4]부터 시작
             std::vector<int> units;
-            for (size_t i = 4; i < tokens.size(); ++i) {
+            for (size_t i = 4; i < tokens.size(); ++i)
+            {
                 if (tokens[i].empty()) continue;
                 units.push_back(std::stoi(tokens[i]));
             }
@@ -409,19 +467,24 @@ void GameManager::loadWaves(const std::string& filename) {
             Wave wave(waveID, life, isDefence, gold, units);
             waves.push_back(wave);
         }
-        else {
+        else 
+        {
             std::cout << "웨이브 데이터를 파싱하는 중 오류 발생: " << line << std::endl;
         }
     }
     file.close();
 }
 
-void GameManager::printWaves() {
+void GameManager::printWaves() 
+{
     std::cout << "=== 웨이브 목록 ===" << std::endl;
-    for (const auto& wave : waves) {
+    for (const auto& wave : waves) 
+    {
         wave.printInfo();
     }
 }
+
+
 
 void GameManager::startPreparationPhase()
 {
@@ -432,6 +495,7 @@ void GameManager::startPreparationPhase()
     // 커서 초기 위치를 맵 중앙으로 설정
     int selectedX = mapWithUnits[0].size() / 2;
     int selectedY = mapWithUnits.size() / 2;
+    int selectedTowerIndex = 1;
 
     // 타워 설치 모드 이전 위치를 저장할 변수
     int originalX = selectedX;
@@ -450,8 +514,8 @@ void GameManager::startPreparationPhase()
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPos);
             std::cout << " ";                                //현재 커서 위치를 빈칸으로 표시
         }
-        
-        
+
+
 
         // 준비 단계 안내 메시지 출력
         COORD messagePos = { 0, static_cast<SHORT>(mapWithUnits.size() + 2) };
@@ -466,14 +530,14 @@ void GameManager::startPreparationPhase()
         }
         else if (input == 'b' || input == 'B')     // 타워 설치 모드 토글
         {
-           
+
             if (isTowerPlacementMode)
             {
                 // 타워 설치 모드 비활성화 - 커서를 원래 위치로 되돌림
                 selectedX = originalX;
                 selectedY = originalY;
                 isTowerPlacementMode = false;
-                
+
             }
             else
             {
@@ -481,7 +545,7 @@ void GameManager::startPreparationPhase()
                 originalX = selectedX;
                 originalY = selectedY;
                 isTowerPlacementMode = true;
-                
+
             }
         }
         else if (isTowerPlacementMode)      // 방향키 입력으로 커서 이동 (타워 설치 모드일 때만)
@@ -502,13 +566,33 @@ void GameManager::startPreparationPhase()
 
                 updateAndPrintMap({});
             }
-            else if (input == 13) // 엔터로 타워 설치
+            else if (input == '1' || input == '2' || input == '3') 
             {
-
+                // 숫자 키로 타워 선택
+                selectedTowerIndex = input - '1';  // '1'을 1로 변환, '2'를 2로 변환, '3'을 3으로 변환
+                std::cout << "타워 " << selectedTowerIndex << " 이 선택되었습니다.\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
             }
+            else if (input == 13 && selectedTowerIndex >= 0) // Enter로 타워 설치
+            {
+                if (map[selectedY][selectedX] == "O")         //타워 설치 가능 지점에만 설치가능
+                {
+                    Tower selectedTower = towers[selectedTowerIndex];
+                    PlacedTower newTower(selectedTower, selectedX, selectedY);
+
+                    map[selectedY][selectedX] = newTower.getTowerName(); // 맵에 타워 표시
+                    placedTowers.push_back(newTower); // 배치된 타워 목록에 추가
+                    std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                }
+            }
+           
         }
     }
 }
+
+
+
 
 
 void GameManager::erasecursol()

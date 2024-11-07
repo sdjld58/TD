@@ -33,6 +33,8 @@ void GameManager::run()
         if (wave.getIsDefence())
         {
             std::cout << "\n=== 웨이브 " << waveID << " 시작 ===\n";
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
 
             if (wave.getLife() > 0)
             {
@@ -44,6 +46,7 @@ void GameManager::run()
             {
                 // 수비 웨이브 처리
                 std::cout << "수비 웨이브입니다. 골드: " << gold << ", 라이프: " << playerLife << "\n";
+                std::this_thread::sleep_for(std::chrono::seconds(1));
 
                 // 유닛 대기열 생성
                 std::queue<Unit> unitQueue;
@@ -123,7 +126,7 @@ void GameManager::run()
             }
         }
         else {
-            std::cout << "=== 웨이브 " << waveID << "는 수비 웨이브가 아닙니다. 건너뜁니다. ===\n";
+            std::cout << "=== 웨이브 " << waveID << "는 수비 웨이브가 아닙니다. 건너뜁니다. ===\n";  //공격웨이브
         }
     }
 
@@ -566,13 +569,29 @@ void GameManager::startPreparationPhase()
 
                 updateAndPrintMap({});
             }
-            else if (input == '1' || input == '2' || input == '3') 
+            else if (input >= '1' && input <= '9')
             {
                 // 숫자 키로 타워 선택
-                selectedTowerIndex = input - '1';  // '1'을 1로 변환, '2'를 2로 변환, '3'을 3으로 변환
-                std::cout << "타워 " << selectedTowerIndex << " 이 선택되었습니다.\n";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                int towerID = (input - '0'); 
+
+                auto it = std::find_if(towers.begin(), towers.end(),
+                    [towerID](const Tower& tower) { return tower.getId() == towerID; });
+
+                if (it != towers.end())
+                {
+                    Tower& selectedTower = *it;
+                    selectedTowerIndex = std::distance(towers.begin(), it); // 선택된 타워의 인덱스를 저장
+                    std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                  
+                }
+                else
+                {
+                    std::cout << "해당 타워가 존재하지 않습니다.\n";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                }
             }
+
             else if (input == 13 && selectedTowerIndex >= 0) // Enter로 타워 설치
             {
                 if (map[selectedY][selectedX] == "O")         //타워 설치 가능 지점에만 설치가능

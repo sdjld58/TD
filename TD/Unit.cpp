@@ -32,9 +32,17 @@ bool Unit::update() {
 
 int Unit::getX() const { return x; }
 int Unit::getY() const { return y; }
+int Unit::getHp() const { return hp; }
 
 std::string Unit::getName() const { return name; }
 
-void Unit::printStatus() const {
+void Unit::printStatus() const 
+{
     std::cout << "Unit " << name << " at (" << x << ", " << y << "), HP: " << hp << std::endl;
+}
+
+void Unit::reduceHp(int damage)
+{
+    hp -= damage;
+    if (hp < 0) hp = 0;
 }

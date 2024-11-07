@@ -25,6 +25,10 @@ public:
     int getX() const;
     int getY() const;
 
+    //HP관련 정보
+    int getHp() const;
+    void reduceHp(int damage);
+
     // 이름 가져오기
     std::string getName() const;
 

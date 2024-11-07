@@ -22,7 +22,7 @@ void GameManager::run()
     loadTowerData("TowerData.csv");
     loadWaves("Stage1.csv");
 
-    for (const auto& wave : waves) 
+    for (const auto& wave : waves)
     {
         int waveID = wave.getWaveID();
 
@@ -34,7 +34,6 @@ void GameManager::run()
         {
             std::cout << "\n=== 웨이브 " << waveID << " 시작 ===\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
-
 
             if (wave.getLife() > 0)
             {
@@ -50,7 +49,7 @@ void GameManager::run()
 
                 // 유닛 대기열 생성
                 std::queue<Unit> unitQueue;
-                for (int unitID : wave.getUnits()) 
+                for (int unitID : wave.getUnits())
                 {
                     // unitID에 해당하는 UnitType 찾기
                     auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
@@ -87,10 +86,10 @@ void GameManager::run()
                     }
 
                     // 유닛 업데이트
-                    for (auto it = activeUnits.begin(); it != activeUnits.end();) 
+                    for (auto it = activeUnits.begin(); it != activeUnits.end();)
                     {
                         bool arrived = it->update();
-                        if (arrived) 
+                        if (arrived)
                         {
                             // 유닛이 목적지에 도달
                             std::cout << it->getName() << " 유닛이 목적지에 도달했습니다!\n";
@@ -102,19 +101,19 @@ void GameManager::run()
                         }
                     }
 
+                    // 타워가 유닛을 공격
+                    attackUnits(activeUnits);
+
                     // 맵 업데이트 및 출력
                     updateAndPrintMap(activeUnits);
 
-                    // 플레이어 라이프 출력
-                    //std::cout << "Player Life: " << playerLife << "\n";
-
-                    if (playerLife <= 0) 
+                    if (playerLife <= 0)
                     {
                         std::cout << "Game Over!\n";
                         return;
                     }
 
-                    if (activeUnits.empty() && unitQueue.empty()) 
+                    if (activeUnits.empty() && unitQueue.empty())
                     {
                         std::cout << "웨이브 " << waveID << " 클리어!\n";
                         break;
@@ -132,6 +131,7 @@ void GameManager::run()
 
     std::cout << "프로그램을 종료합니다.\n";
 }
+
 
 
 void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
@@ -609,6 +609,45 @@ void GameManager::startPreparationPhase()
         }
     }
 }
+
+void GameManager::attackUnits(std::vector<Unit>& activeUnits)
+{
+    for (const auto& tower : placedTowers)
+    {
+        int range = tower.getAttackRange();
+        int damage = tower.getDamage();
+        int targetAmount = tower.getTargetAmount();  // 타워가 공격할 수 있는 최대 적의 수
+        int targetsAttacked = 0;  // 현재 공격한 적의 수를 추적
+
+        for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;)
+        {
+            int unitX = it->getX();
+            int unitY = it->getY();
+            int towerX = tower.getX();
+            int towerY = tower.getY();
+
+            int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
+
+            // 공격 범위 내 유닛을 대상으로 공격
+            if (distanceSquared <= range * range)
+            {
+                it->reduceHp(damage);  // 유닛의 체력 감소
+              
+                if (it->getHp() <= 0)
+                {
+                    std::cout << it->getName() << " 유닛이 제거되었습니다!\n";
+                    it = activeUnits.erase(it);  // 체력이 0 이하인 유닛 제거
+                    continue;
+                }
+
+                targetsAttacked++;  // 공격한 적의 수 증가
+            }
+            ++it;
+        }
+    }
+}
+
+
 
 
 

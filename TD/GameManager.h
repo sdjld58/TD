@@ -39,6 +39,7 @@ public:
     void constructTower();
     void erasecursol();
     void loadTowerData(const std::string& filename); //타워 로드
+    void attackUnits(std::vector<Unit>& activeUnits); //공격로직
    
 };
 

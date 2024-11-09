@@ -9,7 +9,7 @@
 #include <conio.h>
 #include <Windows.h>
 
-GameManager::GameManager() : playerLife(10), gold(0), isPreparation(true) // 게임 매니저 초기화
+GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true) // 게임 매니저 초기화
 {
     erasecursol(); 
 }
@@ -25,6 +25,8 @@ void GameManager::run()
     for (const auto& wave : waves)
     {
         int waveID = wave.getWaveID();
+        gold += wave.getGold();
+       
 
         // 웨이브 시작 전 준비 단계 시작
         startPreparationPhase();
@@ -58,7 +60,7 @@ void GameManager::run()
                     {
                         UnitType& unitType = *it;
                         Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
-                            unitType.getTimePerMove(), path);
+                            unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(), unitType.getKillReward(), path);
                         unitQueue.push(unit);
                     }
                 }
@@ -92,7 +94,7 @@ void GameManager::run()
                         if (arrived)
                         {
                             // 유닛이 목적지에 도달
-                            std::cout << it->getName() << " 유닛이 목적지에 도달했습니다!\n";
+                            
                             playerLife -= 1;
                             it = activeUnits.erase(it);
                         }
@@ -495,6 +497,8 @@ void GameManager::startPreparationPhase()
     isPreparation = true;
     bool isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
 
+    
+
     // 커서 초기 위치를 맵 중앙으로 설정
     int selectedX = mapWithUnits[0].size() / 2;
     int selectedY = mapWithUnits.size() / 2;
@@ -524,6 +528,9 @@ void GameManager::startPreparationPhase()
         COORD messagePos = { 0, static_cast<SHORT>(mapWithUnits.size() + 2) };
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), messagePos);
         std::cout << "준비 단계입니다. 'S'를 눌러 시작하거나 'B'를 눌러 타워를 설치하십시오.\n";
+        std::cout << "현재 골드:" << gold << "\n";
+
+       
 
         char input = _getch(); // 키 입력 대기
         if (input == 's' || input == 'S')
@@ -594,15 +601,27 @@ void GameManager::startPreparationPhase()
 
             else if (input == 13 && selectedTowerIndex >= 0) // Enter로 타워 설치
             {
+                
                 if (map[selectedY][selectedX] == "O")         //타워 설치 가능 지점에만 설치가능
                 {
                     Tower selectedTower = towers[selectedTowerIndex];
-                    PlacedTower newTower(selectedTower, selectedX, selectedY);
 
-                    map[selectedY][selectedX] = newTower.getTowerName(); // 맵에 타워 표시
-                    placedTowers.push_back(newTower); // 배치된 타워 목록에 추가
-                    std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    if (gold - selectedTower.getBuildCost() >= 0)
+                    {
+                        PlacedTower newTower(selectedTower, selectedX, selectedY);
+                        gold -= selectedTower.getBuildCost();
+
+                        map[selectedY][selectedX] = newTower.getTowerName(); // 맵에 타워 표시
+                        placedTowers.push_back(newTower); // 배치된 타워 목록에 추가
+                        std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    }
+                    else
+                    {
+                        std::cout << " 타워를 설치할 골드가 부족합니다.\n";
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                    }
+                  
                 }
             }
            
@@ -636,6 +655,7 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits)
                 if (it->getHp() <= 0)
                 {
                     std::cout << it->getName() << " 유닛이 제거되었습니다!\n";
+                    gold += it->getKillReward();  // UnitType의 처치 보상을 골드에 추가
                     it = activeUnits.erase(it);  // 체력이 0 이하인 유닛 제거
                     continue;
                 }

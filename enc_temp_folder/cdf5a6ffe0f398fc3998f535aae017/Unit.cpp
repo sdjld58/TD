@@ -2,35 +2,28 @@
 #include <iostream>
 
 Unit::Unit(int id, const std::string& name, int hp, int timePerMove, int armor, int resist, int killReward, const std::vector<std::pair<int, int>>& path)
-    : id(id), name(name), hp(hp), timePerMove(timePerMove), moveCounter(0), armor(armor), resist(resist), killReward(killReward), path(path), pathIndex(0)
-{
-    if (!path.empty())
-    {
+    : id(id), name(name), hp(hp), timePerMove(timePerMove), moveCounter(0), armor(armor), resist(resist), killReward(killReward), path(path), pathIndex(0) {
+    if (!path.empty()) {
         x = path[0].first;
         y = path[0].second;
         pathIndex = 1;
     }
-    else
-    {
+    else {
         x = y = -1; // 경로가 없을 경우
     }
 }
 
 
-bool Unit::update() 
-{
+bool Unit::update() {
     moveCounter++;
-    if (moveCounter >= timePerMove)
-    {
+    if (moveCounter >= timePerMove) {
         moveCounter = 0;
         // 이동
-        if (pathIndex < path.size()) 
-        {
+        if (pathIndex < path.size()) {
             x = path[pathIndex].first;
             y = path[pathIndex].second;
             pathIndex++;
-            if (pathIndex == path.size()) 
-            {
+            if (pathIndex == path.size()) {
                 return true; // 목적지에 도달
             }
         }

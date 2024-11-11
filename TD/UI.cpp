@@ -4,7 +4,7 @@
 void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 {
     map = gameMap;
-    window.create(sf::VideoMode(1600, 900), "Tower Defense Game");
+    window.create(sf::VideoMode(1920, 1080), "Tower Defense Game");
 
     // 폰트 로드
     if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf"))
@@ -23,30 +23,42 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     goldText.setFillColor(sf::Color::Yellow);
     goldText.setPosition(10, 40);
 
-    // 타일 크기 (이소메트릭을 위해 수정)
-    // tileSize는 유지하지만, 이소메트릭 타일의 폭과 높이를 따로 정의
-    // 이소메트릭 타일의 폭과 높이 설정
-    tileWidth = tileSize;         // 128
-    tileHeight = tileSize / 2;    // 64
+    // 타일 텍스처 로드
+    if (!roadTexture.loadFromFile("resources/images/tiles/road_spring(1).png"))
+        std::cerr << "road_spring(1).png를 로드할 수 없습니다.\n";
+    roadSprite.setTexture(roadTexture);
 
-    // 유닛 및 타워의 색상 설정 (유닛/타워 이름별로 구분)
-    unitColors["U1"] = sf::Color::Red;
-    unitColors["U2"] = sf::Color::Green;
-    unitColors["U3"] = sf::Color::Yellow;
+    if (!grassTexture.loadFromFile("resources/images/tiles/grass.png"))
+        std::cerr << "grass.png를 로드할 수 없습니다.\n";
+    grassSprite.setTexture(grassTexture);
 
-    towerColors["T1"] = sf::Color::Blue;
-    towerColors["T2"] = sf::Color::Cyan;
-    towerColors["T3"] = sf::Color::Magenta;
+    if (!buildingPlaceGrassTexture.loadFromFile("resources/images/tiles/buildingPlaceGrass.png"))
+        std::cerr << "buildingPlaceGrass.png를 로드할 수 없습니다.\n";
+    buildingPlaceGrassSprite.setTexture(buildingPlaceGrassTexture);
+
+    // 타워 텍스처 로드
+    if (!archerTowerTexture.loadFromFile("resources/images/towers/archer_level_1.png"))
+        std::cerr << "archer_level_1.png를 로드할 수 없습니다.\n";
+    archerTowerSprite.setTexture(archerTowerTexture);
+
+    // **유닛 텍스처 로드**
+    if (!knightUnitTexture.loadFromFile("resources/images/units/knight_level_1.png"))
+        std::cerr << "knight_level_1.png를 로드할 수 없습니다.\n";
+    knightUnitSprite.setTexture(knightUnitTexture);
+
+    // 유닛 스프라이트 설정 (필요에 따라 원점과 크기 조절)
+    knightUnitSprite.setOrigin(knightUnitTexture.getSize().x / 2.0f, knightUnitTexture.getSize().y * 1.3);
+    float unitScale = tileHeight / knightUnitTexture.getSize().y;
+    knightUnitSprite.setScale(unitScale/1.5, unitScale/1.5);
 }
 
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
     int playerLife, int gold, int selectedX, int selectedY)
 {
     window.clear();
-
-    // 타일 크기 변수 설정 (이소메트릭을 위해 추가)
-    const float tileWidth = tileSize;          // 128
-    const float tileHeight = tileSize / 2.0f;  // 64
+    
+    float offsetX = -100.0f;
+    float offsetY = 200.0f;
 
     // 맵 그리기
     for (int y = 0; y < static_cast<int>(map.size()); ++y)
@@ -56,110 +68,86 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             std::string tileType = map[y][x];
 
             // 이소메트릭 좌표 변환
-            float screenX = (x - y) * (tileWidth / 2.0f) + window.getSize().x / 2.0f;
+            float screenX = (x - y) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
             float screenY = (x + y) * (tileHeight / 2.0f);
 
-            // 이소메트릭 타일 그리기 (마름모 형태)
-            sf::ConvexShape tileShape;
-            tileShape.setPointCount(4);
-            tileShape.setPoint(0, sf::Vector2f(tileWidth / 2.0f, 0));
-            tileShape.setPoint(1, sf::Vector2f(tileWidth, tileHeight / 2.0f));
-            tileShape.setPoint(2, sf::Vector2f(tileWidth / 2.0f, tileHeight));
-            tileShape.setPoint(3, sf::Vector2f(0, tileHeight / 2.0f));
-            tileShape.setPosition(screenX, screenY);
+            screenX += offsetX;
+            screenY += offsetY;
 
-            // 타일 색상 설정
-            if (tileType == "P")
+            // 타일 스프라이트 선택
+            sf::Sprite* tileSprite = nullptr;
+            if (tileType == "P" || tileType == "S" || tileType == "D")
             {
-                tileShape.setFillColor(sf::Color(150, 150, 150)); // 경로 타일
+                tileSprite = &roadSprite;
             }
             else if (tileType == "O")
             {
-                tileShape.setFillColor(sf::Color(100, 100, 100)); // 설치 가능 타일
-            }
-            else if (tileType == "S")
-            {
-                tileShape.setFillColor(sf::Color::Green); // 시작 지점
-            }
-            else if (tileType == "D")
-            {
-                tileShape.setFillColor(sf::Color::Red); // 목적 지점
+                tileSprite = &buildingPlaceGrassSprite;
             }
             else
             {
-                tileShape.setFillColor(sf::Color(50, 50, 50)); // 기본 타일
+                tileSprite = &grassSprite;
             }
 
-            window.draw(tileShape);
+            // 스프라이트 위치 설정
+            tileSprite->setPosition(screenX, screenY);
+
+            window.draw(*tileSprite);
 
             // 선택된 타일이면 반투명한 오버레이를 그려서 강조 표시
             if (x == selectedX && y == selectedY)
             {
-                sf::ConvexShape overlayShape = tileShape;
-                overlayShape.setFillColor(sf::Color(255, 255, 0, 100)); // 노란색, 투명도 100
-                window.draw(overlayShape);
+                sf::ConvexShape overlay;
+                overlay.setPointCount(4);
+                overlay.setPoint(0, sf::Vector2f(tileWidth / 2.0f, 0));
+                overlay.setPoint(1, sf::Vector2f(tileWidth, tileHeight / 2.0f));
+                overlay.setPoint(2, sf::Vector2f(tileWidth / 2.0f, tileHeight));
+                overlay.setPoint(3, sf::Vector2f(0, tileHeight / 2.0f));
+                overlay.setPosition(screenX, screenY);
+                overlay.setFillColor(sf::Color(255, 255, 0, 100)); // 노란색, 투명도 100
+                window.draw(overlay);
             }
         }
     }
 
-    // 유닛 그리기 (크기를 tileSize보다 작게 설정)
-    float unitScale = 0.4f; // 유닛 크기를 조절
+    // **유닛 그리기 (스프라이트 사용)**
     for (const auto& unit : units)
     {
         int tileX = unit.getX();
         int tileY = unit.getY();
 
         // 이소메트릭 좌표 변환
-        float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f;
+        float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
         float screenY = (tileX + tileY) * (tileHeight / 2.0f);
 
-        // 유닛의 위치를 타일의 중심으로 설정하고, 크기를 조절
-        sf::CircleShape unitShape((tileWidth * unitScale) / 2.0f);
-        unitShape.setOrigin((tileWidth * unitScale) / 2.0f, (tileWidth * unitScale) / 2.0f);
-        unitShape.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight / 2.0f);
+        screenX += offsetX;
+        screenY += offsetY;
 
-        // 유닛의 이름에 따른 색상 설정
-        std::string unitName = unit.getName();
-        if (unitColors.find(unitName) != unitColors.end())
-        {
-            unitShape.setFillColor(unitColors[unitName]);
-        }
-        else
-        {
-            unitShape.setFillColor(sf::Color::White);
-        }
+        // 유닛 스프라이트 위치 설정
+        knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
-        window.draw(unitShape);
+        window.draw(knightUnitSprite);
     }
 
-    // 타워 그리기 (크기를 조절)
-    float towerScale = 0.5f; // 타워 크기를 조절
+    // 타워 그리기
     for (const auto& tower : placedTowers)
     {
         int tileX = tower.getX();
         int tileY = tower.getY();
 
         // 이소메트릭 좌표 변환
-        float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f;
+        float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
         float screenY = (tileX + tileY) * (tileHeight / 2.0f);
 
-        // 타워의 위치를 타일의 중심으로 설정하고, 크기를 조절
-        sf::RectangleShape towerShape(sf::Vector2f(tileWidth * towerScale, (tileHeight * towerScale) * 2));
-        towerShape.setOrigin((tileWidth * towerScale) / 2.0f, (tileHeight * towerScale));
-        towerShape.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight / 2.0f);
+        screenX += offsetX;
+        screenY += offsetY;
 
-        // 타워의 이름에 따른 색상 설정
-        std::string towerName = tower.getTowerName();
-        if (towerColors.find(towerName) != towerColors.end())
-        {
-            towerShape.setFillColor(towerColors[towerName]);
-        }
-        else
-        {
-            towerShape.setFillColor(sf::Color::White);
-        }
+        // 타워 스프라이트 위치 설정
+        float towerOffsetX = 30.0;
+        float towerOffsetY = -20.0;
+        archerTowerSprite.setPosition(screenX + towerOffsetX, screenY + towerOffsetY);
 
-        window.draw(towerShape);
+        window.draw(archerTowerSprite);
     }
 
     // 플레이어 라이프 및 골드 표시
@@ -171,7 +159,6 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
 
     window.display();
 }
-
 
 sf::RenderWindow& UI::getWindow()
 {

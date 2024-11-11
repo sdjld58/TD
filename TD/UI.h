@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
+#include <map>
 #include "Unit.h"
 #include "PlacedTower.h"
 #include "Tower.h"
@@ -24,23 +25,27 @@ private:
     sf::Text goldText;
 
     // 타일 크기
-    const int tileSize = 128;
-    float tileWidth;
-    float tileHeight;
+    //const int tileSize = 128;
+    const float tileWidth = 128;          // 이소메트릭 타일의 폭
+    const float tileHeight = 76;  // 이소메트릭 타일의 높이
 
-    // 맵 타일에 대한 텍스처 및 스프라이트
-    sf::Texture tileTexture;
-    sf::Sprite tileSprite;
+    // 타일 텍스처 및 스프라이트
+    sf::Texture roadTexture;
+    sf::Sprite roadSprite;
 
-    // 유닛 및 타워에 대한 텍스처 및 스프라이트
-    sf::Texture unitTexture;
-    sf::Texture towerTexture;
-    sf::Sprite unitSprite;
-    sf::Sprite towerSprite;
+    sf::Texture grassTexture;
+    sf::Sprite grassSprite;
 
-    // 유닛 및 타워의 색상 구분을 위한 맵
-    std::map<std::string, sf::Color> unitColors;
-    std::map<std::string, sf::Color> towerColors;
+    sf::Texture buildingPlaceGrassTexture;
+    sf::Sprite buildingPlaceGrassSprite;
+
+    // 타워 텍스처 및 스프라이트
+    sf::Texture archerTowerTexture;
+    sf::Sprite archerTowerSprite;
+
+    // **유닛 텍스처 및 스프라이트**
+    sf::Texture knightUnitTexture;
+    sf::Sprite knightUnitSprite;
 
 public:
     void initialize(const std::vector<std::vector<std::string>>& gameMap);

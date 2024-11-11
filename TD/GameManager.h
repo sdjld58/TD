@@ -19,10 +19,12 @@ private:
     std::vector<std::pair<int, int>> path; // 유닛 이동 경로
     std::vector<Tower> towers;            // 기본 타워 속성을 저장하는 벡터
     std::vector<PlacedTower> placedTowers; // 배치된 타워를 저장하는 벡터
+    std::queue<int> unitProductionQueue; // 유닛 생산 대기열
 
     int playerLife;
     int gold;
     bool isPreparation;
+    int attackGold; // 공격 웨이브 전용 재화
 
 public:
     GameManager();
@@ -41,6 +43,13 @@ public:
     void attackUnits(std::vector<Unit>& activeUnits ,int currentTick); //공격로직
     int calculateDamage(bool damageType, int baseDamage, const Unit& unit); //데미지 계산 로직
    
+    
+
+    void startAttackWave(const Wave& wave,int& currentTick); //공격 웨이브 처리
+    void handleAttackInput();  // 플레이어 공격 입력 처리
+    void updateAttackUnits(std::vector<Unit>& activeUnits); //공격 유닛 생산 및 업데이트
+    bool isAttackWaveOver(const std::vector<Unit>& activeUnits); //공격 웨이브 종료 조건 확인
+
 };
 
 #endif // GAMEMANAGER_H

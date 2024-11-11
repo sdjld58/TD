@@ -25,6 +25,8 @@ private:
 
     // 타일 크기
     const int tileSize = 128;
+    float tileWidth;
+    float tileHeight;
 
     // 맵 타일에 대한 텍스처 및 스프라이트
     sf::Texture tileTexture;

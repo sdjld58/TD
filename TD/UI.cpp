@@ -39,9 +39,14 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     towerColors["T3"] = sf::Color::Magenta;
 }
 
-void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers, int playerLife, int gold, int selectedX, int selectedY)
+void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
+    int playerLife, int gold, int selectedX, int selectedY)
 {
     window.clear();
+
+    // 타일 크기 변수 설정 (이소메트릭을 위해 추가)
+    const float tileWidth = tileSize;          // 128
+    const float tileHeight = tileSize / 2.0f;  // 64
 
     // 맵 그리기
     for (int y = 0; y < static_cast<int>(map.size()); ++y)
@@ -51,7 +56,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             std::string tileType = map[y][x];
 
             // 이소메트릭 좌표 변환
-            float screenX = (x - y) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
+            float screenX = (x - y) * (tileWidth / 2.0f) + window.getSize().x / 2.0f;
             float screenY = (x + y) * (tileHeight / 2.0f);
 
             // 이소메트릭 타일 그리기 (마름모 형태)
@@ -63,17 +68,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             tileShape.setPoint(3, sf::Vector2f(0, tileHeight / 2.0f));
             tileShape.setPosition(screenX, screenY);
 
-            // 선택된 타일이면 다른 색상으로 표시
-            if (x == selectedX && y == selectedY)
-            {
-                tileShape.setOutlineColor(sf::Color::Yellow);
-                tileShape.setOutlineThickness(2);
-            }
-            else
-            {
-                tileShape.setOutlineThickness(0);
-            }
-
+            // 타일 색상 설정
             if (tileType == "P")
             {
                 tileShape.setFillColor(sf::Color(150, 150, 150)); // 경로 타일
@@ -96,6 +91,14 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             }
 
             window.draw(tileShape);
+
+            // 선택된 타일이면 반투명한 오버레이를 그려서 강조 표시
+            if (x == selectedX && y == selectedY)
+            {
+                sf::ConvexShape overlayShape = tileShape;
+                overlayShape.setFillColor(sf::Color(255, 255, 0, 100)); // 노란색, 투명도 100
+                window.draw(overlayShape);
+            }
         }
     }
 
@@ -113,7 +116,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         // 유닛의 위치를 타일의 중심으로 설정하고, 크기를 조절
         sf::CircleShape unitShape((tileWidth * unitScale) / 2.0f);
         unitShape.setOrigin((tileWidth * unitScale) / 2.0f, (tileWidth * unitScale) / 2.0f);
-        unitShape.setPosition(screenX, screenY + (tileHeight / 2.0f));
+        unitShape.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight / 2.0f);
 
         // 유닛의 이름에 따른 색상 설정
         std::string unitName = unit.getName();
@@ -143,7 +146,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         // 타워의 위치를 타일의 중심으로 설정하고, 크기를 조절
         sf::RectangleShape towerShape(sf::Vector2f(tileWidth * towerScale, (tileHeight * towerScale) * 2));
         towerShape.setOrigin((tileWidth * towerScale) / 2.0f, (tileHeight * towerScale));
-        towerShape.setPosition(screenX, screenY + (tileHeight / 2.0f));
+        towerShape.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight / 2.0f);
 
         // 타워의 이름에 따른 색상 설정
         std::string towerName = tower.getTowerName();
@@ -168,6 +171,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
 
     window.display();
 }
+
 
 sf::RenderWindow& UI::getWindow()
 {

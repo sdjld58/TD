@@ -36,10 +36,10 @@ public:
     void printWaves();
     void updateAndPrintMap(const std::vector<Unit>& activeUnits); // 맵 업데이트 및 출력
     void startPreparationPhase();
-    void constructTower();
     void erasecursol();
     void loadTowerData(const std::string& filename); //타워 로드
-    void attackUnits(std::vector<Unit>& activeUnits); //공격로직
+    void attackUnits(std::vector<Unit>& activeUnits ,int currentTick); //공격로직
+    int calculateDamage(bool damageType, int baseDamage, const Unit& unit); //데미지 계산 로직
    
 };
 

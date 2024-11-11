@@ -270,9 +270,7 @@ void GameManager::printMap()
         std::cout << std::endl;
     }
 }
-
-void GameManager::parsePath() 
-{
+void GameManager::parsePath() {
     // BFS 알고리즘을 사용하여 S에서 D까지의 경로를 찾습니다.
     size_t rows = map.size();
     size_t cols = map[0].size();
@@ -305,8 +303,10 @@ void GameManager::parsePath()
     size_t destX = 0, destY = 0;
 
     while (!q.empty()) {
-        auto [y, x] = q.front();
+        auto current = q.front();
         q.pop();
+        size_t y = current.first;
+        size_t x = current.second;
 
         if (map[y][x] == "D") {
             destX = x;
@@ -336,9 +336,9 @@ void GameManager::parsePath()
         int x = destX;
         while (!(x == (int)startX && y == (int)startY)) {
             path.push_back({ x, y });
-            auto [py, px] = parent[y][x];
-            y = py;
-            x = px;
+            auto parentPos = parent[y][x];
+            y = parentPos.first;
+            x = parentPos.second;
         }
         path.push_back({ (int)startX, (int)startY });
         std::reverse(path.begin(), path.end());
@@ -347,6 +347,7 @@ void GameManager::parsePath()
         std::cout << "경로를 찾을 수 없습니다." << std::endl;
     }
 }
+
 
 void GameManager::loadUnitTypes(const std::string& filename)
 {
@@ -752,7 +753,7 @@ void GameManager::startPreparationPhase()
 
 void GameManager::attackUnits(std::vector<Unit>& activeUnits ,int currentTick)
 {
-    std::cout << currentTick << std::endl;
+    
 
     for (const auto& tower : placedTowers)
     {

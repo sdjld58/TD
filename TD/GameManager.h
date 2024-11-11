@@ -9,45 +9,45 @@
 #include "Unit.h"
 #include "PlacedTower.h"
 #include "Tower.h"
+#include "UI.h"  // UI 클래스 추가
 
 class GameManager
 {
 private:
     std::vector<std::vector<std::string>> map;
-    std::vector<UnitType> unitTypes; // 유닛 타입 리스트
-    std::vector<Wave> waves;         // 웨이브 리스트
-    std::vector<std::pair<int, int>> path; // 유닛 이동 경로
-    std::vector<Tower> towers;            // 기본 타워 속성을 저장하는 벡터
-    std::vector<PlacedTower> placedTowers; // 배치된 타워를 저장하는 벡터
-    std::queue<int> unitProductionQueue; // 유닛 생산 대기열
+    std::vector<UnitType> unitTypes;
+    std::vector<Wave> waves;
+    std::vector<std::pair<int, int>> path;
+    std::vector<Tower> towers;
+    std::vector<PlacedTower> placedTowers;
+    std::queue<int> unitProductionQueue;
 
     int playerLife;
     int gold;
     bool isPreparation;
-    int attackGold; // 공격 웨이브 전용 재화
+    int attackGold;
+
+    UI ui;  // UI 클래스 인스턴스 추가
 
 public:
     GameManager();
     void run();
     void loadMap(const std::string& filename);
-    void printMap();
-    void parsePath(); // 맵에서 경로 파싱
+    void parsePath();
     void loadUnitTypes(const std::string& filename);
-    void printUnitTypes();
     void loadWaves(const std::string& filename);
-    void printWaves();
-    void updateAndPrintMap(const std::vector<Unit>& activeUnits); // 맵 업데이트 및 출력
+    void loadTowerData(const std::string& filename);
+
     void startPreparationPhase();
-    void constructTower();
-    void erasecursol();
-    void loadTowerData(const std::string& filename); //타워 로드
-    void attackUnits(std::vector<Unit>& activeUnits); //공격로직
+    void attackUnits(std::vector<Unit>& activeUnits);
 
-    void startAttackWave(const Wave& wave); //공격 웨이브 처리
-    void handleAttackInput(); // 플레이어 공격 입력 처리
-    void updateAttackUnits(std::vector<Unit>& activeUnits); //공격 유닛 생산 및 업데이트
-    bool isAttackWaveOver(const std::vector<Unit>& activeUnits); //공격 웨이브 종료 조건 확인
+    void startAttackWave(const Wave& wave);
+    void handleAttackInput();
+    void updateAttackUnits(std::vector<Unit>& activeUnits);
+    bool isAttackWaveOver(const std::vector<Unit>& activeUnits);
 
+    // 추가된 메서드
+    void updateGameState(std::vector<Unit>& activeUnits);
 };
 
 #endif // GAMEMANAGER_H

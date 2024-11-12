@@ -569,7 +569,7 @@ void GameManager::startPreparationPhase()
                                 map[selectedY][selectedX] = newTower.getTowerName();
                                 placedTowers.push_back(newTower);
                                 std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
-                                std::this_thread::sleep_for(std::chrono::seconds(1));
+                                //std::this_thread::sleep_for(std::chrono::seconds(1));
                             }
                             else
                             {

@@ -3,158 +3,166 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <queue>
 #include <thread>
 #include <chrono>
+#include <climits>
 
-GameManager::GameManager() : playerLife(0), gold(0) {
-    // 게임 매니저 초기화
+GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
+{
+    // UI 초기화
+    ui.initialize(map);
 }
 
-void GameManager::run() {
+void GameManager::run()
+{
     loadMap("Map1.csv");
     parsePath();
     loadUnitTypes("UnitTypes.csv");
+    loadTowerData("TowerData.csv");
     loadWaves("Stage1.csv");
 
-    // 첫 번째 웨이브만 처리
-    if (!waves.empty()) {
-        const Wave& wave = waves[0]; // 첫 번째 웨이브
+    ui.setMap(map);
+    ui.setPath(path);
+    ui.setTowers(towers);
+    ui.setUnitTypes(unitTypes);
 
-        std::cout << "\n=== 웨이브 " << wave.getWaveID() << " 시작 ===\n";
+    int currentTick = 0; // 틱 초기화
 
-        if (wave.getLife() > 0) {
-            playerLife = wave.getLife();
+    for (const auto& wave : waves)
+    {
+        int waveID = wave.getWaveID();
+        gold += wave.getGold();
+
+        
+
+       if (wave.getIsDefence())
+        {
+            startPreparationPhase(); // 수비 웨이브 준비시간
         }
-        gold = wave.getGold();
+        
+        // 수비 웨이브 처리
+        if (wave.getIsDefence())
+        {
+            if (wave.getLife() > 0)
+            {
+                playerLife = wave.getLife();
+            }
 
-        if (wave.getIsDefence()) {
-            // 수비 웨이브 처리
-            std::cout << "수비 웨이브입니다. 골드: " << gold << ", 라이프: " << playerLife << "\n";
-
-            // 유닛 대기열 생성
+            gold = wave.getGold();
             std::queue<Unit> unitQueue;
-            for (int unitID : wave.getUnits()) {
-                // unitID에 해당하는 UnitType 찾기
+
+            // 웨이브에 포함된 유닛 생성
+            for (int unitID : wave.getUnits())
+            {
                 auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
                     [unitID](const UnitType& ut) { return ut.getId() == unitID; });
-                if (it != unitTypes.end()) {
+                if (it != unitTypes.end())
+                {
                     UnitType& unitType = *it;
                     Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
-                        unitType.getTimePerMove(), path);
+                        unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(), unitType.getKillReward(), path);
                     unitQueue.push(unit);
                 }
             }
 
             std::vector<Unit> activeUnits;
-
             const int maxTicks = 100;
-            for (int tick = 0; tick < maxTicks; ++tick) {
-                // S가 비어있으면 다음 유닛 생성
+            for (int tick = 0; tick < maxTicks; ++tick)
+            {
+                currentTick++;
+
                 bool sOccupied = false;
-                for (const auto& unit : activeUnits) {
-                    if (unit.getX() == path[0].first && unit.getY() == path[0].second) {
+                for (const auto& unit : activeUnits)
+                {
+                    if (unit.getX() == path[0].first && unit.getY() == path[0].second)
+                    {
                         sOccupied = true;
                         break;
                     }
                 }
-                if (!sOccupied && !unitQueue.empty()) {
+                if (!sOccupied && !unitQueue.empty())
+                {
                     Unit unit = unitQueue.front();
                     unitQueue.pop();
                     activeUnits.push_back(unit);
                 }
 
-                // 유닛 업데이트
-                for (auto it = activeUnits.begin(); it != activeUnits.end();) {
+                for (auto it = activeUnits.begin(); it != activeUnits.end();)
+                {
                     bool arrived = it->update();
-                    if (arrived) {
-                        // 유닛이 목적지에 도달
-                        std::cout << it->getName() << " 유닛이 목적지에 도달했습니다!\n";
+                    if (arrived)
+                    {
                         playerLife -= 1;
                         it = activeUnits.erase(it);
                     }
-                    else {
+                    else
+                    {
                         ++it;
                     }
                 }
 
-                // 맵 업데이트 및 출력
-                updateAndPrintMap(activeUnits);
+                attackUnits(activeUnits, currentTick);
 
-                // 플레이어 라이프 출력
-                std::cout << "Player Life: " << playerLife << "\n";
+                updateGameState(activeUnits);
 
-                if (playerLife <= 0) {
+                if (playerLife <= 0)
+                {
                     std::cout << "Game Over!\n";
                     return;
                 }
 
-                if (activeUnits.empty() && unitQueue.empty()) {
-                    std::cout << "웨이브 " << wave.getWaveID() << " 클리어!\n";
-                    break;
+                if (activeUnits.empty() && unitQueue.empty())
+                {
+                    std::cout << "웨이브 " << waveID << " 클리어!\n";
+                    break; // 다음 웨이브로 넘어갑니다.
                 }
 
-                // 틱 사이에 시간 지연 추가 (예: 500밀리초)
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
         }
-        else {
-            // 공격 웨이브 처리 (현재는 구현되지 않음)
-            std::cout << "공격 웨이브입니다. 골드: " << gold << "\n";
-            // 공격 웨이브 로직을 구현할 수 있습니다.
-            std::cout << "공격 웨이브 로직은 아직 구현되지 않았습니다.\n";
+        else
+        {
+            /*
+            attackGold = wave.getGold();
+            startAttackWave(wave, currentTick);
+            */
+            // 공격 웨이브 종료 확인
+            
         }
     }
 
     std::cout << "프로그램을 종료합니다.\n";
 }
 
-void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits) {
-    // 화면을 지우고 맵을 다시 출력합니다.
-    // Windows와 Linux에서 화면을 지우는 명령이 다르므로, 시스템에 맞게 선택합니다.
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
 
-    // 맵을 복사하여 유닛을 표시할 수 있도록 합니다.
-    std::vector<std::vector<std::string>> mapWithUnits = map;
 
-    // 유닛들의 위치에 유닛의 이름을 표시합니다.
-    for (const auto& unit : activeUnits) {
-        int x = unit.getX();
-        int y = unit.getY();
-        if (y >= 0 && y < (int)mapWithUnits.size() && x >= 0 && x < (int)mapWithUnits[0].size()) {
-            mapWithUnits[y][x] = unit.getName();
-        }
-    }
 
-    // 맵 출력
-    for (const auto& row : mapWithUnits) {
-        for (const auto& cell : row) {
-            std::cout << cell << ' ';
-        }
-        std::cout << std::endl;
-    }
+
+
+void GameManager::updateGameState(std::vector<Unit>& activeUnits)
+{
+    // UI를 통해 게임 상태를 업데이트하고 화면을 그립니다.
+    ui.update(activeUnits, placedTowers, playerLife, gold);
 }
 
-void GameManager::loadMap(const std::string& filename) {
-    // 기존 코드와 동일
+void GameManager::loadMap(const std::string& filename)
+{
     std::ifstream file(filename);
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cout << "파일을 열 수 없습니다: " << filename << std::endl;
         return;
     }
 
     std::string line;
     bool firstLine = true;
-    while (std::getline(file, line)) {
+    while (std::getline(file, line))
+    {
         if (firstLine) {
-            // UTF-8 BOM 제거
             const std::string utf8_bom = "\xEF\xBB\xBF";
-            if (line.compare(0, utf8_bom.size(), utf8_bom) == 0) {
+            if (line.compare(0, utf8_bom.size(), utf8_bom) == 0)
+            {
                 line.erase(0, utf8_bom.size());
             }
             firstLine = false;
@@ -164,24 +172,16 @@ void GameManager::loadMap(const std::string& filename) {
         std::stringstream ss(line);
         std::string item;
 
-        while (std::getline(ss, item, ',')) {
-            if (!item.empty()) {
+        while (std::getline(ss, item, ','))
+        {
+            if (!item.empty())
+            {
                 row.push_back(item);
             }
         }
         map.push_back(row);
     }
     file.close();
-}
-
-void GameManager::printMap() {
-    std::cout << "=== 맵 출력 ===" << std::endl;
-    for (const auto& row : map) {
-        for (const auto& cell : row) {
-            std::cout << cell << ' ';
-        }
-        std::cout << std::endl;
-    }
 }
 
 void GameManager::parsePath() {
@@ -192,7 +192,6 @@ void GameManager::parsePath() {
     std::queue<std::pair<size_t, size_t>> q;
     std::vector<std::vector<std::pair<int, int>>> parent(rows, std::vector<std::pair<int, int>>(cols, { -1, -1 }));
 
-    // 시작 지점 찾기
     size_t startX = 0, startY = 0;
     bool foundStart = false;
     for (size_t y = 0; y < rows; ++y) {
@@ -217,8 +216,10 @@ void GameManager::parsePath() {
     size_t destX = 0, destY = 0;
 
     while (!q.empty()) {
-        auto [y, x] = q.front();
+        auto current = q.front();
         q.pop();
+        size_t y = current.first;
+        size_t x = current.second;
 
         if (map[y][x] == "D") {
             destX = x;
@@ -242,15 +243,14 @@ void GameManager::parsePath() {
     }
 
     if (foundDest) {
-        // 경로 추적
         path.clear();
         int y = destY;
         int x = destX;
         while (!(x == (int)startX && y == (int)startY)) {
             path.push_back({ x, y });
-            auto [py, px] = parent[y][x];
-            y = py;
-            x = px;
+            auto parentPos = parent[y][x];
+            y = parentPos.first;
+            x = parentPos.second;
         }
         path.push_back({ (int)startX, (int)startY });
         std::reverse(path.begin(), path.end());
@@ -260,20 +260,24 @@ void GameManager::parsePath() {
     }
 }
 
-void GameManager::loadUnitTypes(const std::string& filename) {
-    // 기존 코드와 동일
+
+void GameManager::loadUnitTypes(const std::string& filename)
+{
     std::ifstream file(filename);
 
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cout << "유닛 타입 파일을 열 수 없습니다: " << filename << std::endl;
         return;
     }
 
     std::string line;
     bool isHeader = true;
-    while (std::getline(file, line)) {
-        if (isHeader) {
-            isHeader = false; // 헤더는 건너뜁니다.
+    while (std::getline(file, line))
+    {
+        if (isHeader)
+        {
+            isHeader = false;
             continue;
         }
 
@@ -281,11 +285,13 @@ void GameManager::loadUnitTypes(const std::string& filename) {
         std::string item;
         std::vector<std::string> tokens;
 
-        while (std::getline(ss, item, ',')) {
+        while (std::getline(ss, item, ','))
+        {
             tokens.push_back(item);
         }
 
-        if (tokens.size() == 8) {
+        if (tokens.size() == 8)
+        {
             int id = std::stoi(tokens[0]);
             std::string unitName = tokens[1];
             int hp = std::stoi(tokens[2]);
@@ -298,43 +304,30 @@ void GameManager::loadUnitTypes(const std::string& filename) {
             UnitType unitType(id, unitName, hp, timePerMove, armor, resist, productionCost, killReward);
             unitTypes.push_back(unitType);
         }
-        else {
+        else
+        {
             std::cout << "유닛 타입 데이터를 파싱하는 중 오류 발생: " << line << std::endl;
         }
     }
     file.close();
 }
 
-void GameManager::printUnitTypes() {
-    std::cout << "=== 유닛 타입 목록 ===" << std::endl;
-    for (const auto& unitType : unitTypes) {
-        unitType.printInfo();
-    }
-}
-
-void GameManager::loadWaves(const std::string& filename) {
+void GameManager::loadTowerData(const std::string& filename)
+{
     std::ifstream file(filename);
-
-    if (!file.is_open()) {
-        std::cout << "웨이브 파일을 열 수 없습니다: " << filename << std::endl;
+    if (!file.is_open())
+    {
+        std::cout << "타워 데이터 파일을 열 수 없습니다: " << filename << std::endl;
         return;
     }
 
     std::string line;
     bool isHeader = true;
-    while (std::getline(file, line)) {
-        // UTF-8 BOM 제거
-        if (!line.empty() && (unsigned char)line[0] == 0xEF) {
-            line.erase(0, 3);
-        }
-
-        if (isHeader) {
-            isHeader = false; // 헤더는 건너뜁니다.
-            continue;
-        }
-
-        // 라인이 비어있으면 건너뜁니다.
-        if (line.empty()) {
+    while (std::getline(file, line))
+    {
+        if (isHeader)
+        {
+            isHeader = false;
             continue;
         }
 
@@ -342,19 +335,79 @@ void GameManager::loadWaves(const std::string& filename) {
         std::string item;
         std::vector<std::string> tokens;
 
-        while (std::getline(ss, item, ',')) {
+        while (std::getline(ss, item, ','))
+        {
             tokens.push_back(item);
         }
 
-        if (tokens.size() >= 5) {
+        if (tokens.size() == 9)
+        {
+            int id = std::stoi(tokens[0]);
+            std::string towerName = tokens[1];
+            int nextTowerID = std::stoi(tokens[2]);
+            int buildCost = std::stoi(tokens[3]);
+            int attackRange = std::stoi(tokens[4]);
+            int damage = std::stoi(tokens[5]);
+            bool isMagic = std::stoi(tokens[6]) == 1;
+            int timePerAttack = std::stoi(tokens[7]);
+            int targetAmount = std::stoi(tokens[8]);
+
+            Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage, isMagic, timePerAttack, targetAmount);
+            towers.push_back(tower);
+        }
+    }
+    file.close();
+}
+
+void GameManager::loadWaves(const std::string& filename)
+{
+    std::ifstream file(filename);
+
+    if (!file.is_open())
+    {
+        std::cout << "웨이브 파일을 열 수 없습니다: " << filename << std::endl;
+        return;
+    }
+
+    std::string line;
+    bool isHeader = true;
+    while (std::getline(file, line))
+    {
+        if (!line.empty() && (unsigned char)line[0] == 0xEF)
+        {
+            line.erase(0, 3);
+        }
+
+        if (isHeader)
+        {
+            isHeader = false;
+            continue;
+        }
+
+        if (line.empty())
+        {
+            continue;
+        }
+
+        std::stringstream ss(line);
+        std::string item;
+        std::vector<std::string> tokens;
+
+        while (std::getline(ss, item, ','))
+        {
+            tokens.push_back(item);
+        }
+
+        if (tokens.size() >= 5)
+        {
             int waveID = std::stoi(tokens[0]);
             int life = std::stoi(tokens[1]);
             bool isDefence = (tokens[2] == "1");
             int gold = std::stoi(tokens[3]);
 
-            // units는 tokens[4]부터 시작
             std::vector<int> units;
-            for (size_t i = 4; i < tokens.size(); ++i) {
+            for (size_t i = 4; i < tokens.size(); ++i)
+            {
                 if (tokens[i].empty()) continue;
                 units.push_back(std::stoi(tokens[i]));
             }
@@ -362,16 +415,336 @@ void GameManager::loadWaves(const std::string& filename) {
             Wave wave(waveID, life, isDefence, gold, units);
             waves.push_back(wave);
         }
-        else {
+        else
+        {
             std::cout << "웨이브 데이터를 파싱하는 중 오류 발생: " << line << std::endl;
         }
     }
     file.close();
 }
 
-void GameManager::printWaves() {
-    std::cout << "=== 웨이브 목록 ===" << std::endl;
-    for (const auto& wave : waves) {
-        wave.printInfo();
+void GameManager::startPreparationPhase()
+{
+    std::vector<std::vector<std::string>> mapWithUnits = map;
+    isPreparation = true;
+    bool isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
+    bool isTowerSelected = false;
+
+    int selectedX = mapWithUnits[0].size() / 2;
+    int selectedY = mapWithUnits.size() / 2;
+    int selectedTowerIndex = 1;
+
+    int originalX = selectedX;
+    int originalY = selectedY;
+    int towerX = -1;
+    int towerY = -1;
+
+    while (isPreparation)
+    {
+        ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY);
+
+        sf::Event event;
+        while (ui.getWindow().pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                ui.getWindow().close();
+
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::S)
+                {
+                    isPreparation = false;
+                    break;
+                }
+                else if (event.key.code == sf::Keyboard::B)
+                {
+                    if (isTowerPlacementMode)
+                    {
+                        selectedX = originalX;
+                        selectedY = originalY;
+                        isTowerPlacementMode = false;
+                    }
+                    else
+                    {
+                        originalX = selectedX;
+                        originalY = selectedY;
+                        isTowerPlacementMode = true;
+                    }
+                }
+                else if (isTowerPlacementMode)
+                {
+                    if (event.key.code == sf::Keyboard::Up && selectedY > 0)
+                        selectedY--;
+                    else if (event.key.code == sf::Keyboard::Down && selectedY < mapWithUnits.size() - 1)
+                        selectedY++;
+                    else if (event.key.code == sf::Keyboard::Left && selectedX > 0)
+                        selectedX--;
+                    else if (event.key.code == sf::Keyboard::Right && selectedX < mapWithUnits[0].size() - 1)
+                        selectedX++;
+
+                    else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
+                    {
+                        int towerID = event.key.code - sf::Keyboard::Num0;
+                        auto it = std::find_if(towers.begin(), towers.end(),
+                            [towerID](const Tower& tower) { return tower.getId() == towerID; });
+
+                        if (it != towers.end())
+                        {
+                            Tower& selectedTower = *it;
+                            selectedTowerIndex = std::distance(towers.begin(), it);
+                            std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                        }
+                        else
+                        {
+                            std::cout << "해당 타워가 존재하지 않습니다.\n";
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                        }
+                    }
+
+                    else if (event.key.code == sf::Keyboard::U)
+                    {
+                        auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+                            [selectedX, selectedY](const PlacedTower& tower) {
+                                return tower.getX() == selectedX && tower.getY() == selectedY;
+                            });
+
+                        if (towerIt != placedTowers.end())
+                        {
+                            bool inTowerSelectionMode = true;
+                            towerX = selectedX;
+                            towerY = selectedY;
+
+                            std::cout << "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n";
+
+                            while (inTowerSelectionMode)
+                            {
+                                sf::Event towerEvent;
+                                while (ui.getWindow().pollEvent(towerEvent))
+                                {
+                                    if (towerEvent.type == sf::Event::KeyPressed)
+                                    {
+                                        if (towerEvent.key.code == sf::Keyboard::Num1)
+                                        {
+                                            towerIt->upgrade(gold, map, towers);
+                                            std::cout << "타워가 업그레이드되었습니다.\n";
+                                            inTowerSelectionMode = false;
+                                        }
+                                        else if (towerEvent.key.code == sf::Keyboard::S)
+                                        {
+                                            int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
+                                            gold += refundAmount;
+                                            std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
+                                            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                                            map[towerY][towerX] = "O";
+                                            placedTowers.erase(towerIt);
+                                            inTowerSelectionMode = false;
+                                        }
+                                        else if (towerEvent.key.code == sf::Keyboard::U)
+                                        {
+                                            inTowerSelectionMode = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            std::cout << "현재 위치에 타워가 없습니다.\n";
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                        }
+                    }
+                    else if (event.key.code == sf::Keyboard::Enter && selectedTowerIndex >= 0)
+                    {
+                        if (map[selectedY][selectedX] == "O")
+                        {
+                            Tower selectedTower = towers[selectedTowerIndex];
+
+                            if (gold - selectedTower.getBuildCost() >= 0)
+                            {
+                                PlacedTower newTower(selectedTower, selectedX, selectedY);
+                                gold -= selectedTower.getBuildCost();
+
+                                map[selectedY][selectedX] = newTower.getTowerName();
+                                placedTowers.push_back(newTower);
+                                std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
+                                //std::this_thread::sleep_for(std::chrono::seconds(1));
+                            }
+                            else
+                            {
+                                std::cout << " 타워를 설치할 골드가 부족합니다.\n";
+                                std::this_thread::sleep_for(std::chrono::seconds(1));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
+}
+
+
+
+
+void GameManager::attackUnits(std::vector<Unit>& activeUnits ,int currentTick)
+{
+    
+
+    for (const auto& tower : placedTowers)
+    {
+
+        if (currentTick % tower.getTimePerAttack() != 0) //타워 공속 반영
+        {
+            continue; // 아직 공격할 틱이 아니면 넘어감
+        }
+
+
+        int range = tower.getAttackRange();
+        int damage = tower.getDamage();
+        int targetAmount = tower.getTargetAmount();
+        int targetsAttacked = 0;
+
+        for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;)
+        {
+            int unitX = it->getX();
+            int unitY = it->getY();
+            int towerX = tower.getX();
+            int towerY = tower.getY();
+
+            int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
+
+            if (distanceSquared <= range * range)
+            {
+               
+                int newHp = calculateDamage(tower.getIsMagic(), damage, *it);  // 데미지 계산
+                it->reduceHp(newHp);  // 유닛 체력 업데이트
+
+                if (it->getHp() <= 0)
+                {
+                    
+                    gold += it->getKillReward();
+                    it = activeUnits.erase(it);
+                    continue;
+                }
+
+                targetsAttacked++;
+            }
+            ++it;
+        }
+    }
+}
+
+
+int GameManager::calculateDamage(bool damagetype, int damage, const Unit& unit)
+{
+
+    int actualDamage = 1;
+
+
+    if (damagetype == 0) //물리 데미지
+    {
+        actualDamage = damage - unit.getArmor();
+    }
+    else if (damagetype == 1) //마법 데미지
+    {
+        actualDamage = damage - unit.getResist();
+    }
+
+    actualDamage = actualDamage > 0 ? actualDamage : 1;  // 최소 데미지 보장
+
+    // 유닛의 줄어든 체력 반환
+    return unit.getHp() - actualDamage;
+
+}
+
+void GameManager::startAttackWave(const Wave& wave, int& currentTick)
+{
+    std::vector<Unit> activeUnits;
+    bool waveOver = false;
+
+    while (!waveOver)
+    {
+        handleAttackInput();
+
+        updateAttackUnits(activeUnits);
+
+        // 타워가 유닛을 공격
+        attackUnits(activeUnits, currentTick);
+
+        updateGameState(activeUnits);
+
+        waveOver = isAttackWaveOver(activeUnits);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        currentTick++;
+    }
+
+    std::cout << "공격 웨이브 종료!\n";
+    if (playerLife > 0)
+    {
+        gold = static_cast<int>(gold * 1.2);
+        std::cout << "공격 성공! 수비 재화가 증가했습니다. 현재 골드: " << gold << "\n";
+    }
+}
+
+void GameManager::handleAttackInput()
+{
+    // SFML 이벤트 처리로 대체하거나 별도의 입력 방법을 구현해야 합니다.
+    // 이 예제에서는 간단히 구현하지 않고 넘어갑니다.
+}
+
+void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
+{
+    if (!unitProductionQueue.empty())
+    {
+        int unitId = unitProductionQueue.front();
+        unitProductionQueue.pop();
+
+        auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
+            [unitId](const UnitType& ut) { return ut.getId() == unitId; });
+
+        if (it != unitTypes.end())
+        {
+            const UnitType& unitType = *it;
+            Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
+                unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(),
+                unitType.getKillReward(), path);
+            activeUnits.push_back(unit);
+        }
+    }
+
+    for (auto it = activeUnits.begin(); it != activeUnits.end();)
+    {
+        bool arrived = it->update();
+        if (arrived)
+        {
+            std::cout << it->getName() << " 유닛이 목적지에 도달했습니다!\n";
+            it = activeUnits.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+bool GameManager::isAttackWaveOver(const std::vector<Unit>& activeUnits)
+{
+    int minProductionCost = INT_MAX;
+    for (const auto& unitType : unitTypes)
+    {
+        if (unitType.getProductionCost() < minProductionCost)
+        {
+            minProductionCost = unitType.getProductionCost();
+        }
+    }
+
+    if (attackGold < minProductionCost && activeUnits.empty() && unitProductionQueue.empty())
+    {
+        return true;
+    }
+
+    return false;
 }

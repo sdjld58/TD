@@ -7,28 +7,51 @@
 #include "UnitType.h"
 #include "Wave.h"
 #include "Unit.h"
+#include "PlacedTower.h"
+#include "Tower.h"
+#include "UI.h"  // UI 클래스 추가
 
-class GameManager {
+class GameManager
+{
 private:
     std::vector<std::vector<std::string>> map;
-    std::vector<UnitType> unitTypes; // 유닛 타입 리스트
-    std::vector<Wave> waves;         // 웨이브 리스트
-    std::vector<std::pair<int, int>> path; // 유닛 이동 경로
+    std::vector<UnitType> unitTypes;
+    std::vector<Wave> waves;
+    std::vector<std::pair<int, int>> path;
+    std::vector<Tower> towers;
+    std::vector<PlacedTower> placedTowers;
+    std::queue<int> unitProductionQueue;
 
     int playerLife;
     int gold;
+    bool isPreparation;
+    int attackGold;
+
+    UI ui;  // UI 클래스 인스턴스 추가
 
 public:
     GameManager();
     void run();
     void loadMap(const std::string& filename);
-    void printMap();
-    void parsePath(); // 맵에서 경로 파싱
+    void parsePath();
     void loadUnitTypes(const std::string& filename);
-    void printUnitTypes();
     void loadWaves(const std::string& filename);
-    void printWaves();
-    void updateAndPrintMap(const std::vector<Unit>& activeUnits); // 맵 업데이트 및 출력
+    
+
+    void startPreparationPhase();
+    void loadTowerData(const std::string& filename); //타워 로드
+    void attackUnits(std::vector<Unit>& activeUnits ,int currentTick); //공격로직
+    int calculateDamage(bool damageType, int baseDamage, const Unit& unit); //데미지 계산 로직
+   
+    
+
+    void startAttackWave(const Wave& wave,int& currentTick);
+    void handleAttackInput();
+    void updateAttackUnits(std::vector<Unit>& activeUnits);
+    bool isAttackWaveOver(const std::vector<Unit>& activeUnits);
+
+    // 추가된 메서드
+    void updateGameState(std::vector<Unit>& activeUnits);
 };
 
 #endif // GAMEMANAGER_H

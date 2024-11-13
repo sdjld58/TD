@@ -59,6 +59,7 @@ public:
     void setPath(const std::vector<std::pair<int, int>>& gamePath);
     void setTowers(const std::vector<Tower>& gameTowers);
     void setUnitTypes(const std::vector<UnitType>& gameUnitTypes);
+    
 };
 
 #endif // UI_H

@@ -28,6 +28,10 @@ void GameManager::run()
 
     int currentTick = 0; // 틱 초기화
 
+   
+
+    
+
     for (const auto& wave : waves)
     {
         int waveID = wave.getWaveID();
@@ -43,12 +47,16 @@ void GameManager::run()
         // 수비 웨이브 처리
         if (wave.getIsDefence())
         {
+            
+
+            
+
             if (wave.getLife() > 0)
             {
                 playerLife = wave.getLife();
             }
 
-            gold = wave.getGold();
+            
             std::queue<Unit> unitQueue;
 
             // 웨이브에 포함된 유닛 생성
@@ -67,6 +75,9 @@ void GameManager::run()
 
             std::vector<Unit> activeUnits;
             const int maxTicks = 100;
+
+           
+
             for (int tick = 0; tick < maxTicks; ++tick)
             {
                 currentTick++;
@@ -117,8 +128,12 @@ void GameManager::run()
                     break; // 다음 웨이브로 넘어갑니다.
                 }
 
+            
+
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
+
+          
         }
         else
         {
@@ -578,6 +593,7 @@ void GameManager::startPreparationPhase()
                             }
                         }
                     }
+                   
                 }
             }
         }
@@ -748,3 +764,5 @@ bool GameManager::isAttackWaveOver(const std::vector<Unit>& activeUnits)
 
     return false;
 }
+
+

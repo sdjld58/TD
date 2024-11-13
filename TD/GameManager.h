@@ -26,6 +26,7 @@ private:
     int gold;
     bool isPreparation;
     int attackGold;
+    bool showUnitInfo;
 
     UI ui;  // UI 클래스 인스턴스 추가
 
@@ -52,6 +53,8 @@ public:
 
     // 추가된 메서드
     void updateGameState(std::vector<Unit>& activeUnits);
+    //생존해 있는 유닛 정보 표시
+    void displayUnitInfo(const std::vector<Unit>& activeUnits);
 };
 
 #endif // GAMEMANAGER_H

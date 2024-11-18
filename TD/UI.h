@@ -9,6 +9,8 @@
 #include "PlacedTower.h"
 #include "Tower.h"
 #include "UnitType.h"
+#include <TGUI/TGUI.hpp>
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
 class UI
 {
@@ -45,6 +47,9 @@ private:
     sf::Texture knightUnitTexture;
     sf::Sprite knightUnitSprite;
 
+    //버튼
+    tgui::Gui gui;
+
 public:
     void initialize(const std::vector<std::vector<std::string>>& gameMap);
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
@@ -59,7 +64,11 @@ public:
     // 타일 크기
     const float tileWidth = 128.0f;  // 이소메트릭 타일의 폭
     const float tileHeight = 76.0f;  // 이소메트릭 타일의 높이
-    
+
+    //창 크기
+    const int windowWidth = 1920;
+    const int windowHeight = 1080;
 };
+
 
 #endif // UI_H

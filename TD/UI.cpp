@@ -4,7 +4,7 @@
 void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 {
     map = gameMap;
-    window.create(sf::VideoMode(1920, 1080), "Tower Defense Game");
+    window.create(sf::VideoMode(windowWidth, windowHeight), "Tower Defense Game");
 
     // 폰트 로드
     if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf"))
@@ -50,6 +50,18 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     knightUnitSprite.setOrigin(knightUnitTexture.getSize().x / 2.0f, knightUnitTexture.getSize().y * 1.3);
     float unitScale = tileHeight / knightUnitTexture.getSize().y;
     knightUnitSprite.setScale(unitScale/1.5, unitScale/1.5);
+
+    //버튼 그리기
+    gui.setWindow(window);
+
+    tgui::Button::Ptr towerButton = tgui::Button::create("tower");
+    towerButton->setSize(100, 50); // 버튼 크기 설정
+    towerButton->setPosition(0, windowHeight - 50); // 버튼 위치 설정
+   
+    
+    gui.add(towerButton, "towerButton");
+
+
 }
 
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
@@ -157,6 +169,8 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
     window.draw(lifeText);
     window.draw(goldText);
 
+    gui.draw();
+
     window.display();
 }
 
@@ -184,4 +198,3 @@ void UI::setUnitTypes(const std::vector<UnitType>& gameUnitTypes)
 {
     unitTypes = gameUnitTypes;
 }
-

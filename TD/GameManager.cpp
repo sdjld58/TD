@@ -6,6 +6,7 @@
 #include <thread>
 #include <chrono>
 #include <climits>
+#include <TGUI/TGUI.hpp>
 
 GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 {
@@ -479,6 +480,46 @@ void GameManager::startPreparationPhase()
                                 std::cout << "타워를 설치할 골드가 부족합니다.\n";
                             }
                         }
+                    }
+                }
+            }
+
+            // **마우스 클릭 이벤트 처리**
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    // 마우스 왼쪽 버튼 클릭 시 처리
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
+                    float mouseX = static_cast<float>(mousePosition.x);
+                    float mouseY = static_cast<float>(mousePosition.y);
+
+                    // 이소메트릭 좌표 변환을 위한 보정값
+                    float mapWidth = static_cast<float>(mapWithUnits[0].size());
+                    float mapHeight = static_cast<float>(mapWithUnits.size());
+
+                    // 화면 중심 좌표
+                    float centerX = ui.getWindow().getSize().x / 2.0f;
+                    float centerY = 0.0f; // 맵이 화면 상단에서 시작한다고 가정
+
+                    // 화면 좌표를 타일 좌표로 변환
+                    float tempX = (mouseX - centerX) / (ui.tileWidth / 2.0f);
+                    float tempY = mouseY / (ui.tileHeight / 2.0f);
+
+                    float tileX = (tempX + tempY) / 2.0f - 2;
+                    float tileY = (tempY - tempX) / 2.0f - 3.5;
+
+                    // 타일 좌표를 정수로 변환
+                    int clickedTileX = static_cast<int>(std::floor(tileX));
+                    int clickedTileY = static_cast<int>(std::floor(tileY));
+
+                    // 타일 좌표가 맵 범위 내에 있는지 확인
+                    if (clickedTileX >= 0 && clickedTileX < static_cast<int>(mapWidth) &&
+                        clickedTileY >= 0 && clickedTileY < static_cast<int>(mapHeight))
+                    {
+                        selectedX = clickedTileX;
+                        selectedY = clickedTileY;
+                        std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
                     }
                 }
             }

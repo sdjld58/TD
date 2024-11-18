@@ -36,6 +36,7 @@ public:
     void parsePath();
     void loadUnitTypes(const std::string& filename);
     void loadWaves(const std::string& filename);
+    void updateAndPrintMap(const std::vector<Unit>& activeUnits);
     
 
     void startPreparationPhase();

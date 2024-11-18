@@ -26,21 +26,18 @@ void GameManager::run()
     ui.setTowers(towers);
     ui.setUnitTypes(unitTypes);
 
-    int currentTick = 0; // 틱 초기화
+    int currentTick = 0;
 
     for (const auto& wave : waves)
     {
         int waveID = wave.getWaveID();
         gold += wave.getGold();
 
-
-
         if (wave.getIsDefence())
         {
-            startPreparationPhase(); // 수비 웨이브 준비시간
+            startPreparationPhase(); // 수비 웨이브 준비
         }
 
-        // 수비 웨이브 처리
         if (wave.getIsDefence())
         {
             if (wave.getLife() > 0)
@@ -48,7 +45,6 @@ void GameManager::run()
                 playerLife = wave.getLife();
             }
 
-            
             std::queue<Unit> unitQueue;
 
             // 웨이브에 포함된 유닛 생성
@@ -60,17 +56,20 @@ void GameManager::run()
                 {
                     UnitType& unitType = *it;
                     Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
-                        unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(), unitType.getKillReward(), path);
+                        unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(),
+                        unitType.getKillReward(), path);
                     unitQueue.push(unit);
                 }
             }
 
             std::vector<Unit> activeUnits;
             const int maxTicks = 100;
+
             for (int tick = 0; tick < maxTicks; ++tick)
             {
                 currentTick++;
 
+                // S 위치가 비어있으면 유닛 스폰
                 bool sOccupied = false;
                 for (const auto& unit : activeUnits)
                 {
@@ -87,6 +86,7 @@ void GameManager::run()
                     activeUnits.push_back(unit);
                 }
 
+                // 유닛 업데이트
                 for (auto it = activeUnits.begin(); it != activeUnits.end();)
                 {
                     bool arrived = it->update();
@@ -101,9 +101,12 @@ void GameManager::run()
                     }
                 }
 
+                // 공격 처리
                 attackUnits(activeUnits, currentTick);
 
-                updateGameState(activeUnits);
+                // UI 업데이트 (SFML) 및 콘솔 출력
+                ui.update(activeUnits, placedTowers, playerLife, gold, attackGold);
+                updateAndPrintMap(activeUnits);
 
                 if (playerLife <= 0)
                 {
@@ -114,14 +117,16 @@ void GameManager::run()
                 if (activeUnits.empty() && unitQueue.empty())
                 {
                     std::cout << "웨이브 " << waveID << " 클리어!\n";
-                    break; // 다음 웨이브로 넘어갑니다.
+                    break;
                 }
 
+                // 틱 간 시간 지연
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
         }
         else
         {
+            // 공격 웨이브 처리
             attackGold = wave.getGold();
             startAttackWave(wave, currentTick);
         }
@@ -129,6 +134,7 @@ void GameManager::run()
 
     std::cout << "프로그램을 종료합니다.\n";
 }
+
 
 
 
@@ -354,6 +360,56 @@ void GameManager::loadTowerData(const std::string& filename)
     }
     file.close();
 }
+
+
+void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+
+    std::vector<std::vector<std::string>> mapWithUnits = map;
+
+    // 유닛 위치를 맵에 표시
+    for (const auto& unit : activeUnits)
+    {
+        int x = unit.getX();
+        int y = unit.getY();
+        if (y >= 0 && y < (int)mapWithUnits.size() && x >= 0 && x < (int)mapWithUnits[0].size())
+        {
+            mapWithUnits[y][x] = unit.getName();
+        }
+    }
+
+    // 맵 출력
+    std::cout << "=== 맵 상태 ===\n";
+    for (const auto& row : mapWithUnits)
+    {
+        for (const auto& cell : row)
+        {
+            std::cout << cell << ' ';
+        }
+        std::cout << '\n';
+    }
+
+    // 플레이어 상태 출력
+    std::cout << "\n플레이어 라이프: " << playerLife << "\n";
+    std::cout << "골드: " << gold << "\n";
+
+    // 유닛 상태 출력
+    std::cout << "\n=== 유닛 상태 ===\n";
+    for (const auto& unit : activeUnits)
+    {
+        std::cout << "유닛: " << unit.getName()
+            << ", 위치: (" << unit.getX() << ", " << unit.getY() << ")"
+            << ", 체력: " << unit.getHp() << "\n";
+    }
+}
+
+
+
 
 void GameManager::loadWaves(const std::string& filename)
 {
@@ -728,6 +784,7 @@ void GameManager::handleAttackInput()
         }
     }
 }
+
 
 void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
 {

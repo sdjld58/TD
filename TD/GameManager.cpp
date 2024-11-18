@@ -496,12 +496,12 @@ void GameManager::startPreparationPhase()
 {
     std::vector<std::vector<std::string>> mapWithUnits = map;
     isPreparation = true;
-    bool isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
+    isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
     bool isTowerSelected = false;
 
-    int selectedX = mapWithUnits[0].size() / 2;
-    int selectedY = mapWithUnits.size() / 2;
-    int selectedTowerIndex = 1;
+    selectedX = mapWithUnits[0].size() / 2;
+    selectedY = mapWithUnits.size() / 2;
+    selectedTowerIndex = 1;
 
     int originalX = selectedX;
     int originalY = selectedY;
@@ -578,7 +578,7 @@ void GameManager::startPreparationPhase()
                     else if (event.key.code == sf::Keyboard::U)
                     {
                         auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
-                            [selectedX, selectedY](const PlacedTower& tower) {
+                            [this](const PlacedTower& tower) {
                                 return tower.getX() == selectedX && tower.getY() == selectedY;
                             });
 
@@ -595,6 +595,9 @@ void GameManager::startPreparationPhase()
                                 sf::Event towerEvent;
                                 while (ui.getWindow().pollEvent(towerEvent))
                                 {
+                                    // **TGUI 이벤트 처리 추가**
+                                    ui.gui.handleEvent(towerEvent);
+
                                     if (towerEvent.type == sf::Event::KeyPressed)
                                     {
                                         if (towerEvent.key.code == sf::Keyboard::Num1)
@@ -628,24 +631,7 @@ void GameManager::startPreparationPhase()
                     }
                     else if (event.key.code == sf::Keyboard::Enter && selectedTowerIndex >= 0)
                     {
-                        if (map[selectedY][selectedX] == "O")
-                        {
-                            Tower selectedTower = towers[selectedTowerIndex];
-
-                            if (gold - selectedTower.getBuildCost() >= 0)
-                            {
-                                PlacedTower newTower(selectedTower, selectedX, selectedY);
-                                gold -= selectedTower.getBuildCost();
-
-                                map[selectedY][selectedX] = newTower.getTowerName();
-                                placedTowers.push_back(newTower);
-                                std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
-                            }
-                            else
-                            {
-                                std::cout << " 타워를 설치할 골드가 부족합니다.\n";
-                            }
-                        }
+                        attemptPlaceTower();
                     }
                    
                 }
@@ -905,5 +891,78 @@ bool GameManager::isAttackWaveOver(const std::vector<Unit>& activeUnits)
 
 void GameManager::handleTowerButtonClicked()
 {
+    if (isTowerPlacementMode)
+    {
+        attemptPlaceTower();
+    }
+    else
+    {
+        std::cout << "타워 설치 모드가 아닙니다.\n";
+    }
+}
 
+bool GameManager::isTileSelectable(int x, int y)
+{
+    // 맵 범위 내인지 확인
+    if (x < 0 || x >= static_cast<int>(map[0].size()) || y < 0 || y >= static_cast<int>(map.size()))
+        return false;
+
+    // 해당 타일의 값 가져오기
+    std::string tileValue = map[y][x];
+
+    // 타워가 설치 가능한 타일인지 또는 이미 타워가 설치된 타일인지 확인
+    if (tileValue == "O")
+    {
+        // 설치 가능한 타일
+        return true;
+    }
+    else
+    {
+        // 이미 설치된 타워가 있는지 확인
+        auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+            [x, y](const PlacedTower& tower) {
+                return tower.getX() == x && tower.getY() == y;
+            });
+        if (towerIt != placedTowers.end())
+        {
+            // 타워가 설치된 타일
+            return true;
+        }
+    }
+
+    // 타워 설치 불가능한 타일
+    return false;
+}
+
+void GameManager::attemptPlaceTower()
+{
+    if (selectedTowerIndex >= 0)
+    {
+        if (map[selectedY][selectedX] == "O")
+        {
+            Tower selectedTower = towers[selectedTowerIndex];
+
+            if (gold - selectedTower.getBuildCost() >= 0)
+            {
+                PlacedTower newTower(selectedTower, selectedX, selectedY);
+                gold -= selectedTower.getBuildCost();
+
+                map[selectedY][selectedX] = newTower.getTowerName();
+                placedTowers.push_back(newTower);
+                std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
+            }
+            else
+            {
+                std::cout << "타워를 설치할 골드가 부족합니다.\n";
+            }
+        }
+        else
+        {
+            std::cout << "해당 위치에 타워를 설치할 수 없습니다.\n";
+        }
+    }
+    else
+    {
+        std::cout << "타워가 선택되지 않았습니다.\n";
+    }
 }

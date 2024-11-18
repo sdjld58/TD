@@ -28,7 +28,16 @@ private:
     int attackGold;
     bool showUnitInfo;
     void handleTowerButtonClicked();
+    void attemptPlaceTower();
     UI ui;  // UI 클래스 인스턴스 추가
+
+    int selectedX;
+    int selectedY;
+    int selectedTowerIndex;
+    bool isTowerPlacementMode;
+
+    bool isTileSelectable(int x, int y);
+
 
 public:
     GameManager();

@@ -47,9 +47,6 @@ private:
     sf::Texture knightUnitTexture;
     sf::Sprite knightUnitSprite;
 
-    //버튼
-    tgui::Gui gui;
-
 public:
     void initialize(const std::vector<std::vector<std::string>>& gameMap);
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
@@ -68,6 +65,10 @@ public:
     //창 크기
     const int windowWidth = 1920;
     const int windowHeight = 1080;
+
+    //버튼
+    tgui::Gui gui;
+    std::function<void()> onTowerButtonClicked;
 };
 
 

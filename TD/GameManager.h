@@ -27,7 +27,7 @@ private:
     bool isPreparation;
     int attackGold;
     bool showUnitInfo;
-
+    void handleTowerButtonClicked();
     UI ui;  // UI 클래스 인스턴스 추가
 
 public:

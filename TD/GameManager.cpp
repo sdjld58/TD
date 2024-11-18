@@ -12,6 +12,10 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 {
     // UI 초기화
     ui.initialize(map);
+
+    ui.onTowerButtonClicked = [this]() {
+        this->handleTowerButtonClicked();
+        };
 }
 
 void GameManager::run()
@@ -511,6 +515,10 @@ void GameManager::startPreparationPhase()
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
+
+            // **TGUI 이벤트 처리 추가**
+            ui.gui.handleEvent(event);
+
             if (event.type == sf::Event::Closed)
                 ui.getWindow().close();
 
@@ -895,4 +903,7 @@ bool GameManager::isAttackWaveOver(const std::vector<Unit>& activeUnits)
     return false;
 }
 
+void GameManager::handleTowerButtonClicked()
+{
 
+}

@@ -58,7 +58,14 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     towerButton->setSize(100, 50); // 버튼 크기 설정
     towerButton->setPosition(0, windowHeight - 50); // 버튼 위치 설정
    
-    
+    // 버튼에 콜백 함수 연결
+    towerButton->onClick([this]() {
+        if (onTowerButtonClicked)
+        {
+            onTowerButtonClicked();
+        }
+        });
+
     gui.add(towerButton, "towerButton");
 
 

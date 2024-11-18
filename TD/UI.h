@@ -27,6 +27,10 @@ private:
     // 유닛 상태 표시 텍스트 추가
     sf::Text unitStatusText;
 
+    // 타일 크기
+    const float tileWidth = 128.0f;  // 이소메트릭 타일의 폭
+    const float tileHeight = 76.0f;  // 이소메트릭 타일의 높이
+
     // 타일 텍스처 및 스프라이트
     sf::Texture roadTexture;
     sf::Sprite roadSprite;
@@ -55,9 +59,7 @@ public:
     void setPath(const std::vector<std::pair<int, int>>& gamePath);
     void setTowers(const std::vector<Tower>& gameTowers);
     void setUnitTypes(const std::vector<UnitType>& gameUnitTypes);
-    // 타일 크기
-    const float tileWidth = 128.0f;  // 이소메트릭 타일의 폭
-    const float tileHeight = 76.0f;  // 이소메트릭 타일의 높이
+    
 };
 
 #endif // UI_H

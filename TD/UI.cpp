@@ -184,3 +184,4 @@ void UI::setUnitTypes(const std::vector<UnitType>& gameUnitTypes)
 {
     unitTypes = gameUnitTypes;
 }
+

@@ -56,8 +56,8 @@ void Unit::printStatus() const
     std::cout << "Unit " << name << " at (" << x << ", " << y << "), HP: " << hp << std::endl;
 }
 
-void Unit::reduceHp(int damage)
+void Unit::reduceHp(int currentHp)
 {
-    hp -= damage;
+    hp = currentHp;
     if (hp < 0) hp = 0;
 }

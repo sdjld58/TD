@@ -27,24 +27,40 @@ void GameManager::run()
     ui.setTowers(towers);
     ui.setUnitTypes(unitTypes);
 
+    int currentTick = 0; // 틱 초기화
+
+   
+
+    
+
     for (const auto& wave : waves)
     {
         int waveID = wave.getWaveID();
         gold += wave.getGold();
 
-        // 웨이브 시작 전 준비 단계 시작
-        startPreparationPhase();
+        
 
+       if (wave.getIsDefence())
+        {
+            startPreparationPhase(); // 수비 웨이브 준비시간
+        }
+        
+        // 수비 웨이브 처리
         if (wave.getIsDefence())
         {
+            
+
+            
+
             if (wave.getLife() > 0)
             {
                 playerLife = wave.getLife();
             }
-            gold = wave.getGold();
 
-            // 수비 웨이브 처리
+            
             std::queue<Unit> unitQueue;
+
+            // 웨이브에 포함된 유닛 생성
             for (int unitID : wave.getUnits())
             {
                 auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
@@ -59,11 +75,14 @@ void GameManager::run()
             }
 
             std::vector<Unit> activeUnits;
-
             const int maxTicks = 100;
+
+           
+
             for (int tick = 0; tick < maxTicks; ++tick)
             {
-                // 유닛 생성 로직
+                currentTick++;
+
                 bool sOccupied = false;
                 for (const auto& unit : activeUnits)
                 {
@@ -80,7 +99,6 @@ void GameManager::run()
                     activeUnits.push_back(unit);
                 }
 
-                // 유닛 업데이트
                 for (auto it = activeUnits.begin(); it != activeUnits.end();)
                 {
                     bool arrived = it->update();
@@ -89,15 +107,14 @@ void GameManager::run()
                         playerLife -= 1;
                         it = activeUnits.erase(it);
                     }
-                    else {
+                    else
+                    {
                         ++it;
                     }
                 }
 
-                // 타워가 유닛을 공격
-                attackUnits(activeUnits);
+                attackUnits(activeUnits, currentTick);
 
-                // 게임 상태 업데이트 및 화면 출력
                 updateGameState(activeUnits);
 
                 if (playerLife <= 0)
@@ -109,22 +126,34 @@ void GameManager::run()
                 if (activeUnits.empty() && unitQueue.empty())
                 {
                     std::cout << "웨이브 " << waveID << " 클리어!\n";
-                    break;
+                    break; // 다음 웨이브로 넘어갑니다.
                 }
 
-                // 틱 사이에 시간 지연 추가
+            
+
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
+
+          
         }
-        else {
-            // 공격 웨이브 처리
+        else
+        {
+            /*
             attackGold = wave.getGold();
-            startAttackWave(wave);
+            startAttackWave(wave, currentTick);
+            */
+            // 공격 웨이브 종료 확인
+            
         }
     }
 
     std::cout << "프로그램을 종료합니다.\n";
 }
+
+
+
+
+
 
 void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 {
@@ -203,8 +232,10 @@ void GameManager::parsePath() {
     size_t destX = 0, destY = 0;
 
     while (!q.empty()) {
-        auto [y, x] = q.front();
+        auto current = q.front();
         q.pop();
+        size_t y = current.first;
+        size_t x = current.second;
 
         if (map[y][x] == "D") {
             destX = x;
@@ -233,9 +264,9 @@ void GameManager::parsePath() {
         int x = destX;
         while (!(x == (int)startX && y == (int)startY)) {
             path.push_back({ x, y });
-            auto [py, px] = parent[y][x];
-            y = py;
-            x = px;
+            auto parentPos = parent[y][x];
+            y = parentPos.first;
+            x = parentPos.second;
         }
         path.push_back({ (int)startX, (int)startY });
         std::reverse(path.begin(), path.end());
@@ -244,6 +275,7 @@ void GameManager::parsePath() {
         std::cout << "경로를 찾을 수 없습니다." << std::endl;
     }
 }
+
 
 void GameManager::loadUnitTypes(const std::string& filename)
 {
@@ -409,16 +441,22 @@ void GameManager::loadWaves(const std::string& filename)
 
 void GameManager::startPreparationPhase()
 {
+    std::vector<std::vector<std::string>> mapWithUnits = map;
     isPreparation = true;
-    bool isTowerPlacementMode = false;
+    bool isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
+    bool isTowerSelected = false;
 
-    int selectedX = map[0].size() / 2;
-    int selectedY = map.size() / 2;
-    int selectedTowerIndex = 0;
+    int selectedX = mapWithUnits[0].size() / 2;
+    int selectedY = mapWithUnits.size() / 2;
+    int selectedTowerIndex = 1;
+
+    int originalX = selectedX;
+    int originalY = selectedY;
+    int towerX = -1;
+    int towerY = -1;
 
     while (isPreparation)
     {
-        // UI를 통해 화면을 업데이트 (selectedX, selectedY 전달)
         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY);
 
         sf::Event event;
@@ -436,18 +474,30 @@ void GameManager::startPreparationPhase()
                 }
                 else if (event.key.code == sf::Keyboard::B)
                 {
-                    isTowerPlacementMode = !isTowerPlacementMode;
+                    if (isTowerPlacementMode)
+                    {
+                        selectedX = originalX;
+                        selectedY = originalY;
+                        isTowerPlacementMode = false;
+                    }
+                    else
+                    {
+                        originalX = selectedX;
+                        originalY = selectedY;
+                        isTowerPlacementMode = true;
+                    }
                 }
                 else if (isTowerPlacementMode)
                 {
                     if (event.key.code == sf::Keyboard::Up && selectedY > 0)
                         selectedY--;
-                    else if (event.key.code == sf::Keyboard::Down && selectedY < map.size() - 1)
+                    else if (event.key.code == sf::Keyboard::Down && selectedY < mapWithUnits.size() - 1)
                         selectedY++;
                     else if (event.key.code == sf::Keyboard::Left && selectedX > 0)
                         selectedX--;
-                    else if (event.key.code == sf::Keyboard::Right && selectedX < map[0].size() - 1)
+                    else if (event.key.code == sf::Keyboard::Right && selectedX < mapWithUnits[0].size() - 1)
                         selectedX++;
+
                     else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
                     {
                         int towerID = event.key.code - sf::Keyboard::Num0;
@@ -456,8 +506,69 @@ void GameManager::startPreparationPhase()
 
                         if (it != towers.end())
                         {
+                            Tower& selectedTower = *it;
                             selectedTowerIndex = std::distance(towers.begin(), it);
-                            std::cout << "타워 " << it->getTowerName() << " 이 선택되었습니다.\n";
+                            std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                        }
+                        else
+                        {
+                            std::cout << "해당 타워가 존재하지 않습니다.\n";
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
+                        }
+                    }
+
+                    else if (event.key.code == sf::Keyboard::U)
+                    {
+                        auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+                            [selectedX, selectedY](const PlacedTower& tower) {
+                                return tower.getX() == selectedX && tower.getY() == selectedY;
+                            });
+
+                        if (towerIt != placedTowers.end())
+                        {
+                            bool inTowerSelectionMode = true;
+                            towerX = selectedX;
+                            towerY = selectedY;
+
+                            std::cout << "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n";
+
+                            while (inTowerSelectionMode)
+                            {
+                                sf::Event towerEvent;
+                                while (ui.getWindow().pollEvent(towerEvent))
+                                {
+                                    if (towerEvent.type == sf::Event::KeyPressed)
+                                    {
+                                        if (towerEvent.key.code == sf::Keyboard::Num1)
+                                        {
+                                            towerIt->upgrade(gold, map, towers);
+                                            std::cout << "타워가 업그레이드되었습니다.\n";
+                                            inTowerSelectionMode = false;
+                                        }
+                                        else if (towerEvent.key.code == sf::Keyboard::S)
+                                        {
+                                            int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
+                                            gold += refundAmount;
+                                            std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
+                                            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                                            map[towerY][towerX] = "O";
+                                            placedTowers.erase(towerIt);
+                                            inTowerSelectionMode = false;
+                                        }
+                                        else if (towerEvent.key.code == sf::Keyboard::U)
+                                        {
+                                            inTowerSelectionMode = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            std::cout << "현재 위치에 타워가 없습니다.\n";
+                            std::this_thread::sleep_for(std::chrono::seconds(1));
                         }
                     }
                     else if (event.key.code == sf::Keyboard::Enter && selectedTowerIndex >= 0)
@@ -474,13 +585,16 @@ void GameManager::startPreparationPhase()
                                 map[selectedY][selectedX] = newTower.getTowerName();
                                 placedTowers.push_back(newTower);
                                 std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
+                                //std::this_thread::sleep_for(std::chrono::seconds(1));
                             }
                             else
                             {
-                                std::cout << "타워를 설치할 골드가 부족합니다.\n";
+                                std::cout << " 타워를 설치할 골드가 부족합니다.\n";
+                                std::this_thread::sleep_for(std::chrono::seconds(1));
                             }
                         }
                     }
+                   
                 }
             }
 
@@ -527,10 +641,22 @@ void GameManager::startPreparationPhase()
     }
 }
 
-void GameManager::attackUnits(std::vector<Unit>& activeUnits)
+
+
+
+void GameManager::attackUnits(std::vector<Unit>& activeUnits ,int currentTick)
 {
+    
+
     for (const auto& tower : placedTowers)
     {
+
+        if (currentTick % tower.getTimePerAttack() != 0) //타워 공속 반영
+        {
+            continue; // 아직 공격할 틱이 아니면 넘어감
+        }
+
+
         int range = tower.getAttackRange();
         int damage = tower.getDamage();
         int targetAmount = tower.getTargetAmount();
@@ -547,11 +673,13 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits)
 
             if (distanceSquared <= range * range)
             {
-                it->reduceHp(damage);
+               
+                int newHp = calculateDamage(tower.getIsMagic(), damage, *it);  // 데미지 계산
+                it->reduceHp(newHp);  // 유닛 체력 업데이트
 
                 if (it->getHp() <= 0)
                 {
-                    std::cout << it->getName() << " 유닛이 제거되었습니다!\n";
+                    
                     gold += it->getKillReward();
                     it = activeUnits.erase(it);
                     continue;
@@ -564,7 +692,30 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits)
     }
 }
 
-void GameManager::startAttackWave(const Wave& wave)
+
+int GameManager::calculateDamage(bool damagetype, int damage, const Unit& unit)
+{
+
+    int actualDamage = 1;
+
+
+    if (damagetype == 0) //물리 데미지
+    {
+        actualDamage = damage - unit.getArmor();
+    }
+    else if (damagetype == 1) //마법 데미지
+    {
+        actualDamage = damage - unit.getResist();
+    }
+
+    actualDamage = actualDamage > 0 ? actualDamage : 1;  // 최소 데미지 보장
+
+    // 유닛의 줄어든 체력 반환
+    return unit.getHp() - actualDamage;
+
+}
+
+void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 {
     std::vector<Unit> activeUnits;
     bool waveOver = false;
@@ -575,13 +726,16 @@ void GameManager::startAttackWave(const Wave& wave)
 
         updateAttackUnits(activeUnits);
 
-        attackUnits(activeUnits);
+        // 타워가 유닛을 공격
+        attackUnits(activeUnits, currentTick);
 
         updateGameState(activeUnits);
 
         waveOver = isAttackWaveOver(activeUnits);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        currentTick++;
     }
 
     std::cout << "공격 웨이브 종료!\n";
@@ -651,3 +805,5 @@ bool GameManager::isAttackWaveOver(const std::vector<Unit>& activeUnits)
 
     return false;
 }
+
+

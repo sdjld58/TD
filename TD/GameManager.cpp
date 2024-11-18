@@ -48,7 +48,7 @@ void GameManager::run()
                 playerLife = wave.getLife();
             }
 
-            gold = wave.getGold();
+            
             std::queue<Unit> unitQueue;
 
             // 웨이브에 포함된 유닛 생성

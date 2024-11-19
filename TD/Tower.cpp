@@ -55,3 +55,13 @@ void Tower::printInfo() const {
         << "버프 타워 여부: " << (isNoDamage ? "예" : "아니오") << "\n"
         << "도구: " << tool << "\n";
 }
+
+void Tower::displayInfo() const 
+{
+    std::cout << "타워 이름: " << towerName << "\n";
+    std::cout << "설명: " << tool << "\n";
+    std::cout << "공격력: " << damage << "\n";
+    std::cout << "사거리: " << attackRange << "\n";
+    std::cout << "설치 비용: " << buildCost << "\n";
+    std::cout << "--------------------------------\n";
+}

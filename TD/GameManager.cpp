@@ -427,6 +427,8 @@ void GameManager::loadTowerData(const std::string& filename)
             Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage,
                 isMagic, timePerAttack, targetAmount, isNodamage, tool);
             towers.push_back(tower);
+
+            tower.displayInfo();
         }
         else
         {

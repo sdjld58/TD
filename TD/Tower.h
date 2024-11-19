@@ -24,6 +24,7 @@ public:
     // 업그레이드 함수 - 타워 리스트를 인자로 받음
     void upgrade(const std::vector<Tower>& towerList);
     void printInfo() const;
+    void displayInfo() const;
 
 private:
     int id;
@@ -36,7 +37,7 @@ private:
     int timePerAttack;
     int targetAmount;
     int isNoDamage; // 버프 타워 여부
-    std::string tool; // 도구 속성
+    std::string tool; // 직업 설명
 };
 
 #endif // TOWER_H

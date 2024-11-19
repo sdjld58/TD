@@ -32,7 +32,7 @@ void GameManager::run()
     ui.setUnitTypes(unitTypes);
 
     int currentTick = 0;
-
+    
    
 
     
@@ -40,6 +40,7 @@ void GameManager::run()
     for (const auto& wave : waves)
     {
         int waveID = wave.getWaveID();
+        bool currentwaveType = wave.getIsDefence();
 
         if (wave.getIsDefence())
         {
@@ -118,7 +119,7 @@ void GameManager::run()
                 }
 
                 // 공격 처리
-                attackUnits(activeUnits, currentTick);
+                attackUnits(activeUnits, currentTick, currentwaveType);
 
                 // UI 업데이트 (SFML) 및 콘솔 출력
                 ui.update(activeUnits, placedTowers, playerLife, gold, attackGold);
@@ -409,7 +410,7 @@ void GameManager::loadTowerData(const std::string& filename)
             tokens.push_back(item);
         }
 
-        if (tokens.size() == 9)
+        if (tokens.size() == 11) // 변경된 데이터 크기 반영
         {
             int id = std::stoi(tokens[0]);
             std::string towerName = tokens[1];
@@ -420,13 +421,21 @@ void GameManager::loadTowerData(const std::string& filename)
             bool isMagic = std::stoi(tokens[6]) == 1;
             int timePerAttack = std::stoi(tokens[7]);
             int targetAmount = std::stoi(tokens[8]);
+            int isNodamage = std::stoi(tokens[9]); // 추가된 isNodamage 처리
+            std::string tool = tokens[10];        // 추가된 tool 처리
 
-            Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage, isMagic, timePerAttack, targetAmount);
+            Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage,
+                isMagic, timePerAttack, targetAmount, isNodamage, tool);
             towers.push_back(tower);
+        }
+        else
+        {
+            std::cout << "잘못된 데이터 형식이 있습니다: " << line << std::endl;
         }
     }
     file.close();
 }
+
 
 void GameManager::loadWaves(const std::string& filename)
 {
@@ -683,26 +692,42 @@ void GameManager::startPreparationPhase()
 
 
 
-void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick)
-{
+void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType) {
+    // 1. 모든 타워의 버프 상태 초기화
+    for (auto& tower : placedTowers) {
+        tower.clearBuff();
+    }
 
+    // 2. 버프 타워 처리
+    for (const auto& buffTower : placedTowers) {
+        if (!buffTower.getIsNoDamage()) continue; // 버프 타워가 아니면 넘어감
 
-    for (const auto& tower : placedTowers)
-    {
+        for (auto& targetTower : placedTowers) {
+            if (&buffTower == &targetTower || targetTower.getIsNoDamage()) continue; // 자기 자신 또는 다른 버프 타워 제외
 
-        if (currentTick % tower.getTimePerAttack() != 0) //타워 공속 반영
-        {
-            continue; // 아직 공격할 틱이 아니면 넘어감
+            // 거리 계산
+            int dx = buffTower.getX() - targetTower.getX();
+            int dy = buffTower.getY() - targetTower.getY();
+            int distanceSquared = dx * dx + dy * dy;
+
+            if (distanceSquared <= buffTower.getAttackRange() * buffTower.getAttackRange()) {
+                targetTower.applyBuff(buffTower.getDamage(), buffTower.getTimePerAttack());
+            }
         }
+    }
 
+    // 3. 공격 타워 처리
+    for (auto& tower : placedTowers) {
+        if (tower.getIsNoDamage()) continue; // 버프 타워는 공격하지 않음
+
+        if (currentTick % tower.getTimePerAttack() != 0) continue; // 공격 틱이 아니면 넘어감
 
         int range = tower.getAttackRange();
         int damage = tower.getDamage();
         int targetAmount = tower.getTargetAmount();
         int targetsAttacked = 0;
 
-        for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;)
-        {
+        for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;) {
             int unitX = it->getX();
             int unitY = it->getY();
             int towerX = tower.getX();
@@ -710,17 +735,16 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick)
 
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
-            if (distanceSquared <= range * range)
-            {
+            if (distanceSquared <= range * range) {
+                // 데미지 계산 및 유닛 체력 감소
+                int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
+                it->reduceHp(newHp);
 
-                int newHp = calculateDamage(tower.getIsMagic(), damage, *it);  // 데미지 계산
-                it->reduceHp(newHp);  // 유닛 체력 업데이트
-
-                if (it->getHp() <= 0)
-                {
-
-                    gold += it->getKillReward();
-                    it = activeUnits.erase(it);
+                if (it->getHp() <= 0) {
+                    if (currentWaveType) {
+                        gold += it->getKillReward();
+                    }
+                    it = activeUnits.erase(it); // 유닛 제거
                     continue;
                 }
 
@@ -730,6 +754,13 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick)
         }
     }
 }
+
+
+
+
+
+
+
 
 
 int GameManager::calculateDamage(bool damagetype, int damage, const Unit& unit)
@@ -766,7 +797,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
         updateAttackUnits(activeUnits);
 
         // 타워가 유닛을 공격
-        attackUnits(activeUnits, currentTick);
+        attackUnits(activeUnits, currentTick, currentwaveType);
 
         // UI 업데이트 및 콘솔 출력
         updateGameState(activeUnits);

@@ -3,8 +3,8 @@
 #include <algorithm>
 
 // 생성자 정의
-Tower::Tower(int id, std::string towerName, int nextTowerID, int buildCost, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount)
-    : id(id), towerName(towerName), nextTowerID(nextTowerID), buildCost(buildCost), attackRange(attackRange), damage(damage), isMagic(isMagic), timePerAttack(timePerAttack), targetAmount(targetAmount) {}
+Tower::Tower(int id, std::string towerName, int nextTowerID, int buildCost, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount, int isNoDamage, const std::string& tool)
+    : id(id), towerName(towerName), nextTowerID(nextTowerID), buildCost(buildCost), attackRange(attackRange), damage(damage), isMagic(isMagic), timePerAttack(timePerAttack), targetAmount(targetAmount), isNoDamage(isNoDamage), tool(tool) {}
 
 // Getter 함수들 정의
 int Tower::getId() const { return id; }
@@ -16,6 +16,8 @@ int Tower::getDamage() const { return damage; }
 bool Tower::getIsMagic() const { return isMagic; }
 int Tower::getTimePerAttack() const { return timePerAttack; }
 int Tower::getTargetAmount() const { return targetAmount; }
+int Tower::getIsNoDamage() const { return isNoDamage; }
+std::string Tower::getTool() const { return tool; }
 
 // 업그레이드 함수 정의 - 타워 리스트에서 nextTowerID에 해당하는 타워를 찾음
 void Tower::upgrade(const std::vector<Tower>& towerList)
@@ -49,5 +51,7 @@ void Tower::printInfo() const {
         << "공격 사거리: " << attackRange << "\n"
         << "대미지: " << damage << (isMagic ? " (마법 대미지)" : " (물리 대미지)") << "\n"
         << "공격 속도: " << timePerAttack << "틱마다 한 번 공격\n"
-        << "목표 수: " << targetAmount << "개\n";
+        << "목표 수: " << targetAmount << "개\n"
+        << "버프 타워 여부: " << (isNoDamage ? "예" : "아니오") << "\n"
+        << "도구: " << tool << "\n";
 }

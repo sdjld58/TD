@@ -56,8 +56,9 @@ bool PlacedTower::getIsNoDamage() const {
 }
 
 // 업그레이드 메서드
-bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList) {
+bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList,int num) {
     int nextTowerID = baseTower.getNextTowerID();
+    nextTowerID = nextTowerID + num;
     if (nextTowerID == 0) {
         std::cout << baseTower.getTowerName() << "은(는) 이미 최고 단계입니다.\n";
         return false;

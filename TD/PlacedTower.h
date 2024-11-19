@@ -27,7 +27,7 @@ public:
     bool getIsNoDamage() const;
 
     // 업그레이드 메서드
-    bool upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList);
+    bool upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList,int num);
 
     // 버프 관련 메서드
     void applyBuff(int damageBoost, int attackSpeedReduction);

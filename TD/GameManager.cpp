@@ -611,7 +611,13 @@ void GameManager::startPreparationPhase()
                                     {
                                         if (towerEvent.key.code == sf::Keyboard::Num1)
                                         {
-                                            towerIt->upgrade(gold, map, towers);
+                                            towerIt->upgrade(gold, map, towers,1);
+                                            std::cout << "타워가 업그레이드되었습니다.\n";
+                                            inTowerSelectionMode = false;
+                                        }
+                                        else if (towerEvent.key.code == sf::Keyboard::Num2)
+                                        {
+                                            towerIt->upgrade(gold, map, towers,2);
                                             std::cout << "타워가 업그레이드되었습니다.\n";
                                             inTowerSelectionMode = false;
                                         }

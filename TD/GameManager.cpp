@@ -746,9 +746,9 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                 }
 
                 // 2. 범위 공격 처리 (isNoDamage == 2)
-                if (tower.getIsNoDamage() == 2) {
+                if (tower.getIsNoDamage() == 2) 
+                {
                     const int aoeRange = 1; // 범위: 1칸
-                    const int reducedDamage = damage - 1; // 감소된 데미지
 
                     for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); ++aoeIt) {
                         if (aoeIt == it) continue; // 기본 공격 대상 제외
@@ -760,19 +760,23 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                             (unitY - aoeUnitY) * (unitY - aoeUnitY);
 
                         if (aoeDistanceSquared <= aoeRange * aoeRange) {
-                            int aoeNewHp = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);
-                            aoeIt->reduceHp(aoeNewHp);
+                            // 감소된 데미지 계산
+                            const int reducedDamage = damage - 1; // 기본 데미지에서 감소
+                            int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt); // 방어력/저항력 적용
+                            aoeIt->reduceHp(finalAoeDamage); // 체력 감소
 
+                            // 유닛이 죽었는지 확인
                             if (aoeIt->getHp() <= 0) {
                                 if (currentWaveType) {
-                                    gold += aoeIt->getKillReward();
+                                    gold += aoeIt->getKillReward(); // 골드 보상 추가
                                 }
                                 aoeIt = activeUnits.erase(aoeIt); // 유닛 제거
-                                if (aoeIt == activeUnits.end()) break; // 마지막 유닛이면 종료
+                                if (aoeIt == activeUnits.end()) break; // 반복자 끝 검사
                             }
                         }
                     }
                 }
+
 
                 targetsAttacked++;
             }

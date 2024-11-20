@@ -526,6 +526,7 @@ void GameManager::startPreparationPhase()
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
+            isTowerPlacementMode = true;
 
             // **TGUI 이벤트 처리 추가**
             ui.gui.handleEvent(event);
@@ -540,21 +541,7 @@ void GameManager::startPreparationPhase()
                     isPreparation = false;
                     break;
                 }
-                else if (event.key.code == sf::Keyboard::B)
-                {
-                    if (isTowerPlacementMode)
-                    {
-                        selectedX = originalX;
-                        selectedY = originalY;
-                        isTowerPlacementMode = false;
-                    }
-                    else
-                    {
-                        originalX = selectedX;
-                        originalY = selectedY;
-                        isTowerPlacementMode = true;
-                    }
-                }
+                
                 else if (isTowerPlacementMode)
                 {
                     if (event.key.code == sf::Keyboard::Up && selectedY > 0)

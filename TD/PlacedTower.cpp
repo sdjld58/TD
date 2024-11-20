@@ -51,7 +51,7 @@ int PlacedTower::getTargetAmount() const {
     return baseTower.getTargetAmount();
 }
 
-bool PlacedTower::getIsNoDamage() const {
+int PlacedTower::getIsNoDamage() const {
     return baseTower.getIsNoDamage();
 }
 

@@ -688,32 +688,9 @@ void GameManager::startPreparationPhase()
 
 
 void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType) {
-    // 1. 모든 타워의 버프 상태 초기화
+    // 모든 타워 처리
     for (auto& tower : placedTowers) {
-        tower.clearBuff();
-    }
-
-    // 2. 버프 타워 처리
-    for (const auto& buffTower : placedTowers) {
-        if (!buffTower.getIsNoDamage()) continue; // 버프 타워가 아니면 넘어감
-
-        for (auto& targetTower : placedTowers) {
-            if (&buffTower == &targetTower || targetTower.getIsNoDamage()) continue; // 자기 자신 또는 다른 버프 타워 제외
-
-            // 거리 계산
-            int dx = buffTower.getX() - targetTower.getX();
-            int dy = buffTower.getY() - targetTower.getY();
-            int distanceSquared = dx * dx + dy * dy;
-
-            if (distanceSquared <= buffTower.getAttackRange() * buffTower.getAttackRange()) {
-                targetTower.applyBuff(buffTower.getDamage(), buffTower.getTimePerAttack());
-            }
-        }
-    }
-
-    // 3. 공격 타워 처리
-    for (auto& tower : placedTowers) {
-        if (tower.getIsNoDamage()) continue; // 버프 타워는 공격하지 않음
+        if (tower.getIsNoDamage() == 1) continue; // 버프 타워는 공격하지 않음
 
         if (currentTick % tower.getTimePerAttack() != 0) continue; // 공격 틱이 아니면 넘어감
 
@@ -731,10 +708,11 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range) {
-                // 데미지 계산 및 유닛 체력 감소
+                // 1. 기본 데미지 처리
                 int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
                 it->reduceHp(newHp);
 
+                // 유닛 제거 처리
                 if (it->getHp() <= 0) {
                     if (currentWaveType) {
                         gold += it->getKillReward();
@@ -743,12 +721,42 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                     continue;
                 }
 
+                // 2. 범위 공격 처리 (isNoDamage == 2)
+                if (tower.getIsNoDamage() == 2) {
+                    const int aoeRange = 1; // 범위: 1칸
+                    const int reducedDamage = damage - 1; // 감소된 데미지
+
+                    for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); ++aoeIt) {
+                        if (aoeIt == it) continue; // 기본 공격 대상 제외
+
+                        int aoeUnitX = aoeIt->getX();
+                        int aoeUnitY = aoeIt->getY();
+
+                        int aoeDistanceSquared = (unitX - aoeUnitX) * (unitX - aoeUnitX) +
+                            (unitY - aoeUnitY) * (unitY - aoeUnitY);
+
+                        if (aoeDistanceSquared <= aoeRange * aoeRange) {
+                            int aoeNewHp = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);
+                            aoeIt->reduceHp(aoeNewHp);
+
+                            if (aoeIt->getHp() <= 0) {
+                                if (currentWaveType) {
+                                    gold += aoeIt->getKillReward();
+                                }
+                                aoeIt = activeUnits.erase(aoeIt); // 유닛 제거
+                                if (aoeIt == activeUnits.end()) break; // 마지막 유닛이면 종료
+                            }
+                        }
+                    }
+                }
+
                 targetsAttacked++;
             }
             ++it;
         }
     }
 }
+
 
 
 

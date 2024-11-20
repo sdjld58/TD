@@ -40,7 +40,7 @@ void GameManager::run()
     for (const auto& wave : waves)
     {
         int waveID = wave.getWaveID();
-        bool currentwaveType = wave.getIsDefence();
+        currentwaveType = wave.getIsDefence();
 
         if (wave.getIsDefence())
         {
@@ -202,6 +202,29 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
         std::cout << "유닛: " << unit.getName()
             << ", 위치: (" << unit.getX() << ", " << unit.getY() << ")"
             << ", 체력: " << unit.getHp() << "\n";
+    }
+    // 유닛 생산 대기열 출력 추가
+    if (!unitProductionQueue.empty())
+    {
+        std::cout << "\n=== 유닛 생산 대기열 ===\n";
+        std::queue<int> tempQueue = unitProductionQueue; // 대기열 복사본 생성
+        while (!tempQueue.empty())
+        {
+            int unitId = tempQueue.front();
+            tempQueue.pop();
+
+            // 유닛 ID로 유닛 이름 찾기
+            auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
+                [unitId](const UnitType& ut) { return ut.getId() == unitId; });
+            if (it != unitTypes.end())
+            {
+                std::cout << "유닛: " << it->getUnitName() << "\n";
+            }
+            else
+            {
+                std::cout << "유닛 ID: " << unitId << "\n";
+            }
+        }
     }
 }
 
@@ -789,6 +812,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 {
     std::vector<Unit> activeUnits;
     bool waveOver = false;
+    int previousPlayerLife = playerLife;
 
     while (!waveOver)
     {
@@ -804,6 +828,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
         updateAndPrintMap(activeUnits); // 공격 웨이브에서도 맵 상태를 출력
 
         waveOver = isAttackWaveOver(activeUnits);
+        if (previousPlayerLife > playerLife) waveOver = true;// 공격 성공 시 공격 웨이브 바로 종료
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -811,7 +836,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
     }
 
     std::cout << "공격 웨이브 종료!\n";
-    if (playerLife > 0)
+    if (previousPlayerLife > playerLife)
     {
         gold = static_cast<int>(gold * 1.2);
         std::cout << "공격 성공! 수비 재화가 증가했습니다. 현재 골드: " << gold << "\n";
@@ -863,11 +888,21 @@ void GameManager::handleAttackInput()
     }
 }
 
-
 void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
 {
-    // 대기열에서 유닛을 스폰
-    if (!unitProductionQueue.empty())
+    // 스폰 지점이 비어 있는지 확인
+    bool sOccupied = false;
+    for (const auto& unit : activeUnits)
+    {
+        if (unit.getX() == path[0].first && unit.getY() == path[0].second)
+        {
+            sOccupied = true;
+            break;
+        }
+    }
+
+    // 스폰 지점이 비어 있고, 대기열에 유닛이 있을 경우에만 유닛을 생성
+    if (!sOccupied && !unitProductionQueue.empty())
     {
         int unitId = unitProductionQueue.front();
         unitProductionQueue.pop();
@@ -892,6 +927,19 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
         if (arrived)
         {
             std::cout << it->getName() << " 유닛이 목적지에 도달했습니다!\n";
+
+            // 플레이어 라이프 감소 추가**
+            playerLife -= 1;
+            std::cout << "플레이어 라이프가 1 감소했습니다. 현재 라이프: " << playerLife << "\n";
+
+            // 라이프가 0 이하이면 게임 종료**
+            if (playerLife <= 0)
+            {
+                std::cout << "Game Over!\n";
+                ui.getWindow().close();
+                exit(0); // 프로그램 종료
+            }
+
             it = activeUnits.erase(it);
         }
         else

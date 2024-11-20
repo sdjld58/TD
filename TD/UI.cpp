@@ -129,9 +129,10 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         }
     }
 
-    // **유닛 그리기 (스프라이트 사용)**
-    for (const auto& unit : units)
-    {
+
+
+// **유닛 그리기 (스프라이트 사용)**
+    for (auto& unit : units) {
         int tileX = unit.getX();
         int tileY = unit.getY();
 
@@ -145,6 +146,10 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         // 유닛 스프라이트 위치 설정
         knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
+        // 체력 바 그리기
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), 10); // 체력 최대값 10으로 설정
+
+        // 유닛 스프라이트 그리기
         window.draw(knightUnitSprite);
     }
 
@@ -204,4 +209,25 @@ void UI::setTowers(const std::vector<Tower>& gameTowers)
 void UI::setUnitTypes(const std::vector<UnitType>& gameUnitTypes)
 {
     unitTypes = gameUnitTypes;
+}
+
+// 체력바를 생성하는 함수
+void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp) {
+    float healthBarWidth = 40.0f;         // 체력 바 너비
+    float healthBarHeight = 5.0f;        // 체력 바 높이
+    float healthRatio = static_cast<float>(currentHp) / maxHp; // 체력 비율
+
+    // 체력 바 배경
+    sf::RectangleShape healthBarBackground(sf::Vector2f(healthBarWidth, healthBarHeight));
+    healthBarBackground.setFillColor(sf::Color(50, 50, 50)); // 회색 배경
+    healthBarBackground.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+
+    // 체력 바 (현재 체력)
+    sf::RectangleShape healthBar(sf::Vector2f(healthBarWidth * healthRatio, healthBarHeight));
+    healthBar.setFillColor(sf::Color(200, 0, 0)); // 빨간색
+    healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+
+    // 체력 바 그리기
+    window.draw(healthBarBackground);
+    window.draw(healthBar);
 }

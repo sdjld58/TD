@@ -12,6 +12,8 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
+
+
 class UI
 {
 private:
@@ -58,6 +60,8 @@ public:
     void setTowers(const std::vector<Tower>& gameTowers);
     void setUnitTypes(const std::vector<UnitType>& gameUnitTypes);
 
+    void unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp); //유닛 체력바
+
     // 타일 크기
     const float tileWidth = 128.0f;  // 이소메트릭 타일의 폭
     const float tileHeight = 76.0f;  // 이소메트릭 타일의 높이
@@ -70,6 +74,8 @@ public:
     tgui::Gui gui;
     std::function<void()> onTowerButtonClicked;
 };
+
+
 
 
 #endif // UI_H

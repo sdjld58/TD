@@ -433,7 +433,7 @@ void GameManager::loadTowerData(const std::string& filename)
             tokens.push_back(item);
         }
 
-        if (tokens.size() == 11) // 변경된 데이터 크기 반영
+        if (tokens.size() == 12) // 변경된 데이터 크기 반영
         {
             int id = std::stoi(tokens[0]);
             std::string towerName = tokens[1];
@@ -446,9 +446,10 @@ void GameManager::loadTowerData(const std::string& filename)
             int targetAmount = std::stoi(tokens[8]);
             int isNodamage = std::stoi(tokens[9]); // 추가된 isNodamage 처리
             std::string tool = tokens[10];        // 추가된 tool 처리
+            std::string tool2 = tokens[11];
 
             Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage,
-                isMagic, timePerAttack, targetAmount, isNodamage, tool);
+                isMagic, timePerAttack, targetAmount, isNodamage, tool ,tool2);
             towers.push_back(tower);
 
             tower.displayInfo();

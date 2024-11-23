@@ -35,6 +35,7 @@ private:
     int selectedY;
     int selectedTowerIndex;
     bool isTowerPlacementMode;
+    bool currentwaveType;
 
     bool isTileSelectable(int x, int y);
 
@@ -51,7 +52,7 @@ public:
 
     void startPreparationPhase();
     void loadTowerData(const std::string& filename); //타워 로드
-    void attackUnits(std::vector<Unit>& activeUnits ,int currentTick); //공격로직
+    void attackUnits(std::vector<Unit>& activeUnits ,int currentTick, bool currentwaveType); //공격로직
     int calculateDamage(bool damageType, int baseDamage, const Unit& unit); //데미지 계산 로직
    
     
@@ -63,8 +64,7 @@ public:
 
     // 추가된 메서드
     void updateGameState(std::vector<Unit>& activeUnits);
-    //생존해 있는 유닛 정보 표시
-    void displayUnitInfo(const std::vector<Unit>& activeUnits);
+  
 };
 
 #endif // GAMEMANAGER_H

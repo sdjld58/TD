@@ -1,34 +1,47 @@
-#ifndef PLACED_TOWER_H
-#define PLACED_TOWER_H
+#ifndef PLACEDTOWER_H
+#define PLACEDTOWER_H
 
 #include "Tower.h"
 #include <vector>
 
 class PlacedTower {
 public:
+    // 생성자
     PlacedTower(const Tower& tower, int posX, int posY);
 
-    // 위치 정보 접근자
+    // 위치 관련 메서드
     int getX() const;
     int getY() const;
 
-    // 타워 속성 접근자 (기본 타워의 속성에 접근)
+    // 현재 속성 접근 메서드
+    int getDamage() const;
+    int getTimePerAttack() const;
+
+    // 기본 타워 속성 접근 메서드
     int getId() const;
     std::string getTowerName() const;
     int getBuildCost() const;
     int getAttackRange() const;
-    int getDamage() const;
     bool getIsMagic() const;
-    int getTimePerAttack() const;
     int getTargetAmount() const;
+    int getIsNoDamage() const;
 
-    // 타워 업그레이드 함수
-    bool upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList); // 타워 리스트를 매개변수로 받음
+    // 업그레이드 메서드
+    bool upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList,int num);
+
+    // 버프 관련 메서드
+    void applyBuff(int damageBoost, int attackSpeedReduction);
+    void clearBuff();
+
+    // 버프 상태 관리
+    bool hasReceivedBuff() const;
 
 private:
-    Tower baseTower;
-    int x;
-    int y;
+    Tower baseTower;          // 기본 타워 정보
+    int x, y;                 // 타워 위치
+    int currentDamage;        // 현재 공격력
+    int currentTimePerAttack; // 현재 공격 속도
+    bool receivedBuff = false; // 버프를 받았는지 여부
 };
 
-#endif // PLACED_TOWER_H
+#endif // PLACEDTOWER_H

@@ -42,8 +42,26 @@ private:
     sf::Sprite buildingPlaceGrassSprite;
 
     // 타워 텍스처 및 스프라이트
-    sf::Texture archerTowerTexture;
-    sf::Sprite archerTowerSprite;
+    sf::Texture archer1TowerTexture;
+    sf::Sprite archer1TowerSprite;
+    sf::Texture archer2TowerTexture;
+    sf::Sprite archer2TowerSprite;
+    sf::Texture archer3TowerTexture;
+    sf::Sprite archer3TowerSprite;
+
+    sf::Texture wizard1TowerTexture;
+    sf::Sprite wizard1TowerSprite;
+    sf::Texture wizard2TowerTexture;
+    sf::Sprite wizard2TowerSprite;
+    sf::Texture wizard3TowerTexture;
+    sf::Sprite wizard3TowerSprite;
+
+    sf::Texture barrack1TowerTexture;
+    sf::Sprite barrack1TowerSprite;
+    sf::Texture barrack2TowerTexture;
+    sf::Sprite barrack2TowerSprite;
+    sf::Texture barrack3TowerTexture;
+    sf::Sprite barrack3TowerSprite;
 
     // 유닛 텍스처 및 스프라이트
     sf::Texture knightUnitTexture;

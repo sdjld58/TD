@@ -37,9 +37,43 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     buildingPlaceGrassSprite.setTexture(buildingPlaceGrassTexture);
 
     // 타워 텍스처 로드
-    if (!archerTowerTexture.loadFromFile("resources/images/towers/archer_level_1.png"))
+    if (!archer1TowerTexture.loadFromFile("resources/images/towers/archer_level_1.png"))
         std::cerr << "archer_level_1.png를 로드할 수 없습니다.\n";
-    archerTowerSprite.setTexture(archerTowerTexture);
+    archer1TowerSprite.setTexture(archer1TowerTexture);
+
+    if (!archer2TowerTexture.loadFromFile("resources/images/towers/archer_level_2.png"))
+        std::cerr << "archer_level_2.png를 로드할 수 없습니다.\n";
+    archer2TowerSprite.setTexture(archer2TowerTexture);
+
+    if (!archer3TowerTexture.loadFromFile("resources/images/towers/archer_level_3.png"))
+        std::cerr << "archer_level_3.png를 로드할 수 없습니다.\n";
+    archer3TowerSprite.setTexture(archer3TowerTexture);
+
+    if (!wizard1TowerTexture.loadFromFile("resources/images/towers/wizard_level_1.png"))
+        std::cerr << "wizard_level_1.png를 로드할 수 없습니다.\n";
+    wizard1TowerSprite.setTexture(wizard1TowerTexture);
+
+    if (!wizard2TowerTexture.loadFromFile("resources/images/towers/wizard_level_2.png"))
+        std::cerr << "wizard_level_2.png를 로드할 수 없습니다.\n";
+    wizard2TowerSprite.setTexture(wizard2TowerTexture);
+
+    if (!wizard3TowerTexture.loadFromFile("resources/images/towers/wizard_level_3.png"))
+        std::cerr << "wizard_level_3.png를 로드할 수 없습니다.\n";
+    wizard3TowerSprite.setTexture(wizard3TowerTexture);
+
+    if (!barrack1TowerTexture.loadFromFile("resources/images/towers/barrack_level_1.png"))
+        std::cerr << "barrack_level_1.png를 로드할 수 없습니다.\n";
+    barrack1TowerSprite.setTexture(barrack1TowerTexture);
+
+    if (!barrack2TowerTexture.loadFromFile("resources/images/towers/barrack_level_2.png"))
+        std::cerr << "barrack_level_2.png를 로드할 수 없습니다.\n";
+    barrack2TowerSprite.setTexture(barrack2TowerTexture);
+
+    if (!barrack3TowerTexture.loadFromFile("resources/images/towers/barrack_level_3.png"))
+        std::cerr << "barrack_level_3.png를 로드할 수 없습니다.\n";
+    barrack3TowerSprite.setTexture(barrack3TowerTexture);
+
+
 
     // **유닛 텍스처 로드**
     if (!knightUnitTexture.loadFromFile("resources/images/units/knight_level_1.png"))
@@ -163,15 +197,73 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
         float screenY = (tileX + tileY) * (tileHeight / 2.0f);
 
-        screenX += offsetX;
-        screenY += offsetY;
+        sf::Sprite* towerSprite = nullptr;
+        int towerID = tower.getId();
 
-        // 타워 스프라이트 위치 설정
-        float towerOffsetX = 30.0;
-        float towerOffsetY = -20.0;
-        archerTowerSprite.setPosition(screenX + towerOffsetX, screenY + towerOffsetY);
+        float towerOffsetX = 0;
+        float towerOffsetY = 0;
 
-        window.draw(archerTowerSprite);
+        switch (towerID)
+        {
+            case 1:
+                towerSprite = &barrack1TowerSprite; towerSprite->setScale(1.1, 1.1);
+                towerOffsetX = 25.0;
+                towerOffsetY = 20.0;
+                break;
+            case 101:
+                towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
+                towerOffsetX = 25.0;
+                towerOffsetY = 20.0;
+                break;
+            case 102:
+                towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+                towerOffsetX = 25.0;
+                towerOffsetY = 20.0;
+                break;
+            case 2:
+                towerSprite = &archer1TowerSprite;
+                towerOffsetX = 30.0;
+                towerOffsetY = 20.0;
+                break;
+            case 201:
+                towerSprite = &archer2TowerSprite;
+                towerOffsetX = 30.0;
+                towerOffsetY = 20.0;
+                break;
+            case 202:
+                towerSprite = &archer3TowerSprite;
+                towerOffsetX = 30.0;
+                towerOffsetY = 20.0;
+                break;
+            case 3:
+                towerSprite = &wizard1TowerSprite;
+                towerSprite->setScale(1.3, 1.3);
+                towerOffsetX = 15.0;
+                towerOffsetY = 25.0;
+                break;
+            case 301:
+                towerSprite = &wizard2TowerSprite;
+                towerSprite->setScale(1.3, 1.3);
+                towerOffsetX = 15.0;
+                towerOffsetY = 25.0;
+                break;
+            case 302:
+                towerSprite = &wizard3TowerSprite;
+                towerSprite->setScale(1.3, 1.3);
+                towerOffsetX = 15.0;
+                towerOffsetY = 25.0;
+                break;
+            default:
+                towerSprite = &archer1TowerSprite;
+                break;
+        }
+
+        screenX += offsetX + towerOffsetX;
+        screenY += offsetY + towerOffsetY;
+            
+        towerSprite->setPosition(screenX, screenY - tileHeight / 2.0f);
+        window.draw(*towerSprite);
+
     }
 
     // 플레이어 라이프 및 골드 표시

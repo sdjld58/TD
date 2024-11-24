@@ -22,6 +22,7 @@ private:
     std::vector<Tower> towers;
     std::vector<PlacedTower> placedTowers;
     std::queue<int> unitProductionQueue;
+    std::vector<Unit*> aoeTargets;
 
     int playerLife;
     int gold;

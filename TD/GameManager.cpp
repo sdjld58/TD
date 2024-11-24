@@ -754,6 +754,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
         int targetAmount = tower.getTargetAmount();
         int targetsAttacked = 0;
 
+        // **기본 공격 처리**
+        std::vector<Unit*> aoeTargets; // 범위 공격 대상 저장
         for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;) {
             int unitX = it->getX();
             int unitY = it->getY();
@@ -763,7 +765,7 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range) {
-                // 1. 기본 데미지 처리
+                // 기본 데미지 처리
                 int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
                 it->reduceHp(newHp);
 
@@ -772,52 +774,52 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                     if (currentWaveType) {
                         gold += it->getKillReward();
                     }
-                    it = activeUnits.erase(it); // 유닛 제거
+                    it = activeUnits.erase(it);
                     continue;
                 }
 
-                //투사체 생성
-                createProjectile(tower, *it);
-
-                // 2. 범위 공격 처리 (isNoDamage == 2)
-                if (tower.getIsNoDamage() == 2) 
-                {
-                    const int aoeRange = 1; // 범위: 1칸
-
-                    for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); ++aoeIt) {
-                        if (aoeIt == it) continue; // 기본 공격 대상 제외
-
-                        int aoeUnitX = aoeIt->getX();
-                        int aoeUnitY = aoeIt->getY();
-
-                        int aoeDistanceSquared = (unitX - aoeUnitX) * (unitX - aoeUnitX) +
-                            (unitY - aoeUnitY) * (unitY - aoeUnitY);
-
-                        if (aoeDistanceSquared <= aoeRange * aoeRange) {
-                            // 감소된 데미지 계산
-                            const int reducedDamage = damage - 1; // 기본 데미지에서 감소
-                            int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt); // 방어력/저항력 적용
-                            aoeIt->reduceHp(finalAoeDamage); // 체력 감소
-
-                            // 유닛이 죽었는지 확인
-                            if (aoeIt->getHp() <= 0) {
-                                if (currentWaveType) {
-                                    gold += aoeIt->getKillReward(); // 골드 보상 추가
-                                }
-                                aoeIt = activeUnits.erase(aoeIt); // 유닛 제거
-                                if (aoeIt == activeUnits.end()) break; // 반복자 끝 검사
-                            }
-                        }
-                    }
-                }
-
-
+                aoeTargets.push_back(&(*it)); // 범위 공격 대상을 저장
                 targetsAttacked++;
             }
             ++it;
         }
+
+        // **범위 공격 처리**
+        if (tower.getIsNoDamage() == 2) {
+            for (Unit* target : aoeTargets) { // 기본 공격 대상으로부터 범위 공격 수행
+                for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); ) {
+                    if (&(*aoeIt) == target) {
+                        ++aoeIt;
+                        continue; // 기본 공격 대상은 제외
+                    }
+
+                    int aoeDistanceSquared = (target->getX() - aoeIt->getX()) * (target->getX() - aoeIt->getX()) +
+                        (target->getY() - aoeIt->getY()) * (target->getY() - aoeIt->getY());
+
+                    if (aoeDistanceSquared <= 1 * 1) { // 범위 공격 거리 1칸
+                        const int reducedDamage = damage - 1;
+                        int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);
+                        aoeIt->reduceHp(finalAoeDamage);
+
+                        if (aoeIt->getHp() <= 0) {
+                            if (currentWaveType) {
+                                gold += aoeIt->getKillReward();
+                            }
+                            aoeIt = activeUnits.erase(aoeIt);
+                        }
+                        else {
+                            ++aoeIt;
+                        }
+                    }
+                    else {
+                        ++aoeIt;
+                    }
+                }
+            }
+        }
     }
 }
+
 
 
 void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetUnit)

@@ -332,6 +332,7 @@ void GameManager::parsePath() {
         if (foundStart) break;
     }
 
+
     q.push({ startY, startX });
     visited[startY][startX] = true;
 

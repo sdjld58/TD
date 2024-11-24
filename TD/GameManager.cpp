@@ -821,6 +821,8 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
     std::vector<Unit> activeUnits;
     bool waveOver = false;
     int previousPlayerLife = playerLife;
+    
+    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화
 
     while (!waveOver)
     {

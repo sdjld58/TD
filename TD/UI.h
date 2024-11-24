@@ -11,8 +11,7 @@
 #include "UnitType.h"
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
-
-
+#include <cmath>
 
 class UI
 {
@@ -53,6 +52,8 @@ public:
     void initialize(const std::vector<std::vector<std::string>>& gameMap);
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
         int playerLife, int gold, int selectedX = -1, int selectedY = -1);
+    void drawUnit(sf::RenderWindow& window, const Unit& unit, float offsetX, float offsetY);
+    void drawTower(sf::RenderWindow& window, const PlacedTower& tower, float offsetX, float offsetY);
     void render(); // 새로 추가한 함수
     sf::RenderWindow& getWindow();
     void setMap(const std::vector<std::vector<std::string>>& gameMap);
@@ -61,7 +62,8 @@ public:
     void setUnitTypes(const std::vector<UnitType>& gameUnitTypes);
 
     void unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp); //유닛 체력바
-
+    void drawBullet(sf::RenderWindow& window, const PlacedTower& tower, const Unit& targetUnit,
+        const std::vector<PlacedTower>& placedTowers, const std::vector<Unit>& activeUnits);
     // 타일 크기
     const float tileWidth = 128.0f;  // 이소메트릭 타일의 폭
     const float tileHeight = 76.0f;  // 이소메트릭 타일의 높이

@@ -685,18 +685,14 @@ void GameManager::startPreparationPhase()
 
 void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick)
 {
-
-
     for (const auto& tower : placedTowers)
     {
-
-        if (currentTick % tower.getTimePerAttack() != 0) //타워 공속 반영
+        // 타워의 공격 속도에 따라 공격 가능 여부 판단
+        if (currentTick % tower.getTimePerAttack() != 0)
         {
             continue; // 아직 공격할 틱이 아니면 넘어감
         }
 
-
-        int range = tower.getAttackRange();
         int damage = tower.getDamage();
         int targetAmount = tower.getTargetAmount();
         int targetsAttacked = 0;
@@ -708,25 +704,23 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick)
             int towerX = tower.getX();
             int towerY = tower.getY();
 
-            int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
-
-            if (distanceSquared <= range * range)
+            // 유닛이 타워의 공격 범위 안에 있는지 확인
+            if (tower.isUnitInRange(unitX, unitY, towerX, towerY))
             {
-
-                int newHp = calculateDamage(tower.getIsMagic(), damage, *it);  // 데미지 계산
+                int newHp = calculateDamage(tower.getIsMagic(), damage, *it); // 데미지 계산
                 it->reduceHp(newHp);  // 유닛 체력 업데이트
 
                 if (it->getHp() <= 0)
                 {
-
                     gold += it->getKillReward();
-                    it = activeUnits.erase(it);
+                    it = activeUnits.erase(it); // 유닛 제거
                     continue;
                 }
 
                 targetsAttacked++;
             }
-            ++it;
+
+            ++it; // 다음 유닛
         }
     }
 }

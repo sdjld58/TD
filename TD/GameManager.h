@@ -11,6 +11,7 @@
 #include "Tower.h"
 #include "UI.h"  // UI 클래스 추가
 
+
 class GameManager
 {
 private:
@@ -21,6 +22,7 @@ private:
     std::vector<Tower> towers;
     std::vector<PlacedTower> placedTowers;
     std::queue<int> unitProductionQueue;
+    sf::RenderWindow window;
 
     int playerLife;
     int gold;
@@ -65,6 +67,7 @@ public:
     void updateGameState(std::vector<Unit>& activeUnits);
     //생존해 있는 유닛 정보 표시
     void displayUnitInfo(const std::vector<Unit>& activeUnits);
+
 };
 
 #endif // GAMEMANAGER_H

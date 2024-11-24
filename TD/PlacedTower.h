@@ -24,7 +24,7 @@ public:
 
     // 타워 업그레이드 함수
     bool upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList); // 타워 리스트를 매개변수로 받음
-
+    bool isUnitInRange(int unitX, int unitY, int towerX, int towerY) const;
 private:
     Tower baseTower;
     int x;

@@ -4,6 +4,7 @@
 *.suo
 *.VC.db
 *.VC.VC.opendb
+testSFML.cpp
 
 # 빌드 결과물
 Debug/

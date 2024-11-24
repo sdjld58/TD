@@ -56,3 +56,10 @@ bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map,
     std::cout << baseTower.getTowerName() << "이(가) 업그레이드되었습니다.\n";
     return true;
 }
+bool PlacedTower::isUnitInRange(int unitX, int unitY, int towerX, int towerY) const {
+    int dx = towerX - unitX;
+    int dy = towerY - unitY;
+    int distanceSquared = dx * dx + dy * dy;
+
+    return distanceSquared <= this->getAttackRange() * this->getAttackRange();
+}

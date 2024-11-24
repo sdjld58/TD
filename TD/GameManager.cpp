@@ -762,6 +762,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             int towerX = tower.getX();
             int towerY = tower.getY();
 
+            createProjectile(tower, *it);
+
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range) {

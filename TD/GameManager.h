@@ -9,7 +9,8 @@
 #include "Unit.h"
 #include "PlacedTower.h"
 #include "Tower.h"
-#include "UI.h"  // UI 클래스 추가
+#include "UI.h"
+#include "Projectile.h"
 
 class GameManager
 {
@@ -37,6 +38,8 @@ private:
     bool isTowerPlacementMode;
     bool currentwaveType;
 
+    std::vector<Projectile> projectiles;
+
     bool isTileSelectable(int x, int y);
 
 
@@ -54,8 +57,11 @@ public:
     void loadTowerData(const std::string& filename); //타워 로드
     void attackUnits(std::vector<Unit>& activeUnits ,int currentTick, bool currentwaveType); //공격로직
     int calculateDamage(bool damageType, int baseDamage, const Unit& unit); //데미지 계산 로직
-   
-    
+    void spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue);
+    void updateUnits(std::vector<Unit>& activeUnits);
+
+    void createProjectile(const PlacedTower& tower, const Unit& targetUnit);
+    void updateProjectiles(sf::Time deltaTime);
 
     void startAttackWave(const Wave& wave,int& currentTick);
     void handleAttackInput();

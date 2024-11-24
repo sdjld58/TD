@@ -73,7 +73,11 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
         std::cerr << "barrack_level_3.png를 로드할 수 없습니다.\n";
     barrack3TowerSprite.setTexture(barrack3TowerTexture);
 
-
+    // 투사체 텍스처 로드
+    if (!projectileTexture.loadFromFile("resources/images/towers/arrow.png"))
+    {
+        std::cerr << "arrow.png를 로드할 수 없습니다.\n";
+    }
 
     // **유닛 텍스처 로드**
     if (!knightUnitTexture.loadFromFile("resources/images/units/knight_level_1.png"))
@@ -106,12 +110,9 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 }
 
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
-    int playerLife, int gold, int selectedX, int selectedY)
+    int playerLife, int gold, int selectedX, int selectedY, const std::vector<Projectile>& projectiles)
 {
     window.clear();
-    
-    float offsetX = -100.0f;
-    float offsetY = 200.0f;
 
     // 맵 그리기
     for (int y = 0; y < static_cast<int>(map.size()); ++y)
@@ -163,9 +164,10 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         }
     }
 
+    // 투사체 그리기
+    drawProjectiles(projectiles);
 
-
-// **유닛 그리기 (스프라이트 사용)**
+    // **유닛 그리기 (스프라이트 사용)**
     for (auto& unit : units) {
         int tileX = unit.getX();
         int tileY = unit.getY();
@@ -322,4 +324,30 @@ void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int c
     // 체력 바 그리기
     window.draw(healthBarBackground);
     window.draw(healthBar);
+}
+
+const sf::Texture& UI::getProjectileTexture() const
+{
+    return projectileTexture;
+}
+
+void UI::drawProjectiles(const std::vector<Projectile>& projectiles)
+{
+    for (const auto& projectile : projectiles)
+    {
+        sf::Sprite sprite = projectile.getSprite();
+
+        // 현재 스프라이트의 위치를 가져옵니다.
+        sf::Vector2f position = sprite.getPosition();
+
+        // offsetX와 offsetY를 더해줍니다.
+        position.x += offsetX;
+        position.y += offsetY;
+
+        // 위치를 업데이트합니다.
+        sprite.setPosition(position);
+
+        // 스프라이트를 그립니다.
+        window.draw(sprite);
+    }
 }

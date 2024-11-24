@@ -32,10 +32,6 @@ void GameManager::run()
     ui.setUnitTypes(unitTypes);
 
     int currentTick = 0;
-    
-   
-
-    
 
     for (const auto& wave : waves)
     {
@@ -50,16 +46,11 @@ void GameManager::run()
 
         if (wave.getIsDefence())
         {
-            
-
-            
-
             if (wave.getLife() > 0)
             {
                 playerLife = wave.getLife();
             }
 
-            
             std::queue<Unit> unitQueue;
 
             // 웨이브에 포함된 유닛 생성
@@ -78,71 +69,75 @@ void GameManager::run()
             }
 
             std::vector<Unit> activeUnits;
-            const int maxTicks = 100;
 
-           
+            // **게임 루프 수정 부분 시작**
+            sf::Clock clock;
+            sf::Time lastLogicUpdateTime = sf::Time::Zero;
+            sf::Time logicUpdateInterval = sf::milliseconds(500); // 논리 업데이트 간격 (500ms)
+            bool waveOver = false;
 
-            for (int tick = 0; tick < maxTicks; ++tick)
+            while (!waveOver && ui.getWindow().isOpen())
             {
-                currentTick++;
+                sf::Time elapsedTime = clock.restart();
 
-                // S 위치가 비어있으면 유닛 스폰
-                bool sOccupied = false;
-                for (const auto& unit : activeUnits)
+                // **이벤트 처리**
+                sf::Event event;
+                while (ui.getWindow().pollEvent(event))
                 {
-                    if (unit.getX() == path[0].first && unit.getY() == path[0].second)
+                    if (event.type == sf::Event::Closed)
                     {
-                        sOccupied = true;
-                        break;
+                        ui.getWindow().close();
+                        return;
+                    }
+                    // 기타 이벤트 처리 필요 시 추가
+                }
+
+                // **논리 업데이트 시간 체크**
+                lastLogicUpdateTime += elapsedTime;
+                if (lastLogicUpdateTime >= logicUpdateInterval)
+                {
+                    lastLogicUpdateTime -= logicUpdateInterval;
+                    currentTick++;
+
+                    // **논리 업데이트 수행**
+
+                    // 유닛 스폰
+                    spawnUnits(activeUnits, unitQueue);
+
+                    // 유닛 이동
+                    updateUnits(activeUnits);
+
+                    // 공격 처리
+                    attackUnits(activeUnits, currentTick, currentwaveType);
+
+                    // 콘솔 출력
+                    updateAndPrintMap(activeUnits);
+
+                    // 게임 종료 조건 체크
+                    if (playerLife <= 0)
+                    {
+                        std::cout << "Game Over!\n";
+                        ui.getWindow().close();
+                        return;
+                    }
+
+                    if (activeUnits.empty() && unitQueue.empty())
+                    {
+                        std::cout << "웨이브 " << waveID << " 클리어!\n";
+                        waveOver = true;
                     }
                 }
-                if (!sOccupied && !unitQueue.empty())
-                {
-                    Unit unit = unitQueue.front();
-                    unitQueue.pop();
-                    activeUnits.push_back(unit);
-                }
 
-                // 유닛 업데이트
-                for (auto it = activeUnits.begin(); it != activeUnits.end();)
-                {
-                    bool arrived = it->update();
-                    if (arrived)
-                    {
-                        playerLife -= 1;
-                        it = activeUnits.erase(it);
-                    }
-                    else
-                    {
-                        ++it;
-                    }
-                }
+                // **투사체 업데이트 (매 프레임)**
+                updateProjectiles(elapsedTime);
 
-                // 공격 처리
-                attackUnits(activeUnits, currentTick, currentwaveType);
+                // **화면 그리기**
+                updateGameState(activeUnits);
 
-                // UI 업데이트 (SFML) 및 콘솔 출력
-                ui.update(activeUnits, placedTowers, playerLife, gold, attackGold);
-                updateAndPrintMap(activeUnits);
-
-                if (playerLife <= 0)
-                {
-                    std::cout << "Game Over!\n";
-                    return;
-                }
-
-                if (activeUnits.empty() && unitQueue.empty())
-                {
-                    std::cout << "웨이브 " << waveID << " 클리어!\n";
-                    break;
-                }
-
-            
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                // **FPS 제한 (선택 사항)**
+                // std::this_thread::sleep_for(std::chrono::milliseconds(16)); // 약 60 FPS
             }
-
-          
+            // **게임 루프 수정 부분 끝**
         }
         else
         {
@@ -153,6 +148,44 @@ void GameManager::run()
     }
 
     std::cout << "프로그램을 종료합니다.\n";
+}
+
+void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue)
+{
+    // S 위치가 비어있으면 유닛 스폰
+    bool sOccupied = false;
+    for (const auto& unit : activeUnits)
+    {
+        if (unit.getX() == path[0].first && unit.getY() == path[0].second)
+        {
+            sOccupied = true;
+            break;
+        }
+    }
+    if (!sOccupied && !unitQueue.empty())
+    {
+        Unit unit = unitQueue.front();
+        unitQueue.pop();
+        activeUnits.push_back(unit);
+    }
+}
+
+void GameManager::updateUnits(std::vector<Unit>& activeUnits)
+{
+    // 유닛 업데이트
+    for (auto it = activeUnits.begin(); it != activeUnits.end();)
+    {
+        bool arrived = it->update();
+        if (arrived)
+        {
+            playerLife -= 1;
+            it = activeUnits.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 
@@ -235,7 +268,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 {
     // UI를 통해 게임 상태를 업데이트하고 화면을 그립니다.
-    ui.update(activeUnits, placedTowers, playerLife, gold, attackGold);
+    ui.update(activeUnits, placedTowers, playerLife, gold, attackGold, selectedX, projectiles);
 }
 
 void GameManager::loadMap(const std::string& filename)
@@ -298,6 +331,7 @@ void GameManager::parsePath() {
         }
         if (foundStart) break;
     }
+
 
     q.push({ startY, startX });
     visited[startY][startX] = true;
@@ -433,7 +467,7 @@ void GameManager::loadTowerData(const std::string& filename)
             tokens.push_back(item);
         }
 
-        if (tokens.size() == 11) // 변경된 데이터 크기 반영
+        if (tokens.size() == 12) // 변경된 데이터 크기 반영
         {
             int id = std::stoi(tokens[0]);
             std::string towerName = tokens[1];
@@ -446,9 +480,10 @@ void GameManager::loadTowerData(const std::string& filename)
             int targetAmount = std::stoi(tokens[8]);
             int isNodamage = std::stoi(tokens[9]); // 추가된 isNodamage 처리
             std::string tool = tokens[10];        // 추가된 tool 처리
+            std::string tool2 = tokens[11];
 
             Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage,
-                isMagic, timePerAttack, targetAmount, isNodamage, tool);
+                isMagic, timePerAttack, targetAmount, isNodamage, tool ,tool2);
             towers.push_back(tower);
 
             tower.displayInfo();
@@ -549,6 +584,7 @@ void GameManager::startPreparationPhase()
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
+            isTowerPlacementMode = true;
 
             // **TGUI 이벤트 처리 추가**
             ui.gui.handleEvent(event);
@@ -563,21 +599,7 @@ void GameManager::startPreparationPhase()
                     isPreparation = false;
                     break;
                 }
-                else if (event.key.code == sf::Keyboard::B)
-                {
-                    if (isTowerPlacementMode)
-                    {
-                        selectedX = originalX;
-                        selectedY = originalY;
-                        isTowerPlacementMode = false;
-                    }
-                    else
-                    {
-                        originalX = selectedX;
-                        originalY = selectedY;
-                        isTowerPlacementMode = true;
-                    }
-                }
+                
                 else if (isTowerPlacementMode)
                 {
                     if (event.key.code == sf::Keyboard::Up && selectedY > 0)
@@ -720,36 +742,10 @@ void GameManager::startPreparationPhase()
     }
 }
 
-
-
-
 void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType) {
-    // 1. 모든 타워의 버프 상태 초기화
+    // 모든 타워 처리
     for (auto& tower : placedTowers) {
-        tower.clearBuff();
-    }
-
-    // 2. 버프 타워 처리
-    for (const auto& buffTower : placedTowers) {
-        if (!buffTower.getIsNoDamage()) continue; // 버프 타워가 아니면 넘어감
-
-        for (auto& targetTower : placedTowers) {
-            if (&buffTower == &targetTower || targetTower.getIsNoDamage()) continue; // 자기 자신 또는 다른 버프 타워 제외
-
-            // 거리 계산
-            int dx = buffTower.getX() - targetTower.getX();
-            int dy = buffTower.getY() - targetTower.getY();
-            int distanceSquared = dx * dx + dy * dy;
-
-            if (distanceSquared <= buffTower.getAttackRange() * buffTower.getAttackRange()) {
-                targetTower.applyBuff(buffTower.getDamage(), buffTower.getTimePerAttack());
-            }
-        }
-    }
-
-    // 3. 공격 타워 처리
-    for (auto& tower : placedTowers) {
-        if (tower.getIsNoDamage()) continue; // 버프 타워는 공격하지 않음
+        if (tower.getIsNoDamage() == 1) continue; // 버프 타워는 공격하지 않음
 
         if (currentTick % tower.getTimePerAttack() != 0) continue; // 공격 틱이 아니면 넘어감
 
@@ -758,6 +754,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
         int targetAmount = tower.getTargetAmount();
         int targetsAttacked = 0;
 
+        // **기본 공격 처리**
+        std::vector<Unit*> aoeTargets; // 범위 공격 대상 저장
         for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;) {
             int unitX = it->getX();
             int unitY = it->getY();
@@ -767,32 +765,107 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range) {
-                // 데미지 계산 및 유닛 체력 감소
+                // 기본 데미지 처리
                 int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
                 it->reduceHp(newHp);
 
+                // 유닛 제거 처리
                 if (it->getHp() <= 0) {
                     if (currentWaveType) {
                         gold += it->getKillReward();
                     }
-                    it = activeUnits.erase(it); // 유닛 제거
+                    it = activeUnits.erase(it);
                     continue;
                 }
 
+                aoeTargets.push_back(&(*it)); // 범위 공격 대상을 저장
                 targetsAttacked++;
             }
             ++it;
+        }
+
+        // **범위 공격 처리**
+        if (tower.getIsNoDamage() == 2) {
+            for (Unit* target : aoeTargets) { // 기본 공격 대상으로부터 범위 공격 수행
+                for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); ) {
+                    if (&(*aoeIt) == target) {
+                        ++aoeIt;
+                        continue; // 기본 공격 대상은 제외
+                    }
+
+                    int aoeDistanceSquared = (target->getX() - aoeIt->getX()) * (target->getX() - aoeIt->getX()) +
+                        (target->getY() - aoeIt->getY()) * (target->getY() - aoeIt->getY());
+
+                    if (aoeDistanceSquared <= 1 * 1) { // 범위 공격 거리 1칸
+                        const int reducedDamage = damage - 1;
+                        int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);
+                        aoeIt->reduceHp(finalAoeDamage);
+
+                        if (aoeIt->getHp() <= 0) {
+                            if (currentWaveType) {
+                                gold += aoeIt->getKillReward();
+                            }
+                            aoeIt = activeUnits.erase(aoeIt);
+                        }
+                        else {
+                            ++aoeIt;
+                        }
+                    }
+                    else {
+                        ++aoeIt;
+                    }
+                }
+            }
         }
     }
 }
 
 
 
+void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetUnit)
+{
+    float projectileOffsetX = 0;
+    float projectileOffsetY = 50;
+    int towerX = tower.getX();
+    int towerY = tower.getY();
+    int unitX = targetUnit.getX();
+    int unitY = targetUnit.getY();
 
+    // 화면 좌표로 변환 (이소메트릭 변환 적용)
+    float startX = (towerX - towerY) * (ui.tileWidth / 2.0f) + ui.getWindow().getSize().x / 2.0f;
+    float startY = (towerX + towerY) * (ui.tileHeight / 2.0f);
 
+    float targetX = (unitX - unitY) * (ui.tileWidth / 2.0f) + ui.getWindow().getSize().x / 2.0f;
+    float targetY = (unitX + unitY) * (ui.tileHeight / 2.0f);
 
+    startX += projectileOffsetX;
+    targetX += projectileOffsetX;
+    startY += projectileOffsetY;
+    targetY += projectileOffsetY;
 
+    // 투사체 생성
+    float speed = 400.0f; // 투사체 속도 (크게 설정하여 빠르게 이동)
+    Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture());
 
+    projectiles.push_back(projectile);
+}
+
+void GameManager::updateProjectiles(sf::Time deltaTime)
+{
+    for (auto it = projectiles.begin(); it != projectiles.end();)
+    {
+        it->update(deltaTime);
+
+        if (it->hasReachedTarget())
+        {
+            it = projectiles.erase(it); // 투사체 제거
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
 
 int GameManager::calculateDamage(bool damagetype, int damage, const Unit& unit)
 {

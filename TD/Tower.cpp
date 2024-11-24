@@ -3,8 +3,8 @@
 #include <algorithm>
 
 // 생성자 정의
-Tower::Tower(int id, std::string towerName, int nextTowerID, int buildCost, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount, int isNoDamage, const std::string& tool)
-    : id(id), towerName(towerName), nextTowerID(nextTowerID), buildCost(buildCost), attackRange(attackRange), damage(damage), isMagic(isMagic), timePerAttack(timePerAttack), targetAmount(targetAmount), isNoDamage(isNoDamage), tool(tool) {}
+Tower::Tower(int id, std::string towerName, int nextTowerID, int buildCost, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount, int isNoDamage, const std::string& tool, const std::string& tool2)
+    : id(id), towerName(towerName), nextTowerID(nextTowerID), buildCost(buildCost), attackRange(attackRange), damage(damage), isMagic(isMagic), timePerAttack(timePerAttack), targetAmount(targetAmount), isNoDamage(isNoDamage), tool(tool), tool2(tool2) {}
 
 // Getter 함수들 정의
 int Tower::getId() const { return id; }
@@ -18,6 +18,7 @@ int Tower::getTimePerAttack() const { return timePerAttack; }
 int Tower::getTargetAmount() const { return targetAmount; }
 int Tower::getIsNoDamage() const { return isNoDamage; }
 std::string Tower::getTool() const { return tool; }
+std::string Tower::getTool2() const { return tool2; }
 
 // 업그레이드 함수 정의 - 타워 리스트에서 nextTowerID에 해당하는 타워를 찾음
 void Tower::upgrade(const std::vector<Tower>& towerList)
@@ -60,6 +61,7 @@ void Tower::displayInfo() const
 {
     std::cout << "타워 이름: " << towerName << "\n";
     std::cout << "설명: " << tool << "\n";
+    std::cout << "설명: " << tool2 << "\n";
     std::cout << "공격력: " << damage << "\n";
     std::cout << "사거리: " << attackRange << "\n";
     std::cout << "설치 비용: " << buildCost << "\n";

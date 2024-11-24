@@ -24,7 +24,7 @@ public:
     int getAttackRange() const;
     bool getIsMagic() const;
     int getTargetAmount() const;
-    bool getIsNoDamage() const;
+    int getIsNoDamage() const;
 
     // 업그레이드 메서드
     bool upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList,int num);

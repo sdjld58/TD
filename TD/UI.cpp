@@ -37,9 +37,47 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     buildingPlaceGrassSprite.setTexture(buildingPlaceGrassTexture);
 
     // 타워 텍스처 로드
-    if (!archerTowerTexture.loadFromFile("resources/images/towers/archer_level_1.png"))
+    if (!archer1TowerTexture.loadFromFile("resources/images/towers/archer_level_1.png"))
         std::cerr << "archer_level_1.png를 로드할 수 없습니다.\n";
-    archerTowerSprite.setTexture(archerTowerTexture);
+    archer1TowerSprite.setTexture(archer1TowerTexture);
+
+    if (!archer2TowerTexture.loadFromFile("resources/images/towers/archer_level_2.png"))
+        std::cerr << "archer_level_2.png를 로드할 수 없습니다.\n";
+    archer2TowerSprite.setTexture(archer2TowerTexture);
+
+    if (!archer3TowerTexture.loadFromFile("resources/images/towers/archer_level_3.png"))
+        std::cerr << "archer_level_3.png를 로드할 수 없습니다.\n";
+    archer3TowerSprite.setTexture(archer3TowerTexture);
+
+    if (!wizard1TowerTexture.loadFromFile("resources/images/towers/wizard_level_1.png"))
+        std::cerr << "wizard_level_1.png를 로드할 수 없습니다.\n";
+    wizard1TowerSprite.setTexture(wizard1TowerTexture);
+
+    if (!wizard2TowerTexture.loadFromFile("resources/images/towers/wizard_level_2.png"))
+        std::cerr << "wizard_level_2.png를 로드할 수 없습니다.\n";
+    wizard2TowerSprite.setTexture(wizard2TowerTexture);
+
+    if (!wizard3TowerTexture.loadFromFile("resources/images/towers/wizard_level_3.png"))
+        std::cerr << "wizard_level_3.png를 로드할 수 없습니다.\n";
+    wizard3TowerSprite.setTexture(wizard3TowerTexture);
+
+    if (!barrack1TowerTexture.loadFromFile("resources/images/towers/barrack_level_1.png"))
+        std::cerr << "barrack_level_1.png를 로드할 수 없습니다.\n";
+    barrack1TowerSprite.setTexture(barrack1TowerTexture);
+
+    if (!barrack2TowerTexture.loadFromFile("resources/images/towers/barrack_level_2.png"))
+        std::cerr << "barrack_level_2.png를 로드할 수 없습니다.\n";
+    barrack2TowerSprite.setTexture(barrack2TowerTexture);
+
+    if (!barrack3TowerTexture.loadFromFile("resources/images/towers/barrack_level_3.png"))
+        std::cerr << "barrack_level_3.png를 로드할 수 없습니다.\n";
+    barrack3TowerSprite.setTexture(barrack3TowerTexture);
+
+    // 투사체 텍스처 로드
+    if (!projectileTexture.loadFromFile("resources/images/towers/arrow.png"))
+    {
+        std::cerr << "arrow.png를 로드할 수 없습니다.\n";
+    }
 
     // **유닛 텍스처 로드**
     if (!knightUnitTexture.loadFromFile("resources/images/units/knight_level_1.png"))
@@ -72,12 +110,9 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 }
 
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
-    int playerLife, int gold, int selectedX, int selectedY)
+    int playerLife, int gold, int selectedX, int selectedY, const std::vector<Projectile>& projectiles)
 {
     window.clear();
-    
-    float offsetX = -100.0f;
-    float offsetY = 200.0f;
 
     // 맵 그리기
     for (int y = 0; y < static_cast<int>(map.size()); ++y)
@@ -129,9 +164,11 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         }
     }
 
+    // 투사체 그리기
+    drawProjectiles(projectiles);
+
     // **유닛 그리기 (스프라이트 사용)**
-    for (const auto& unit : units)
-    {
+    for (auto& unit : units) {
         int tileX = unit.getX();
         int tileY = unit.getY();
 
@@ -145,6 +182,10 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         // 유닛 스프라이트 위치 설정
         knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
+        // 체력 바 그리기
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), 10); // 체력 최대값 10으로 설정
+
+        // 유닛 스프라이트 그리기
         window.draw(knightUnitSprite);
     }
 
@@ -158,15 +199,73 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
         float screenY = (tileX + tileY) * (tileHeight / 2.0f);
 
-        screenX += offsetX;
-        screenY += offsetY;
+        sf::Sprite* towerSprite = nullptr;
+        int towerID = tower.getId();
 
-        // 타워 스프라이트 위치 설정
-        float towerOffsetX = 30.0;
-        float towerOffsetY = -20.0;
-        archerTowerSprite.setPosition(screenX + towerOffsetX, screenY + towerOffsetY);
+        float towerOffsetX = 0;
+        float towerOffsetY = 0;
 
-        window.draw(archerTowerSprite);
+        switch (towerID)
+        {
+            case 1:
+                towerSprite = &barrack1TowerSprite; towerSprite->setScale(1.1, 1.1);
+                towerOffsetX = 25.0;
+                towerOffsetY = 20.0;
+                break;
+            case 101:
+                towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
+                towerOffsetX = 25.0;
+                towerOffsetY = 20.0;
+                break;
+            case 102:
+                towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+                towerOffsetX = 25.0;
+                towerOffsetY = 20.0;
+                break;
+            case 2:
+                towerSprite = &archer1TowerSprite;
+                towerOffsetX = 30.0;
+                towerOffsetY = 20.0;
+                break;
+            case 201:
+                towerSprite = &archer2TowerSprite;
+                towerOffsetX = 30.0;
+                towerOffsetY = 20.0;
+                break;
+            case 202:
+                towerSprite = &archer3TowerSprite;
+                towerOffsetX = 30.0;
+                towerOffsetY = 20.0;
+                break;
+            case 3:
+                towerSprite = &wizard1TowerSprite;
+                towerSprite->setScale(1.3, 1.3);
+                towerOffsetX = 15.0;
+                towerOffsetY = 25.0;
+                break;
+            case 301:
+                towerSprite = &wizard2TowerSprite;
+                towerSprite->setScale(1.3, 1.3);
+                towerOffsetX = 15.0;
+                towerOffsetY = 25.0;
+                break;
+            case 302:
+                towerSprite = &wizard3TowerSprite;
+                towerSprite->setScale(1.3, 1.3);
+                towerOffsetX = 15.0;
+                towerOffsetY = 25.0;
+                break;
+            default:
+                towerSprite = &archer1TowerSprite;
+                break;
+        }
+
+        screenX += offsetX + towerOffsetX;
+        screenY += offsetY + towerOffsetY;
+            
+        towerSprite->setPosition(screenX, screenY - tileHeight / 2.0f);
+        window.draw(*towerSprite);
+
     }
 
     // 플레이어 라이프 및 골드 표시
@@ -204,4 +303,51 @@ void UI::setTowers(const std::vector<Tower>& gameTowers)
 void UI::setUnitTypes(const std::vector<UnitType>& gameUnitTypes)
 {
     unitTypes = gameUnitTypes;
+}
+
+// 체력바를 생성하는 함수
+void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp) {
+    float healthBarWidth = 40.0f;         // 체력 바 너비
+    float healthBarHeight = 5.0f;        // 체력 바 높이
+    float healthRatio = static_cast<float>(currentHp) / maxHp; // 체력 비율
+
+    // 체력 바 배경
+    sf::RectangleShape healthBarBackground(sf::Vector2f(healthBarWidth, healthBarHeight));
+    healthBarBackground.setFillColor(sf::Color(50, 50, 50)); // 회색 배경
+    healthBarBackground.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+
+    // 체력 바 (현재 체력)
+    sf::RectangleShape healthBar(sf::Vector2f(healthBarWidth * healthRatio, healthBarHeight));
+    healthBar.setFillColor(sf::Color(200, 0, 0)); // 빨간색
+    healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+
+    // 체력 바 그리기
+    window.draw(healthBarBackground);
+    window.draw(healthBar);
+}
+
+const sf::Texture& UI::getProjectileTexture() const
+{
+    return projectileTexture;
+}
+
+void UI::drawProjectiles(const std::vector<Projectile>& projectiles)
+{
+    for (const auto& projectile : projectiles)
+    {
+        sf::Sprite sprite = projectile.getSprite();
+
+        // 현재 스프라이트의 위치를 가져옵니다.
+        sf::Vector2f position = sprite.getPosition();
+
+        // offsetX와 offsetY를 더해줍니다.
+        position.x += offsetX;
+        position.y += offsetY;
+
+        // 위치를 업데이트합니다.
+        sprite.setPosition(position);
+
+        // 스프라이트를 그립니다.
+        window.draw(sprite);
+    }
 }

@@ -22,6 +22,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PlacedTower.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Tower.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Unit.cpp" />
@@ -31,6 +32,7 @@
   <ItemGroup>
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="PlacedTower.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="Tower.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Unit.h" />

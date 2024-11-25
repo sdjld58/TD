@@ -573,6 +573,7 @@ void GameManager::startPreparationPhase()
     while (isPreparation)
     {
         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY);
+       
 
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
@@ -613,7 +614,7 @@ void GameManager::startPreparationPhase()
                 }
 
                 // 1~9 키로 타워 선택
-                else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
+                else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9 && isTowerPlacementMode == true)
                 {
                     int towerID = event.key.code - sf::Keyboard::Num0;
                     auto it = std::find_if(towers.begin(), towers.end(),
@@ -644,20 +645,34 @@ void GameManager::startPreparationPhase()
                         return tower.getX() == selectedX && tower.getY() == selectedY;
                     });
 
+                // 타워가 있는지 확인하고 모드 설정
                 if (towerIt != placedTowers.end())
                 {
+                    // 타워가 있으면 업그레이드/판매 모드로 전환
+                    isTowerPlacementMode = false;
+                }
+                else
+                {
+                    // 타워가 없으면 설치 모드로 전환
+                    isTowerPlacementMode = true;
+                }
+
+                if (towerIt != placedTowers.end())
+                {
+                    
+
                     // Num1/Num2로 업그레이드
-                    if (event.key.code == sf::Keyboard::Num1) // 업그레이드 (1번)
+                    if (event.key.code == sf::Keyboard::Num1 && isTowerPlacementMode == false) // 업그레이드 (1번)
                     {
                         towerIt->upgrade(gold, map, towers, 1);
-                        
+    
                     }
-                    else if (event.key.code == sf::Keyboard::Num2) // 업그레이드 (2번)
+                    else if (event.key.code == sf::Keyboard::Num2 && isTowerPlacementMode == false) // 업그레이드 (2번)
                     {
                         towerIt->upgrade(gold, map, towers, 2);
                         
                     }
-                    else if (event.key.code == sf::Keyboard::Num3) // 타워 판매 (3번)
+                    else if (event.key.code == sf::Keyboard::Num3 && isTowerPlacementMode == false) // 타워 판매 (3번)
                     {
                         int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
                         gold += refundAmount;
@@ -670,6 +685,8 @@ void GameManager::startPreparationPhase()
                     {
                         //추후 필료시 추가
                     }
+                    
+
                 }
             }
 

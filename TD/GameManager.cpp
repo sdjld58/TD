@@ -876,7 +876,7 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                         gold += it->getKillReward();
                     }
                     it = activeUnits.erase(it);
-                    continue;
+                    break;
                 }
 
                 aoeTargets.push_back(&(*it)); // 범위 공격 대상을 저장

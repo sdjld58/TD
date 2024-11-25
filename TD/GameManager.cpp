@@ -48,6 +48,8 @@ void GameManager::run()
         int waveID = wave.getWaveID();
         currentwaveType = wave.getIsDefence();
         ui.setIsDefence(currentwaveType);
+        ui.clearButtons();
+        ui.drawButtons();
       
         if (wave.getIsDefence())
         {
@@ -847,6 +849,7 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
 
         // **기본 공격 처리**
         std::vector<Unit*> aoeTargets; // 범위 공격 대상 저장
+
         for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;) {
             int unitX = it->getX();
             int unitY = it->getY();
@@ -859,6 +862,7 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             {
                 //투사체 생성
                 createProjectile(tower, *it);
+
                 // 기본 데미지 처리
                 int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
                 it->reduceHp(newHp);

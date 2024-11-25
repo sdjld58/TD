@@ -90,79 +90,95 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     float unitScale = tileHeight / knightUnitTexture.getSize().y;
     knightUnitSprite.setScale(unitScale/1.5, unitScale/1.5);
 
-    //버튼 그리기
-    gui.setWindow(window);
-    tgui::Font font("resources/fonts/BMDOHYEON_ttf.ttf");
-    auto towerButton = tgui::Button::create("Tower");
-    towerButton->setSize(120, 70);
-    towerButton->setPosition(25, windowHeight - 380);
-    towerButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-    towerButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-    towerButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-    towerButton->setTextSize(26); //글씨 크기 설정
-    towerButton->getRenderer()->setFont(font); // 폰트 설정
-   
+    drawButtons();
+}
 
-    auto oneButton = tgui::Button::create("1");
-    oneButton->setSize(80, 70);
-    oneButton->setPosition(200, windowHeight - 380);
-    oneButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-    oneButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-    oneButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-    oneButton->setTextSize(30); //글씨 크기 설정
-    oneButton->getRenderer()->setFont(font); // 폰트 설정
-    
-
-    auto twoButton = tgui::Button::create("2");
-    twoButton->setSize(80, 70);
-    twoButton->setPosition(300, windowHeight - 380);
-    twoButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-    twoButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-    twoButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-    twoButton->setTextSize(30); //글씨 크기 설정
-    twoButton->getRenderer()->setFont(font); // 폰트 설정
-
-    auto threeButton = tgui::Button::create("3");
-    threeButton->setSize(80, 70);
-    threeButton->setPosition(400, windowHeight - 380);
-    threeButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-    threeButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-    threeButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-    threeButton->setTextSize(30); //글씨 크기 설정
-    threeButton->getRenderer()->setFont(font); // 폰트 설정
-   
-
-    // 버튼에 콜백 함수 연결
-    towerButton->onClick([this]() {
-        if (onTowerButtonClicked)
-        {
-            onTowerButtonClicked();
-        }
-    });
-    oneButton->onClick([this]() {
-        if (onOneButtonClicked)
-        {
-            onOneButtonClicked();
-        }
-        });
-    twoButton->onClick([this]() {
-        if (onTwoButtonClicked)
-        {
-            onTwoButtonClicked();
-        }
-        });
-    threeButton->onClick([this]() {
-        if (onThreeButtonClicked)
-        {
-            onThreeButtonClicked();
-        }
-        });
-    gui.add(towerButton, "towerButton");
-    gui.add(oneButton, "oneButton");
-    gui.add(twoButton, "twoButton");
-    gui.add(threeButton, "threeButton");
+void UI::drawButtons()
+{
+    if (curWaveIsDefense)
+    {
+        //버튼 그리기
+        gui.setWindow(window);
+        tgui::Font font("resources/fonts/BMDOHYEON_ttf.ttf");
+        auto towerButton = tgui::Button::create("Tower");
+        towerButton->setSize(120, 70);
+        towerButton->setPosition(25, windowHeight - 380);
+        towerButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
+        towerButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
+        towerButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
+        towerButton->setTextSize(26); //글씨 크기 설정
+        towerButton->getRenderer()->setFont(font); // 폰트 설정
 
 
+        auto oneButton = tgui::Button::create("1");
+        oneButton->setSize(80, 70);
+        oneButton->setPosition(200, windowHeight - 380);
+        oneButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
+        oneButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
+        oneButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
+        oneButton->setTextSize(30); //글씨 크기 설정
+        oneButton->getRenderer()->setFont(font); // 폰트 설정
+
+
+        auto twoButton = tgui::Button::create("2");
+        twoButton->setSize(80, 70);
+        twoButton->setPosition(300, windowHeight - 380);
+        twoButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
+        twoButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
+        twoButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
+        twoButton->setTextSize(30); //글씨 크기 설정
+        twoButton->getRenderer()->setFont(font); // 폰트 설정
+
+        auto threeButton = tgui::Button::create("3");
+        threeButton->setSize(80, 70);
+        threeButton->setPosition(400, windowHeight - 380);
+        threeButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
+        threeButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
+        threeButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
+        threeButton->setTextSize(30); //글씨 크기 설정
+        threeButton->getRenderer()->setFont(font); // 폰트 설정
+
+
+        // 버튼에 콜백 함수 연결
+        towerButton->onClick([this]() {
+            if (onTowerButtonClicked)
+            {
+                onTowerButtonClicked();
+            }
+            });
+        oneButton->onClick([this]() {
+            if (onOneButtonClicked)
+            {
+                onOneButtonClicked();
+            }
+            });
+        twoButton->onClick([this]() {
+            if (onTwoButtonClicked)
+            {
+                onTwoButtonClicked();
+            }
+            });
+        threeButton->onClick([this]() {
+            if (onThreeButtonClicked)
+            {
+                onThreeButtonClicked();
+            }
+            });
+
+        gui.add(towerButton, "towerButton");
+        gui.add(oneButton, "oneButton");
+        gui.add(twoButton, "twoButton");
+        gui.add(threeButton, "threeButton");
+    }
+    else
+    {
+
+    }
+}
+
+void UI::clearButtons()
+{
+    gui.removeAllWidgets();
 }
 
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
@@ -323,7 +339,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         window.draw(*towerSprite);
 
     }
-    TextBox textBox(*this, curWaveIsDefece, { getInfoText(0),getInfoText(1), getInfoText(2)});
+    TextBox textBox(*this, curWaveIsDefense, { getInfoText(0),getInfoText(1), getInfoText(2)});
         textBox.draw(window);
     
     // 플레이어 라이프 및 골드 표시
@@ -364,7 +380,7 @@ void UI::setUnitTypes(const std::vector<UnitType>& gameUnitTypes)
 }
 void UI::setIsDefence(bool isDefence)
 {
-    curWaveIsDefece = isDefence;
+    curWaveIsDefense = isDefence;
 }
 
 

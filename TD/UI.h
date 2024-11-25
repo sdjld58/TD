@@ -77,7 +77,7 @@ private:
     float offsetY = 200.0f;
     
     //현재 웨이브 상태
-    bool curWaveIsDefece;
+    bool curWaveIsDefense = true;
     
     //TextBox에 출력하기위한 출력 문구들
     std::vector<std::wstring> infoTexts; // 여러 infoText를 저장하는 벡터
@@ -87,6 +87,9 @@ public:
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
         int playerLife, int gold, int selectedX = -1, int selectedY = -1,
         const std::vector<Projectile>& projectiles = {});
+
+    void drawButtons();
+    void clearButtons();
     
     sf::RenderWindow& getWindow();
     void setMap(const std::vector<std::vector<std::string>>& gameMap);

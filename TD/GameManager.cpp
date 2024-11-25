@@ -991,28 +991,43 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
     std::vector<Unit> activeUnits;
     bool waveOver = false;
     int previousPlayerLife = playerLife;
+
+    sf::Clock clock;
+    sf::Time lastLogicUpdateTime = sf::Time::Zero;
+    sf::Time logicUpdateInterval = sf::milliseconds(500); // 논리 업데이트 간격 (500ms)
     
     while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화
 
     while (!waveOver)
     {
+        sf::Time elapsedTime = clock.restart();
+
         handleAttackInput();
 
-        updateAttackUnits(activeUnits);
+        // **논리 업데이트 시간 체크**
+        lastLogicUpdateTime += elapsedTime;
+        if (lastLogicUpdateTime >= logicUpdateInterval)
+        {
+            lastLogicUpdateTime -= logicUpdateInterval;
+            currentTick++;
 
-        // 타워가 유닛을 공격
-        attackUnits(activeUnits, currentTick, currentwaveType);
+            updateAttackUnits(activeUnits);
+
+            // 타워가 유닛을 공격
+            attackUnits(activeUnits, currentTick, currentwaveType);
+            updateAndPrintMap(activeUnits); // 공격 웨이브에서도 맵 상태를 출력
+        }
+
+        // **투사체 업데이트 (매 프레임)**
+        updateProjectiles(elapsedTime);
 
         // UI 업데이트 및 콘솔 출력
         updateGameState(activeUnits);
-        updateAndPrintMap(activeUnits); // 공격 웨이브에서도 맵 상태를 출력
 
         waveOver = isAttackWaveOver(activeUnits);
         if (previousPlayerLife > playerLife) waveOver = true;// 공격 성공 시 공격 웨이브 바로 종료
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-        currentTick++;
+        //std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
     while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화,공격웨이브가 끝나고 바로 초기화

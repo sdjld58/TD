@@ -695,6 +695,16 @@ void GameManager::startPreparationPhase()
                     {
                         attemptPlaceTower();
                     }
+                    else if (event.key.code == sf::Keyboard::Escape)
+                    {
+                        if (isTowerPlacementMode)
+                        {
+                            // 타워 선택 해제 및 초기 상태로 복원
+                            isTowerPlacementMode = false;
+                            selectedTowerIndex = -1;  // 선택된 타워 해제
+                            std::cout << "타워 선택이 취소되었습니다.\n";
+                        }
+                    }
                    
                 }
             }

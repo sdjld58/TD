@@ -565,7 +565,7 @@ void GameManager::startPreparationPhase()
 {
     std::vector<std::vector<std::string>> mapWithUnits = map;
     isPreparation = true;
-    isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
+    isTowerPlacementMode = true;  // 타워 설치 모드 상태 변수
     selectedX = mapWithUnits[0].size() / 2;
     selectedY = mapWithUnits.size() / 2;
     selectedTowerIndex = -1;  // 초기값 -1로 설정 (선택되지 않음)

@@ -10,8 +10,10 @@
 #include "Tower.h"
 #include "UnitType.h"
 #include "Projectile.h"
+#include "TextBox.h"
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
+#include<string>
 
 
 
@@ -73,6 +75,12 @@ private:
 
     float offsetX = -100.0f;
     float offsetY = 200.0f;
+    
+    //현재 웨이브 상태
+    bool curWaveIsDefece;
+    
+    //TextBox에 출력하기위한 출력 문구들
+    std::vector<std::wstring> infoTexts; // 여러 infoText를 저장하는 벡터
 
 public:
     void initialize(const std::vector<std::vector<std::string>>& gameMap);
@@ -85,6 +93,13 @@ public:
     void setPath(const std::vector<std::pair<int, int>>& gamePath);
     void setTowers(const std::vector<Tower>& gameTowers);
     void setUnitTypes(const std::vector<UnitType>& gameUnitTypes);
+    void setIsDefence(bool isDefence); 
+
+    //텍스트 박스 문구 세팅
+    void setInfoText(std::initializer_list<std::string> infoSentences);
+    std::wstring getInfoText(int index) const;
+
+    UI() : infoTexts() {}
 
     //투사체
     const sf::Texture& getProjectileTexture() const;
@@ -99,11 +114,64 @@ public:
     //창 크기
     const int windowWidth = 1920;
     const int windowHeight = 1080;
-
+  
     //버튼
     tgui::Gui gui;
     std::function<void()> onTowerButtonClicked;
+    std::function<void()> onOneButtonClicked;
+    std::function<void()> onTwoButtonClicked;
+    std::function<void()> onThreeButtonClicked;
 };
+
+
+//TGUI 버튼 구현을 위한 클래스
+class RoundedRectangleShape : public sf::Shape {
+public:
+    RoundedRectangleShape(const sf::Vector2f& size, float radius, size_t pointCount = 30)
+        : m_size(size), m_radius(radius), m_pointCount(pointCount) {
+        update();
+    }
+
+    void setSize(const sf::Vector2f& size) {
+        m_size = size;
+        update();
+    }
+
+    void setRadius(float radius) {
+        m_radius = radius;
+        update();
+    }
+
+    virtual std::size_t getPointCount() const override {
+        return m_pointCount * 4;
+    }
+
+    virtual sf::Vector2f getPoint(std::size_t index) const override {
+        float deltaAngle = 90.f / m_pointCount;
+        sf::Vector2f center;
+        size_t corner = index / m_pointCount;
+
+        switch (corner) {
+        case 0: center = { m_size.x - m_radius, m_radius }; break;
+        case 1: center = { m_radius, m_radius }; break;
+        case 2: center = { m_radius, m_size.y - m_radius }; break;
+        case 3: center = { m_size.x - m_radius, m_size.y - m_radius }; break;
+        }
+
+        float angle = deltaAngle * (index % m_pointCount);
+        angle = corner * 90.f + angle;
+        return {
+            center.x + m_radius * std::cos(angle * 3.14159265f / 180.f),
+            center.y - m_radius * std::sin(angle * 3.14159265f / 180.f)
+        };
+    }
+
+private:
+    sf::Vector2f m_size;
+    float m_radius;
+    size_t m_pointCount;
+};
+
 
 
 

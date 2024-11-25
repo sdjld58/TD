@@ -46,7 +46,16 @@ int PlacedTower::getAttackRange() const {
 bool PlacedTower::getIsMagic() const {
     return baseTower.getIsMagic();
 }
-
+std::string PlacedTower::getTool() const {
+    return baseTower.getTool();
+}
+std::string PlacedTower::getTool2() const {
+    return baseTower.getTool2();
+}
+std::string PlacedTower::attackType() const {
+    if (baseTower.getIsMagic()) return "마법";
+    else return "물리";
+}
 int PlacedTower::getTargetAmount() const {
     return baseTower.getTargetAmount();
 }

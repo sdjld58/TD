@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <thread>
+#include <chrono>
 #include <queue>
 #include "UnitType.h"
 #include "Wave.h"
@@ -30,7 +32,12 @@ private:
     int attackGold;
     bool showUnitInfo;
     void handleTowerButtonClicked();
+    void handleOneButtonClicked();
+    void handleTwoButtonClicked();
+    void handleThreeButtonClicked();
+
     void attemptPlaceTower();
+    void selectTower(const std::vector<Tower>& towers, int towerId, int& selectedTowerIndex, UI& ui);
     UI ui;  // UI 클래스 인스턴스 추가
 
     int selectedX;

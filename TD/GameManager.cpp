@@ -16,6 +16,15 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
     ui.onTowerButtonClicked = [this]() {
         this->handleTowerButtonClicked();
         };
+    ui.onOneButtonClicked = [this]() {
+        this->handleOneButtonClicked();
+        };
+    ui.onTwoButtonClicked = [this]() {
+        this->handleTwoButtonClicked();
+        };
+    ui.onThreeButtonClicked = [this]() {
+        this->handleThreeButtonClicked();
+        };
 }
 
 void GameManager::run()
@@ -30,6 +39,7 @@ void GameManager::run()
     ui.setPath(path);
     ui.setTowers(towers);
     ui.setUnitTypes(unitTypes);
+    
 
     int currentTick = 0;
 
@@ -37,11 +47,14 @@ void GameManager::run()
     {
         int waveID = wave.getWaveID();
         currentwaveType = wave.getIsDefence();
-
+        ui.setIsDefence(currentwaveType);
+      
         if (wave.getIsDefence())
         {
             gold += wave.getGold();
+            ui.setInfoText({ "타워를 설치하세요!!", "빈 건설 부지입니다..", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
             startPreparationPhase(); // 수비 웨이브 준비
+            ui.setInfoText({ "적들이 몰려오고 있습니다!!", "이 공격을 막지 못하면 끝입니다!", "..." });
         }
 
         if (wave.getIsDefence())
@@ -141,6 +154,8 @@ void GameManager::run()
         }
         else
         {
+            ui.setInfoText({ "침투를 준비하세요!!", "대기중인 유닛이 없습니다!", "..." });
+
             // 공격 웨이브 처리
             attackGold = wave.getGold();
             startAttackWave(wave, currentTick);
@@ -611,24 +626,12 @@ void GameManager::startPreparationPhase()
                     else if (event.key.code == sf::Keyboard::Right && selectedX < mapWithUnits[0].size() - 1)
                         selectedX++;
 
-                    else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
-                    {
-                        int towerID = event.key.code - sf::Keyboard::Num0;
-                        auto it = std::find_if(towers.begin(), towers.end(),
-                            [towerID](const Tower& tower) { return tower.getId() == towerID; });
+                    else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9) {
+                        // 입력된 키를 기반으로 타워 ID 계산
+                        int towerId = event.key.code - sf::Keyboard::Num0;
 
-                        if (it != towers.end())
-                        {
-                            Tower& selectedTower = *it;
-                            selectedTowerIndex = std::distance(towers.begin(), it);
-                            std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
-                        }
-                        else
-                        {
-                            std::cout << "해당 타워가 존재하지 않습니다.\n";
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
-                        }
+                        // selectTower 함수 호출로 타워 선택 처리
+                        selectTower(towers, towerId, selectedTowerIndex, ui);
                     }
 
                     else if (event.key.code == sf::Keyboard::U)
@@ -645,7 +648,7 @@ void GameManager::startPreparationPhase()
                             towerY = selectedY;
 
                             std::cout << "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n";
-
+                            ui.setInfoText({ "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n","...","..." });
                             while (inTowerSelectionMode)
                             {
                                 sf::Event towerEvent;
@@ -689,6 +692,7 @@ void GameManager::startPreparationPhase()
                         else
                         {
                             std::cout << "현재 위치에 타워가 없습니다.\n";
+                            ui.setInfoText({ "현재 위치에 타워가 없습니다.\n","...","..." });
                         }
                     }
                     else if (event.key.code == sf::Keyboard::Enter && selectedTowerIndex >= 0)
@@ -735,6 +739,9 @@ void GameManager::startPreparationPhase()
                         selectedX = clickedTileX;
                         selectedY = clickedTileY;
                         std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
+                        ui.setInfoText({ "수비 웨이브\n",
+                            "타일 선택됨: [" + std::to_string(selectedX) + ", " + std::to_string(selectedY) + "]\n",
+                            "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
                     }
                 }
             }
@@ -1062,9 +1069,45 @@ void GameManager::handleTowerButtonClicked()
     else
     {
         std::cout << "타워 설치 모드가 아닙니다.\n";
+        ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..."});
     }
 }
-
+void GameManager::handleOneButtonClicked()
+{
+    if (isTowerPlacementMode)
+    {
+        selectTower(towers, 1, selectedTowerIndex, ui);
+    }
+    else
+    {
+        std::cout << "타워 설치 모드가 아닙니다.\n";
+        ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..." });
+    }
+}
+void GameManager::handleTwoButtonClicked()
+{
+    if (isTowerPlacementMode)
+    {
+        selectTower(towers, 2, selectedTowerIndex, ui);
+    }
+    else
+    {
+        std::cout << "타워 설치 모드가 아닙니다.\n";
+        ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..." });
+    }
+}
+void GameManager::handleThreeButtonClicked()
+{
+    if (isTowerPlacementMode)
+    {
+        selectTower(towers, 3, selectedTowerIndex, ui);
+    }
+    else
+    {
+        std::cout << "타워 설치 모드가 아닙니다.\n";
+        ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..." });
+    }
+}
 bool GameManager::isTileSelectable(int x, int y)
 {
     // 맵 범위 내인지 확인
@@ -1097,6 +1140,26 @@ bool GameManager::isTileSelectable(int x, int y)
     // 타워 설치 불가능한 타일
     return false;
 }
+void GameManager::selectTower(const std::vector<Tower>& towers, int towerId, int& selectedTowerIndex, UI& ui)
+{
+    const auto it = std::find_if(towers.begin(), towers.end(),
+        [towerId](const Tower& tower) { return tower.getId() == towerId; });
+
+    if (it != towers.end()) {
+        const Tower& selectedTower = *it; // const Tower& 사용
+        selectedTowerIndex = std::distance(towers.begin(), it);
+        std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
+        ui.setInfoText({ selectedTower.getTool() + "타워가 선택되었습니다.\n", selectedTower.getTool2(), "..." });
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    else {
+        // 타워가 존재하지 않을 때
+        std::cout << "해당 타워가 존재하지 않습니다.\n";
+
+        // 1초 대기
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
 
 void GameManager::attemptPlaceTower()
 {
@@ -1114,19 +1177,30 @@ void GameManager::attemptPlaceTower()
                 map[selectedY][selectedX] = newTower.getTowerName();
                 placedTowers.push_back(newTower);
                 std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
+                
+              
+                ui.setInfoText({ newTower.getTool() + " 타워가 설치되었습니다!\n",
+                    newTower.getTool2(),
+                    "공격력: " + std::to_string(newTower.getDamage()) +
+                    "\n공격 속도: " + std::to_string(newTower.getTimePerAttack()) +
+                    "\n사거리: " + std::to_string(newTower.getAttackRange()) +
+                    "\n공격 유형: " + newTower.attackType() });
             }
             else
             {
                 std::cout << "타워를 설치할 골드가 부족합니다.\n";
+                ui.setInfoText({"타워를 설치할 골드가 부족합니다.\n", "...", "..."});
             }
         }
         else
         {
             std::cout << "해당 위치에 타워를 설치할 수 없습니다.\n";
+            ui.setInfoText({ "해당 위치에 타워를 설치할 수 없습니다.\n","...","..." });
         }
     }
     else
     {
         std::cout << "타워가 선택되지 않았습니다.\n";
+        ui.setInfoText({ "타워가 선택되지 않았습니다.\n","...","..." });
     }
 }

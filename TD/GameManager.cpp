@@ -566,16 +566,9 @@ void GameManager::startPreparationPhase()
     std::vector<std::vector<std::string>> mapWithUnits = map;
     isPreparation = true;
     isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
-    bool isTowerSelected = false;
-
     selectedX = mapWithUnits[0].size() / 2;
     selectedY = mapWithUnits.size() / 2;
-    selectedTowerIndex = 1;
-
-    int originalX = selectedX;
-    int originalY = selectedY;
-    int towerX = -1;
-    int towerY = -1;
+    selectedTowerIndex = -1;  // 초기값 -1로 설정 (선택되지 않음)
 
     while (isPreparation)
     {
@@ -584,173 +577,129 @@ void GameManager::startPreparationPhase()
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
-            isTowerPlacementMode = true;
-
-            // **TGUI 이벤트 처리 추가**
-            ui.gui.handleEvent(event);
+            ui.gui.handleEvent(event); // TGUI 이벤트 처리
 
             if (event.type == sf::Event::Closed)
+            {
                 ui.getWindow().close();
+                return;
+            }
 
             if (event.type == sf::Event::KeyPressed)
             {
-                if (event.key.code == sf::Keyboard::S)
+             
+                if (event.key.code == sf::Keyboard::F)
                 {
                     isPreparation = false;
                     break;
                 }
-                
-                else if (isTowerPlacementMode)
+
+                // WASD로 타일 이동
+                if (event.key.code == sf::Keyboard::W && selectedY > 0)
+                    selectedY--;
+                else if (event.key.code == sf::Keyboard::S && selectedY < mapWithUnits.size() - 1)
+                    selectedY++;
+                else if (event.key.code == sf::Keyboard::A && selectedX > 0)
+                    selectedX--;
+                else if (event.key.code == sf::Keyboard::D && selectedX < mapWithUnits[0].size() - 1)
+                    selectedX++;
+
+                // 1~9 키로 타워 선택
+                else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
                 {
-                    if (event.key.code == sf::Keyboard::Up && selectedY > 0)
-                        selectedY--;
-                    else if (event.key.code == sf::Keyboard::Down && selectedY < mapWithUnits.size() - 1)
-                        selectedY++;
-                    else if (event.key.code == sf::Keyboard::Left && selectedX > 0)
-                        selectedX--;
-                    else if (event.key.code == sf::Keyboard::Right && selectedX < mapWithUnits[0].size() - 1)
-                        selectedX++;
+                    int towerID = event.key.code - sf::Keyboard::Num0;
+                    auto it = std::find_if(towers.begin(), towers.end(),
+                        [towerID](const Tower& tower) { return tower.getId() == towerID; });
 
-                    else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
+                    if (it != towers.end())
                     {
-                        int towerID = event.key.code - sf::Keyboard::Num0;
-                        auto it = std::find_if(towers.begin(), towers.end(),
-                            [towerID](const Tower& tower) { return tower.getId() == towerID; });
-
-                        if (it != towers.end())
-                        {
-                            Tower& selectedTower = *it;
-                            selectedTowerIndex = std::distance(towers.begin(), it);
-                            std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
-                        }
-                        else
-                        {
-                            std::cout << "해당 타워가 존재하지 않습니다.\n";
-                            std::this_thread::sleep_for(std::chrono::seconds(1));
-                        }
+                        Tower& selectedTower = *it;
+                        selectedTowerIndex = std::distance(towers.begin(), it);
+                        std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
                     }
-
-                    else if (event.key.code == sf::Keyboard::U)
+                    else
                     {
-                        auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
-                            [this](const PlacedTower& tower) {
-                                return tower.getX() == selectedX && tower.getY() == selectedY;
-                            });
-
-                        if (towerIt != placedTowers.end())
-                        {
-                            bool inTowerSelectionMode = true;
-                            towerX = selectedX;
-                            towerY = selectedY;
-
-                            std::cout << "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n";
-
-                            while (inTowerSelectionMode)
-                            {
-                                sf::Event towerEvent;
-                                while (ui.getWindow().pollEvent(towerEvent))
-                                {
-                                    // **TGUI 이벤트 처리 추가**
-                                    ui.gui.handleEvent(towerEvent);
-
-                                    if (towerEvent.type == sf::Event::KeyPressed)
-                                    {
-                                        if (towerEvent.key.code == sf::Keyboard::Num1)
-                                        {
-                                            towerIt->upgrade(gold, map, towers,1);
-                                            std::cout << "타워가 업그레이드되었습니다.\n";
-                                            inTowerSelectionMode = false;
-                                        }
-                                        else if (towerEvent.key.code == sf::Keyboard::Num2)
-                                        {
-                                            towerIt->upgrade(gold, map, towers,2);
-                                            std::cout << "타워가 업그레이드되었습니다.\n";
-                                            inTowerSelectionMode = false;
-                                        }
-                                        else if (towerEvent.key.code == sf::Keyboard::S)
-                                        {
-                                            int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
-                                            gold += refundAmount;
-                                            std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
-
-                                            map[towerY][towerX] = "O";
-                                            placedTowers.erase(towerIt);
-                                            inTowerSelectionMode = false;
-                                        }
-                                        else if (towerEvent.key.code == sf::Keyboard::U)
-                                        {
-                                            inTowerSelectionMode = false;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            std::cout << "현재 위치에 타워가 없습니다.\n";
-                        }
+                        std::cout << "해당 타워가 존재하지 않습니다.\n";
                     }
-                    else if (event.key.code == sf::Keyboard::Enter && selectedTowerIndex >= 0)
+                }
+
+                // Space 키로 타워 배치
+                else if (event.key.code == sf::Keyboard::Space && selectedTowerIndex >= 0)
+                {
+                    attemptPlaceTower();
+                }
+
+                // 현재 선택된 타일에 있는 타워와 상호작용
+                auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+                    [this](const PlacedTower& tower) 
                     {
-                        attemptPlaceTower();
-                    }
-                    else if (event.key.code == sf::Keyboard::Escape)
+                        return tower.getX() == selectedX && tower.getY() == selectedY;
+                    });
+
+                if (towerIt != placedTowers.end())
+                {
+                    // Num1/Num2로 업그레이드
+                    if (event.key.code == sf::Keyboard::Num1) // 업그레이드 (1번)
                     {
-                        if (isTowerPlacementMode)
-                        {
-                            // 타워 선택 해제 및 초기 상태로 복원
-                            isTowerPlacementMode = false;
-                            selectedTowerIndex = -1;  // 선택된 타워 해제
-                            std::cout << "타워 선택이 취소되었습니다.\n";
-                        }
+                        towerIt->upgrade(gold, map, towers, 1);
+                        
                     }
-                   
+                    else if (event.key.code == sf::Keyboard::Num2) // 업그레이드 (2번)
+                    {
+                        towerIt->upgrade(gold, map, towers, 2);
+                        
+                    }
+                    else if (event.key.code == sf::Keyboard::Num3) // 타워 판매 (3번)
+                    {
+                        int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
+                        gold += refundAmount;
+                        std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
+
+                        map[towerIt->getY()][towerIt->getX()] = "O";
+                        placedTowers.erase(towerIt);
+                    }
+                    else if (event.key.code >= sf::Keyboard::Num4 && event.key.code <= sf::Keyboard::Num9)
+                    {
+                        //추후 필료시 추가
+                    }
                 }
             }
 
-            // **마우스 클릭 이벤트 처리**
-            if (event.type == sf::Event::MouseButtonPressed)
+            // 마우스 클릭으로 타일 선택
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
-                if (event.mouseButton.button == sf::Mouse::Left)
+                sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
+                float mouseX = static_cast<float>(mousePosition.x);
+                float mouseY = static_cast<float>(mousePosition.y);
+
+                float mapWidth = static_cast<float>(mapWithUnits[0].size());
+                float mapHeight = static_cast<float>(mapWithUnits.size());
+
+                float centerX = ui.getWindow().getSize().x / 2.0f;
+                float centerY = 0.0f;
+
+                float tempX = (mouseX - centerX) / (ui.tileWidth / 2.0f);
+                float tempY = mouseY / (ui.tileHeight / 2.0f);
+
+                float tileX = (tempX + tempY) / 2.0f - 2;
+                float tileY = (tempY - tempX) / 2.0f - 3.5;
+
+                int clickedTileX = static_cast<int>(std::floor(tileX));
+                int clickedTileY = static_cast<int>(std::floor(tileY));
+
+                if (clickedTileX >= 0 && clickedTileX < static_cast<int>(mapWidth) &&
+                    clickedTileY >= 0 && clickedTileY < static_cast<int>(mapHeight))
                 {
-                    // 마우스 왼쪽 버튼 클릭 시 처리
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
-                    float mouseX = static_cast<float>(mousePosition.x);
-                    float mouseY = static_cast<float>(mousePosition.y);
-
-                    // 이소메트릭 좌표 변환을 위한 보정값
-                    float mapWidth = static_cast<float>(mapWithUnits[0].size());
-                    float mapHeight = static_cast<float>(mapWithUnits.size());
-
-                    // 화면 중심 좌표
-                    float centerX = ui.getWindow().getSize().x / 2.0f;
-                    float centerY = 0.0f; // 맵이 화면 상단에서 시작한다고 가정
-
-                    // 화면 좌표를 타일 좌표로 변환
-                    float tempX = (mouseX - centerX) / (ui.tileWidth / 2.0f);
-                    float tempY = mouseY / (ui.tileHeight / 2.0f);
-
-                    float tileX = (tempX + tempY) / 2.0f - 2;
-                    float tileY = (tempY - tempX) / 2.0f - 3.5;
-
-                    // 타일 좌표를 정수로 변환
-                    int clickedTileX = static_cast<int>(std::floor(tileX));
-                    int clickedTileY = static_cast<int>(std::floor(tileY));
-
-                    // 타일 좌표가 맵 범위 내에 있는지 확인
-                    if (clickedTileX >= 0 && clickedTileX < static_cast<int>(mapWidth) &&
-                        clickedTileY >= 0 && clickedTileY < static_cast<int>(mapHeight))
-                    {
-                        selectedX = clickedTileX;
-                        selectedY = clickedTileY;
-                        std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
-                    }
+                    selectedX = clickedTileX;
+                    selectedY = clickedTileY;
+                    std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
                 }
             }
         }
     }
 }
+
+
 
 void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType) {
     // 모든 타워 처리
@@ -774,7 +723,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
 
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
-            if (distanceSquared <= range * range) {
+            if (distanceSquared <= range * range) 
+            {
                 //투사체 생성
                 createProjectile(tower, *it);
                 // 기본 데미지 처리
@@ -782,8 +732,11 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                 it->reduceHp(newHp);
 
                 // 유닛 제거 처리
-                if (it->getHp() <= 0) {
-                    if (currentWaveType) {
+                if (it->getHp() <= 0) 
+                {
+                    if (currentWaveType)
+                    
+                    {
                         gold += it->getKillReward();
                     }
                     it = activeUnits.erase(it);
@@ -930,7 +883,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
         currentTick++;
     }
 
-    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화
+    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화,공격웨이브가 끝나고 바로 초기화
 
     std::cout << "공격 웨이브 종료!\n";
     if (previousPlayerLife > playerLife)

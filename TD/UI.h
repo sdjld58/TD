@@ -124,6 +124,10 @@ public:
     std::function<void()> onOneButtonClicked;
     std::function<void()> onTwoButtonClicked;
     std::function<void()> onThreeButtonClicked;
+
+    std::function<void()> onFirstUnitButtonClicked;
+    std::function<void()> onSecondUnitButtonClicked;
+    std::function<void()> onThirdUnitButtonClicked;
 };
 
 

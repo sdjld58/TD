@@ -775,6 +775,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range) {
+                //투사체 생성
+                createProjectile(tower, *it);
                 // 기본 데미지 처리
                 int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
                 it->reduceHp(newHp);
@@ -905,7 +907,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
     bool waveOver = false;
     int previousPlayerLife = playerLife;
     
-    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화
+    
 
     while (!waveOver)
     {
@@ -927,6 +929,8 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 
         currentTick++;
     }
+
+    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화
 
     std::cout << "공격 웨이브 종료!\n";
     if (previousPlayerLife > playerLife)

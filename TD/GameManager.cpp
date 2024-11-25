@@ -604,6 +604,14 @@ void GameManager::startPreparationPhase()
                 else if (event.key.code == sf::Keyboard::D && selectedX < mapWithUnits[0].size() - 1)
                     selectedX++;
 
+                else if (event.key.code == sf::Keyboard::Escape)
+                {
+                    selectedTowerIndex = -1; // 선택된 타워 초기화
+                    std::cout << "타워 선택이 초기화되었습니다.\n";
+
+                    ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
+                }
+
                 // 1~9 키로 타워 선택
                 else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9)
                 {

@@ -10,7 +10,7 @@
 
 GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 {
-    // UI ÃÊ±âÈ­
+    // UI ì´ˆê¸°í™”
     ui.initialize(map);
 
     ui.onTowerButtonClicked = [this]() {
@@ -52,9 +52,9 @@ void GameManager::run()
         if (wave.getIsDefence())
         {
             gold += wave.getGold();
-            ui.setInfoText({ "Å¸¿ö¸¦ ¼³Ä¡ÇÏ¼¼¿ä!!", "ºó °Ç¼³ ºÎÁöÀÔ´Ï´Ù..", "1¹ø : °Ë»ç Å¸¿ö \n2¹ø : ±Ã¼ö Å¸¿ö \n3¹ø : ¸¶¹ı»ç Å¸¿ö" });
-            startPreparationPhase(); // ¼öºñ ¿şÀÌºê ÁØºñ
-            ui.setInfoText({ "ÀûµéÀÌ ¸ô·Á¿À°í ÀÖ½À´Ï´Ù!!", "ÀÌ °ø°İÀ» ¸·Áö ¸øÇÏ¸é ³¡ÀÔ´Ï´Ù!", "..." });
+            ui.setInfoText({ "íƒ€ì›Œë¥¼ ì„¤ì¹˜í•˜ì„¸ìš”!!", "ë¹ˆ ê±´ì„¤ ë¶€ì§€ì…ë‹ˆë‹¤..", "1ë²ˆ : ê²€ì‚¬ íƒ€ì›Œ \n2ë²ˆ : ê¶ìˆ˜ íƒ€ì›Œ \n3ë²ˆ : ë§ˆë²•ì‚¬ íƒ€ì›Œ" });
+            startPreparationPhase(); // ìˆ˜ë¹„ ì›¨ì´ë¸Œ ì¤€ë¹„
+            ui.setInfoText({ "ì ë“¤ì´ ëª°ë ¤ì˜¤ê³  ìˆìŠµë‹ˆë‹¤!!", "ì´ ê³µê²©ì„ ë§‰ì§€ ëª»í•˜ë©´ ëì…ë‹ˆë‹¤!", "..." });
         }
 
         if (wave.getIsDefence())
@@ -66,7 +66,7 @@ void GameManager::run()
 
             std::queue<Unit> unitQueue;
 
-            // ¿şÀÌºê¿¡ Æ÷ÇÔµÈ À¯´Ö »ı¼º
+            // ì›¨ì´ë¸Œì— í¬í•¨ëœ ìœ ë‹› ìƒì„±
             for (int unitID : wave.getUnits())
             {
                 auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
@@ -83,17 +83,17 @@ void GameManager::run()
 
             std::vector<Unit> activeUnits;
 
-            // **°ÔÀÓ ·çÇÁ ¼öÁ¤ ºÎºĞ ½ÃÀÛ**
+            // **ê²Œì„ ë£¨í”„ ìˆ˜ì • ë¶€ë¶„ ì‹œì‘**
             sf::Clock clock;
             sf::Time lastLogicUpdateTime = sf::Time::Zero;
-            sf::Time logicUpdateInterval = sf::milliseconds(500); // ³í¸® ¾÷µ¥ÀÌÆ® °£°İ (500ms)
+            sf::Time logicUpdateInterval = sf::milliseconds(500); // ë…¼ë¦¬ ì—…ë°ì´íŠ¸ ê°„ê²© (500ms)
             bool waveOver = false;
 
             while (!waveOver && ui.getWindow().isOpen())
             {
                 sf::Time elapsedTime = clock.restart();
 
-                // **ÀÌº¥Æ® Ã³¸®**
+                // **ì´ë²¤íŠ¸ ì²˜ë¦¬**
                 sf::Event event;
                 while (ui.getWindow().pollEvent(event))
                 {
@@ -102,31 +102,31 @@ void GameManager::run()
                         ui.getWindow().close();
                         return;
                     }
-                    // ±âÅ¸ ÀÌº¥Æ® Ã³¸® ÇÊ¿ä ½Ã Ãß°¡
+                    // ê¸°íƒ€ ì´ë²¤íŠ¸ ì²˜ë¦¬ í•„ìš” ì‹œ ì¶”ê°€
                 }
 
-                // **³í¸® ¾÷µ¥ÀÌÆ® ½Ã°£ Ã¼Å©**
+                // **ë…¼ë¦¬ ì—…ë°ì´íŠ¸ ì‹œê°„ ì²´í¬**
                 lastLogicUpdateTime += elapsedTime;
                 if (lastLogicUpdateTime >= logicUpdateInterval)
                 {
                     lastLogicUpdateTime -= logicUpdateInterval;
                     currentTick++;
 
-                    // **³í¸® ¾÷µ¥ÀÌÆ® ¼öÇà**
+                    // **ë…¼ë¦¬ ì—…ë°ì´íŠ¸ ìˆ˜í–‰**
 
-                    // À¯´Ö ½ºÆù
+                    // ìœ ë‹› ìŠ¤í°
                     spawnUnits(activeUnits, unitQueue);
 
-                    // À¯´Ö ÀÌµ¿
+                    // ìœ ë‹› ì´ë™
                     updateUnits(activeUnits);
 
-                    // °ø°İ Ã³¸®
+                    // ê³µê²© ì²˜ë¦¬
                     attackUnits(activeUnits, currentTick, currentwaveType);
 
-                    // ÄÜ¼Ö Ãâ·Â
+                    // ì½˜ì†” ì¶œë ¥
                     updateAndPrintMap(activeUnits);
 
-                    // °ÔÀÓ Á¾·á Á¶°Ç Ã¼Å©
+                    // ê²Œì„ ì¢…ë£Œ ì¡°ê±´ ì²´í¬
                     if (playerLife <= 0)
                     {
                         std::cout << "Game Over!\n";
@@ -136,38 +136,38 @@ void GameManager::run()
 
                     if (activeUnits.empty() && unitQueue.empty())
                     {
-                        std::cout << "¿şÀÌºê " << waveID << " Å¬¸®¾î!\n";
+                        std::cout << "ì›¨ì´ë¸Œ " << waveID << " í´ë¦¬ì–´!\n";
                         waveOver = true;
                     }
                 }
 
-                // **Åõ»çÃ¼ ¾÷µ¥ÀÌÆ® (¸Å ÇÁ·¹ÀÓ)**
+                // **íˆ¬ì‚¬ì²´ ì—…ë°ì´íŠ¸ (ë§¤ í”„ë ˆì„)**
                 updateProjectiles(elapsedTime);
 
-                // **È­¸é ±×¸®±â**
+                // **í™”ë©´ ê·¸ë¦¬ê¸°**
                 updateGameState(activeUnits);
 
-                // **FPS Á¦ÇÑ (¼±ÅÃ »çÇ×)**
-                // std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ¾à 60 FPS
+                // **FPS ì œí•œ (ì„ íƒ ì‚¬í•­)**
+                // std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ì•½ 60 FPS
             }
-            // **°ÔÀÓ ·çÇÁ ¼öÁ¤ ºÎºĞ ³¡**
+            // **ê²Œì„ ë£¨í”„ ìˆ˜ì • ë¶€ë¶„ ë**
         }
         else
         {
-            ui.setInfoText({ "Ä§Åõ¸¦ ÁØºñÇÏ¼¼¿ä!!", "´ë±âÁßÀÎ À¯´ÖÀÌ ¾ø½À´Ï´Ù!", "..." });
+            ui.setInfoText({ "ì¹¨íˆ¬ë¥¼ ì¤€ë¹„í•˜ì„¸ìš”!!", "ëŒ€ê¸°ì¤‘ì¸ ìœ ë‹›ì´ ì—†ìŠµë‹ˆë‹¤!", "..." });
 
-            // °ø°İ ¿şÀÌºê Ã³¸®
+            // ê³µê²© ì›¨ì´ë¸Œ ì²˜ë¦¬
             attackGold = wave.getGold();
             startAttackWave(wave, currentTick);
         }
     }
 
-    std::cout << "ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù.\n";
+    std::cout << "í”„ë¡œê·¸ë¨ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.\n";
 }
 
 void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue)
 {
-    // S À§Ä¡°¡ ºñ¾îÀÖÀ¸¸é À¯´Ö ½ºÆù
+    // S ìœ„ì¹˜ê°€ ë¹„ì–´ìˆìœ¼ë©´ ìœ ë‹› ìŠ¤í°
     bool sOccupied = false;
     for (const auto& unit : activeUnits)
     {
@@ -187,7 +187,7 @@ void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& u
 
 void GameManager::updateUnits(std::vector<Unit>& activeUnits)
 {
-    // À¯´Ö ¾÷µ¥ÀÌÆ®
+    // ìœ ë‹› ì—…ë°ì´íŠ¸
     for (auto it = activeUnits.begin(); it != activeUnits.end();)
     {
         bool arrived = it->update();
@@ -214,7 +214,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 
     std::vector<std::vector<std::string>> mapWithUnits = map;
 
-    // À¯´Ö À§Ä¡¸¦ ¸Ê¿¡ Ç¥½Ã
+    // ìœ ë‹› ìœ„ì¹˜ë¥¼ ë§µì— í‘œì‹œ
     for (const auto& unit : activeUnits)
     {
         int x = unit.getX();
@@ -225,8 +225,8 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
         }
     }
 
-    // ¸Ê Ãâ·Â
-    std::cout << "=== ¸Ê »óÅÂ ===\n";
+    // ë§µ ì¶œë ¥
+    std::cout << "=== ë§µ ìƒíƒœ ===\n";
     for (const auto& row : mapWithUnits)
     {
         for (const auto& cell : row)
@@ -236,41 +236,41 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
         std::cout << '\n';
     }
 
-    // ÇÃ·¹ÀÌ¾î »óÅÂ Ãâ·Â
-    std::cout << "\nÇÃ·¹ÀÌ¾î ¶óÀÌÇÁ: " << playerLife << "\n";
-    std::cout << "°ñµå: " << gold << "\n";
+    // í”Œë ˆì´ì–´ ìƒíƒœ ì¶œë ¥
+    std::cout << "\ní”Œë ˆì´ì–´ ë¼ì´í”„: " << playerLife << "\n";
+    std::cout << "ê³¨ë“œ: " << gold << "\n";
 
-    // °ø°İ ¿şÀÌºê °ñµå Ãâ·Â
-    std::cout << "°ø°İ °ñµå(AttackGold): " << attackGold << "\n";
+    // ê³µê²© ì›¨ì´ë¸Œ ê³¨ë“œ ì¶œë ¥
+    std::cout << "ê³µê²© ê³¨ë“œ(AttackGold): " << attackGold << "\n";
 
-    // À¯´Ö »óÅÂ Ãâ·Â
-    std::cout << "\n=== À¯´Ö »óÅÂ ===\n";
+    // ìœ ë‹› ìƒíƒœ ì¶œë ¥
+    std::cout << "\n=== ìœ ë‹› ìƒíƒœ ===\n";
     for (const auto& unit : activeUnits)
     {
-        std::cout << "À¯´Ö: " << unit.getName()
-            << ", À§Ä¡: (" << unit.getX() << ", " << unit.getY() << ")"
-            << ", Ã¼·Â: " << unit.getHp() << "\n";
+        std::cout << "ìœ ë‹›: " << unit.getName()
+            << ", ìœ„ì¹˜: (" << unit.getX() << ", " << unit.getY() << ")"
+            << ", ì²´ë ¥: " << unit.getHp() << "\n";
     }
-    // À¯´Ö »ı»ê ´ë±â¿­ Ãâ·Â Ãß°¡
+    // ìœ ë‹› ìƒì‚° ëŒ€ê¸°ì—´ ì¶œë ¥ ì¶”ê°€
     if (!unitProductionQueue.empty())
     {
-        std::cout << "\n=== À¯´Ö »ı»ê ´ë±â¿­ ===\n";
-        std::queue<int> tempQueue = unitProductionQueue; // ´ë±â¿­ º¹»çº» »ı¼º
+        std::cout << "\n=== ìœ ë‹› ìƒì‚° ëŒ€ê¸°ì—´ ===\n";
+        std::queue<int> tempQueue = unitProductionQueue; // ëŒ€ê¸°ì—´ ë³µì‚¬ë³¸ ìƒì„±
         while (!tempQueue.empty())
         {
             int unitId = tempQueue.front();
             tempQueue.pop();
 
-            // À¯´Ö ID·Î À¯´Ö ÀÌ¸§ Ã£±â
+            // ìœ ë‹› IDë¡œ ìœ ë‹› ì´ë¦„ ì°¾ê¸°
             auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
                 [unitId](const UnitType& ut) { return ut.getId() == unitId; });
             if (it != unitTypes.end())
             {
-                std::cout << "À¯´Ö: " << it->getUnitName() << "\n";
+                std::cout << "ìœ ë‹›: " << it->getUnitName() << "\n";
             }
             else
             {
-                std::cout << "À¯´Ö ID: " << unitId << "\n";
+                std::cout << "ìœ ë‹› ID: " << unitId << "\n";
             }
         }
     }
@@ -282,7 +282,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 
 void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 {
-    // UI¸¦ ÅëÇØ °ÔÀÓ »óÅÂ¸¦ ¾÷µ¥ÀÌÆ®ÇÏ°í È­¸éÀ» ±×¸³´Ï´Ù.
+    // UIë¥¼ í†µí•´ ê²Œì„ ìƒíƒœë¥¼ ì—…ë°ì´íŠ¸í•˜ê³  í™”ë©´ì„ ê·¸ë¦½ë‹ˆë‹¤.
     ui.update(activeUnits, placedTowers, playerLife, gold, attackGold, selectedX, projectiles);
 }
 
@@ -292,7 +292,7 @@ void GameManager::loadMap(const std::string& filename)
 
     if (!file.is_open())
     {
-        std::cout << "ÆÄÀÏÀ» ¿­ ¼ö ¾ø½À´Ï´Ù: " << filename << std::endl;
+        std::cout << "íŒŒì¼ì„ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: " << filename << std::endl;
         return;
     }
 
@@ -326,7 +326,7 @@ void GameManager::loadMap(const std::string& filename)
 }
 
 void GameManager::parsePath() {
-    // BFS ¾Ë°í¸®ÁòÀ» »ç¿ëÇÏ¿© S¿¡¼­ D±îÁöÀÇ °æ·Î¸¦ Ã£½À´Ï´Ù.
+    // BFS ì•Œê³ ë¦¬ì¦˜ì„ ì‚¬ìš©í•˜ì—¬ Sì—ì„œ Dê¹Œì§€ì˜ ê²½ë¡œë¥¼ ì°¾ìŠµë‹ˆë‹¤.
     size_t rows = map.size();
     size_t cols = map[0].size();
     std::vector<std::vector<bool>> visited(rows, std::vector<bool>(cols, false));
@@ -398,7 +398,7 @@ void GameManager::parsePath() {
         std::reverse(path.begin(), path.end());
     }
     else {
-        std::cout << "°æ·Î¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù." << std::endl;
+        std::cout << "ê²½ë¡œë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤." << std::endl;
     }
 }
 
@@ -409,7 +409,7 @@ void GameManager::loadUnitTypes(const std::string& filename)
 
     if (!file.is_open())
     {
-        std::cout << "À¯´Ö Å¸ÀÔ ÆÄÀÏÀ» ¿­ ¼ö ¾ø½À´Ï´Ù: " << filename << std::endl;
+        std::cout << "ìœ ë‹› íƒ€ì… íŒŒì¼ì„ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: " << filename << std::endl;
         return;
     }
 
@@ -448,7 +448,7 @@ void GameManager::loadUnitTypes(const std::string& filename)
         }
         else
         {
-            std::cout << "À¯´Ö Å¸ÀÔ µ¥ÀÌÅÍ¸¦ ÆÄ½ÌÇÏ´Â Áß ¿À·ù ¹ß»ı: " << line << std::endl;
+            std::cout << "ìœ ë‹› íƒ€ì… ë°ì´í„°ë¥¼ íŒŒì‹±í•˜ëŠ” ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " << line << std::endl;
         }
     }
     file.close();
@@ -459,7 +459,7 @@ void GameManager::loadTowerData(const std::string& filename)
     std::ifstream file(filename);
     if (!file.is_open())
     {
-        std::cout << "Å¸¿ö µ¥ÀÌÅÍ ÆÄÀÏÀ» ¿­ ¼ö ¾ø½À´Ï´Ù: " << filename << std::endl;
+        std::cout << "íƒ€ì›Œ ë°ì´í„° íŒŒì¼ì„ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: " << filename << std::endl;
         return;
     }
 
@@ -482,7 +482,7 @@ void GameManager::loadTowerData(const std::string& filename)
             tokens.push_back(item);
         }
 
-        if (tokens.size() == 12) // º¯°æµÈ µ¥ÀÌÅÍ Å©±â ¹İ¿µ
+        if (tokens.size() == 12) // ë³€ê²½ëœ ë°ì´í„° í¬ê¸° ë°˜ì˜
         {
             int id = std::stoi(tokens[0]);
             std::string towerName = tokens[1];
@@ -493,8 +493,8 @@ void GameManager::loadTowerData(const std::string& filename)
             bool isMagic = std::stoi(tokens[6]) == 1;
             int timePerAttack = std::stoi(tokens[7]);
             int targetAmount = std::stoi(tokens[8]);
-            int isNodamage = std::stoi(tokens[9]); // Ãß°¡µÈ isNodamage Ã³¸®
-            std::string tool = tokens[10];        // Ãß°¡µÈ tool Ã³¸®
+            int isNodamage = std::stoi(tokens[9]); // ì¶”ê°€ëœ isNodamage ì²˜ë¦¬
+            std::string tool = tokens[10];        // ì¶”ê°€ëœ tool ì²˜ë¦¬
             std::string tool2 = tokens[11];
 
             Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage,
@@ -505,7 +505,7 @@ void GameManager::loadTowerData(const std::string& filename)
         }
         else
         {
-            std::cout << "Àß¸øµÈ µ¥ÀÌÅÍ Çü½ÄÀÌ ÀÖ½À´Ï´Ù: " << line << std::endl;
+            std::cout << "ì˜ëª»ëœ ë°ì´í„° í˜•ì‹ì´ ìˆìŠµë‹ˆë‹¤: " << line << std::endl;
         }
     }
     file.close();
@@ -518,7 +518,7 @@ void GameManager::loadWaves(const std::string& filename)
 
     if (!file.is_open())
     {
-        std::cout << "¿şÀÌºê ÆÄÀÏÀ» ¿­ ¼ö ¾ø½À´Ï´Ù: " << filename << std::endl;
+        std::cout << "ì›¨ì´ë¸Œ íŒŒì¼ì„ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: " << filename << std::endl;
         return;
     }
 
@@ -570,7 +570,7 @@ void GameManager::loadWaves(const std::string& filename)
         }
         else
         {
-            std::cout << "¿şÀÌºê µ¥ÀÌÅÍ¸¦ ÆÄ½ÌÇÏ´Â Áß ¿À·ù ¹ß»ı: " << line << std::endl;
+            std::cout << "ì›¨ì´ë¸Œ ë°ì´í„°ë¥¼ íŒŒì‹±í•˜ëŠ” ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " << line << std::endl;
         }
     }
     file.close();
@@ -580,7 +580,7 @@ void GameManager::startPreparationPhase()
 {
     std::vector<std::vector<std::string>> mapWithUnits = map;
     isPreparation = true;
-    isTowerPlacementMode = false;  // Å¸¿ö ¼³Ä¡ ¸ğµå »óÅÂ º¯¼ö
+    isTowerPlacementMode = false;  // íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œ ìƒíƒœ ë³€ìˆ˜
     bool isTowerSelected = false;
 
     selectedX = mapWithUnits[0].size() / 2;
@@ -601,7 +601,7 @@ void GameManager::startPreparationPhase()
         {
             isTowerPlacementMode = true;
 
-            // **TGUI ÀÌº¥Æ® Ã³¸® Ãß°¡**
+            // **TGUI ì´ë²¤íŠ¸ ì²˜ë¦¬ ì¶”ê°€**
             ui.gui.handleEvent(event);
 
             if (event.type == sf::Event::Closed)
@@ -627,10 +627,10 @@ void GameManager::startPreparationPhase()
                         selectedX++;
 
                     else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9) {
-                        // ÀÔ·ÂµÈ Å°¸¦ ±â¹İÀ¸·Î Å¸¿ö ID °è»ê
+                        // ì…ë ¥ëœ í‚¤ë¥¼ ê¸°ë°˜ìœ¼ë¡œ íƒ€ì›Œ ID ê³„ì‚°
                         int towerId = event.key.code - sf::Keyboard::Num0;
 
-                        // selectTower ÇÔ¼ö È£Ãâ·Î Å¸¿ö ¼±ÅÃ Ã³¸®
+                        // selectTower í•¨ìˆ˜ í˜¸ì¶œë¡œ íƒ€ì›Œ ì„ íƒ ì²˜ë¦¬
                         selectTower(towers, towerId, selectedTowerIndex, ui);
                     }
 
@@ -647,14 +647,14 @@ void GameManager::startPreparationPhase()
                             towerX = selectedX;
                             towerY = selectedY;
 
-                            std::cout << "Å¸¿ö°¡ ¼±ÅÃµÇ¾ú½À´Ï´Ù. 1 Å°¸¦ ´­·¯ ¾÷±×·¹ÀÌµåÇÏ°Å³ª S Å°¸¦ ´­·¯ ÆÇ¸ÅÇÏ¼¼¿ä. U Å°¸¦ ´Ù½Ã ´­·¯ ¼±ÅÃÀ» ÇØÁ¦ÇÕ´Ï´Ù.\n";
-                            ui.setInfoText({ "Å¸¿ö°¡ ¼±ÅÃµÇ¾ú½À´Ï´Ù. 1 Å°¸¦ ´­·¯ ¾÷±×·¹ÀÌµåÇÏ°Å³ª S Å°¸¦ ´­·¯ ÆÇ¸ÅÇÏ¼¼¿ä. U Å°¸¦ ´Ù½Ã ´­·¯ ¼±ÅÃÀ» ÇØÁ¦ÇÕ´Ï´Ù.\n","...","..." });
+                            std::cout << "íƒ€ì›Œê°€ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤. 1 í‚¤ë¥¼ ëˆŒëŸ¬ ì—…ê·¸ë ˆì´ë“œí•˜ê±°ë‚˜ S í‚¤ë¥¼ ëˆŒëŸ¬ íŒë§¤í•˜ì„¸ìš”. U í‚¤ë¥¼ ë‹¤ì‹œ ëˆŒëŸ¬ ì„ íƒì„ í•´ì œí•©ë‹ˆë‹¤.\n";
+                            ui.setInfoText({ "íƒ€ì›Œê°€ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤. 1 í‚¤ë¥¼ ëˆŒëŸ¬ ì—…ê·¸ë ˆì´ë“œí•˜ê±°ë‚˜ S í‚¤ë¥¼ ëˆŒëŸ¬ íŒë§¤í•˜ì„¸ìš”. U í‚¤ë¥¼ ë‹¤ì‹œ ëˆŒëŸ¬ ì„ íƒì„ í•´ì œí•©ë‹ˆë‹¤.\n","...","..." });
                             while (inTowerSelectionMode)
                             {
                                 sf::Event towerEvent;
                                 while (ui.getWindow().pollEvent(towerEvent))
                                 {
-                                    // **TGUI ÀÌº¥Æ® Ã³¸® Ãß°¡**
+                                    // **TGUI ì´ë²¤íŠ¸ ì²˜ë¦¬ ì¶”ê°€**
                                     ui.gui.handleEvent(towerEvent);
 
                                     if (towerEvent.type == sf::Event::KeyPressed)
@@ -662,20 +662,20 @@ void GameManager::startPreparationPhase()
                                         if (towerEvent.key.code == sf::Keyboard::Num1)
                                         {
                                             towerIt->upgrade(gold, map, towers,1);
-                                            std::cout << "Å¸¿ö°¡ ¾÷±×·¹ÀÌµåµÇ¾ú½À´Ï´Ù.\n";
+                                            std::cout << "íƒ€ì›Œê°€ ì—…ê·¸ë ˆì´ë“œë˜ì—ˆìŠµë‹ˆë‹¤.\n";
                                             inTowerSelectionMode = false;
                                         }
                                         else if (towerEvent.key.code == sf::Keyboard::Num2)
                                         {
                                             towerIt->upgrade(gold, map, towers,2);
-                                            std::cout << "Å¸¿ö°¡ ¾÷±×·¹ÀÌµåµÇ¾ú½À´Ï´Ù.\n";
+                                            std::cout << "íƒ€ì›Œê°€ ì—…ê·¸ë ˆì´ë“œë˜ì—ˆìŠµë‹ˆë‹¤.\n";
                                             inTowerSelectionMode = false;
                                         }
                                         else if (towerEvent.key.code == sf::Keyboard::S)
                                         {
                                             int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
                                             gold += refundAmount;
-                                            std::cout << "Å¸¿ö°¡ ÆÇ¸ÅµÇ¾ú½À´Ï´Ù. ¹İÈ¯µÈ °ñµå: " << refundAmount << "\n";
+                                            std::cout << "íƒ€ì›Œê°€ íŒë§¤ë˜ì—ˆìŠµë‹ˆë‹¤. ë°˜í™˜ëœ ê³¨ë“œ: " << refundAmount << "\n";
 
                                             map[towerY][towerX] = "O";
                                             placedTowers.erase(towerIt);
@@ -691,8 +691,8 @@ void GameManager::startPreparationPhase()
                         }
                         else
                         {
-                            std::cout << "ÇöÀç À§Ä¡¿¡ Å¸¿ö°¡ ¾ø½À´Ï´Ù.\n";
-                            ui.setInfoText({ "ÇöÀç À§Ä¡¿¡ Å¸¿ö°¡ ¾ø½À´Ï´Ù.\n","...","..." });
+                            std::cout << "í˜„ì¬ ìœ„ì¹˜ì— íƒ€ì›Œê°€ ì—†ìŠµë‹ˆë‹¤.\n";
+                            ui.setInfoText({ "í˜„ì¬ ìœ„ì¹˜ì— íƒ€ì›Œê°€ ì—†ìŠµë‹ˆë‹¤.\n","...","..." });
                         }
                     }
                     else if (event.key.code == sf::Keyboard::Enter && selectedTowerIndex >= 0)
@@ -703,45 +703,45 @@ void GameManager::startPreparationPhase()
                 }
             }
 
-            // **¸¶¿ì½º Å¬¸¯ ÀÌº¥Æ® Ã³¸®**
+            // **ë§ˆìš°ìŠ¤ í´ë¦­ ì´ë²¤íŠ¸ ì²˜ë¦¬**
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    // ¸¶¿ì½º ¿ŞÂÊ ¹öÆ° Å¬¸¯ ½Ã Ã³¸®
+                    // ë§ˆìš°ìŠ¤ ì™¼ìª½ ë²„íŠ¼ í´ë¦­ ì‹œ ì²˜ë¦¬
                     sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
                     float mouseX = static_cast<float>(mousePosition.x);
                     float mouseY = static_cast<float>(mousePosition.y);
 
-                    // ÀÌ¼Ò¸ŞÆ®¸¯ ÁÂÇ¥ º¯È¯À» À§ÇÑ º¸Á¤°ª
+                    // ì´ì†Œë©”íŠ¸ë¦­ ì¢Œí‘œ ë³€í™˜ì„ ìœ„í•œ ë³´ì •ê°’
                     float mapWidth = static_cast<float>(mapWithUnits[0].size());
                     float mapHeight = static_cast<float>(mapWithUnits.size());
 
-                    // È­¸é Áß½É ÁÂÇ¥
+                    // í™”ë©´ ì¤‘ì‹¬ ì¢Œí‘œ
                     float centerX = ui.getWindow().getSize().x / 2.0f;
-                    float centerY = 0.0f; // ¸ÊÀÌ È­¸é »ó´Ü¿¡¼­ ½ÃÀÛÇÑ´Ù°í °¡Á¤
+                    float centerY = 0.0f; // ë§µì´ í™”ë©´ ìƒë‹¨ì—ì„œ ì‹œì‘í•œë‹¤ê³  ê°€ì •
 
-                    // È­¸é ÁÂÇ¥¸¦ Å¸ÀÏ ÁÂÇ¥·Î º¯È¯
+                    // í™”ë©´ ì¢Œí‘œë¥¼ íƒ€ì¼ ì¢Œí‘œë¡œ ë³€í™˜
                     float tempX = (mouseX - centerX) / (ui.tileWidth / 2.0f);
                     float tempY = mouseY / (ui.tileHeight / 2.0f);
 
                     float tileX = (tempX + tempY) / 2.0f - 2;
                     float tileY = (tempY - tempX) / 2.0f - 3.5;
 
-                    // Å¸ÀÏ ÁÂÇ¥¸¦ Á¤¼ö·Î º¯È¯
+                    // íƒ€ì¼ ì¢Œí‘œë¥¼ ì •ìˆ˜ë¡œ ë³€í™˜
                     int clickedTileX = static_cast<int>(std::floor(tileX));
                     int clickedTileY = static_cast<int>(std::floor(tileY));
 
-                    // Å¸ÀÏ ÁÂÇ¥°¡ ¸Ê ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎ
+                    // íƒ€ì¼ ì¢Œí‘œê°€ ë§µ ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸
                     if (clickedTileX >= 0 && clickedTileX < static_cast<int>(mapWidth) &&
                         clickedTileY >= 0 && clickedTileY < static_cast<int>(mapHeight))
                     {
                         selectedX = clickedTileX;
                         selectedY = clickedTileY;
-                        std::cout << "Å¸ÀÏ ¼±ÅÃµÊ: (" << selectedX << ", " << selectedY << ")\n";
-                        ui.setInfoText({ "¼öºñ ¿şÀÌºê\n",
-                            "Å¸ÀÏ ¼±ÅÃµÊ: [" + std::to_string(selectedX) + ", " + std::to_string(selectedY) + "]\n",
-                            "1¹ø : °Ë»ç Å¸¿ö \n2¹ø : ±Ã¼ö Å¸¿ö \n3¹ø : ¸¶¹ı»ç Å¸¿ö" });
+                        std::cout << "íƒ€ì¼ ì„ íƒë¨: (" << selectedX << ", " << selectedY << ")\n";
+                        ui.setInfoText({ "ìˆ˜ë¹„ ì›¨ì´ë¸Œ\n",
+                            "íƒ€ì¼ ì„ íƒë¨: [" + std::to_string(selectedX) + ", " + std::to_string(selectedY) + "]\n",
+                            "1ë²ˆ : ê²€ì‚¬ íƒ€ì›Œ \n2ë²ˆ : ê¶ìˆ˜ íƒ€ì›Œ \n3ë²ˆ : ë§ˆë²•ì‚¬ íƒ€ì›Œ" });
                     }
                 }
             }
@@ -750,19 +750,19 @@ void GameManager::startPreparationPhase()
 }
 
 void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType) {
-    // ¸ğµç Å¸¿ö Ã³¸®
+    // ëª¨ë“  íƒ€ì›Œ ì²˜ë¦¬
     for (auto& tower : placedTowers) {
-        if (tower.getIsNoDamage() == 1) continue; // ¹öÇÁ Å¸¿ö´Â °ø°İÇÏÁö ¾ÊÀ½
+        if (tower.getIsNoDamage() == 1) continue; // ë²„í”„ íƒ€ì›ŒëŠ” ê³µê²©í•˜ì§€ ì•ŠìŒ
 
-        if (currentTick % tower.getTimePerAttack() != 0) continue; // °ø°İ Æ½ÀÌ ¾Æ´Ï¸é ³Ñ¾î°¨
+        if (currentTick % tower.getTimePerAttack() != 0) continue; // ê³µê²© í‹±ì´ ì•„ë‹ˆë©´ ë„˜ì–´ê°
 
         int range = tower.getAttackRange();
         int damage = tower.getDamage();
         int targetAmount = tower.getTargetAmount();
         int targetsAttacked = 0;
 
-        // **±âº» °ø°İ Ã³¸®**
-        std::vector<Unit*> aoeTargets; // ¹üÀ§ °ø°İ ´ë»ó ÀúÀå
+        // **ê¸°ë³¸ ê³µê²© ì²˜ë¦¬**
+        std::vector<Unit*> aoeTargets; // ë²”ìœ„ ê³µê²© ëŒ€ìƒ ì €ì¥
         for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;) {
             int unitX = it->getX();
             int unitY = it->getY();
@@ -774,11 +774,11 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range) {
-                // ±âº» µ¥¹ÌÁö Ã³¸®
+                // ê¸°ë³¸ ë°ë¯¸ì§€ ì²˜ë¦¬
                 int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
                 it->reduceHp(newHp);
 
-                // À¯´Ö Á¦°Å Ã³¸®
+                // ìœ ë‹› ì œê±° ì²˜ë¦¬
                 if (it->getHp() <= 0) {
                     if (currentWaveType) {
                         gold += it->getKillReward();
@@ -787,25 +787,25 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                     continue;
                 }
 
-                aoeTargets.push_back(&(*it)); // ¹üÀ§ °ø°İ ´ë»óÀ» ÀúÀå
+                aoeTargets.push_back(&(*it)); // ë²”ìœ„ ê³µê²© ëŒ€ìƒì„ ì €ì¥
                 targetsAttacked++;
             }
             ++it;
         }
 
-        // **¹üÀ§ °ø°İ Ã³¸®**
+        // **ë²”ìœ„ ê³µê²© ì²˜ë¦¬**
         if (tower.getIsNoDamage() == 2) {
-            for (Unit* target : aoeTargets) { // ±âº» °ø°İ ´ë»óÀ¸·ÎºÎÅÍ ¹üÀ§ °ø°İ ¼öÇà
+            for (Unit* target : aoeTargets) { // ê¸°ë³¸ ê³µê²© ëŒ€ìƒìœ¼ë¡œë¶€í„° ë²”ìœ„ ê³µê²© ìˆ˜í–‰
                 for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); ) {
                     if (&(*aoeIt) == target) {
                         ++aoeIt;
-                        continue; // ±âº» °ø°İ ´ë»óÀº Á¦¿Ü
+                        continue; // ê¸°ë³¸ ê³µê²© ëŒ€ìƒì€ ì œì™¸
                     }
 
                     int aoeDistanceSquared = (target->getX() - aoeIt->getX()) * (target->getX() - aoeIt->getX()) +
                         (target->getY() - aoeIt->getY()) * (target->getY() - aoeIt->getY());
 
-                    if (aoeDistanceSquared <= 1 * 1) { // ¹üÀ§ °ø°İ °Å¸® 1Ä­
+                    if (aoeDistanceSquared <= 1 * 1) { // ë²”ìœ„ ê³µê²© ê±°ë¦¬ 1ì¹¸
                         const int reducedDamage = damage - 1;
                         int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);
                         aoeIt->reduceHp(finalAoeDamage);
@@ -840,7 +840,7 @@ void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetU
     int unitX = targetUnit.getX();
     int unitY = targetUnit.getY();
 
-    // È­¸é ÁÂÇ¥·Î º¯È¯ (ÀÌ¼Ò¸ŞÆ®¸¯ º¯È¯ Àû¿ë)
+    // í™”ë©´ ì¢Œí‘œë¡œ ë³€í™˜ (ì´ì†Œë©”íŠ¸ë¦­ ë³€í™˜ ì ìš©)
     float startX = (towerX - towerY) * (ui.tileWidth / 2.0f) + ui.getWindow().getSize().x / 2.0f;
     float startY = (towerX + towerY) * (ui.tileHeight / 2.0f);
 
@@ -852,8 +852,8 @@ void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetU
     startY += projectileOffsetY;
     targetY += projectileOffsetY;
 
-    // Åõ»çÃ¼ »ı¼º
-    float speed = 400.0f; // Åõ»çÃ¼ ¼Óµµ (Å©°Ô ¼³Á¤ÇÏ¿© ºü¸£°Ô ÀÌµ¿)
+    // íˆ¬ì‚¬ì²´ ìƒì„±
+    float speed = 400.0f; // íˆ¬ì‚¬ì²´ ì†ë„ (í¬ê²Œ ì„¤ì •í•˜ì—¬ ë¹ ë¥´ê²Œ ì´ë™)
     Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture());
 
     projectiles.push_back(projectile);
@@ -867,7 +867,7 @@ void GameManager::updateProjectiles(sf::Time deltaTime)
 
         if (it->hasReachedTarget())
         {
-            it = projectiles.erase(it); // Åõ»çÃ¼ Á¦°Å
+            it = projectiles.erase(it); // íˆ¬ì‚¬ì²´ ì œê±°
         }
         else
         {
@@ -882,18 +882,18 @@ int GameManager::calculateDamage(bool damagetype, int damage, const Unit& unit)
     int actualDamage = 1;
 
 
-    if (damagetype == 0) //¹°¸® µ¥¹ÌÁö
+    if (damagetype == 0) //ë¬¼ë¦¬ ë°ë¯¸ì§€
     {
         actualDamage = damage - unit.getArmor();
     }
-    else if (damagetype == 1) //¸¶¹ı µ¥¹ÌÁö
+    else if (damagetype == 1) //ë§ˆë²• ë°ë¯¸ì§€
     {
         actualDamage = damage - unit.getResist();
     }
 
-    actualDamage = actualDamage > 0 ? actualDamage : 1;  // ÃÖ¼Ò µ¥¹ÌÁö º¸Àå
+    actualDamage = actualDamage > 0 ? actualDamage : 1;  // ìµœì†Œ ë°ë¯¸ì§€ ë³´ì¥
 
-    // À¯´ÖÀÇ ÁÙ¾îµç Ã¼·Â ¹İÈ¯
+    // ìœ ë‹›ì˜ ì¤„ì–´ë“  ì²´ë ¥ ë°˜í™˜
     return unit.getHp() - actualDamage;
 
 }
@@ -904,7 +904,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
     bool waveOver = false;
     int previousPlayerLife = playerLife;
     
-    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// À¯´Ö »ı»ê ´ë±â¿­ ÃÊ±âÈ­
+    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// ìœ ë‹› ìƒì‚° ëŒ€ê¸°ì—´ ì´ˆê¸°í™”
 
     while (!waveOver)
     {
@@ -912,26 +912,26 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 
         updateAttackUnits(activeUnits);
 
-        // Å¸¿ö°¡ À¯´ÖÀ» °ø°İ
+        // íƒ€ì›Œê°€ ìœ ë‹›ì„ ê³µê²©
         attackUnits(activeUnits, currentTick, currentwaveType);
 
-        // UI ¾÷µ¥ÀÌÆ® ¹× ÄÜ¼Ö Ãâ·Â
+        // UI ì—…ë°ì´íŠ¸ ë° ì½˜ì†” ì¶œë ¥
         updateGameState(activeUnits);
-        updateAndPrintMap(activeUnits); // °ø°İ ¿şÀÌºê¿¡¼­µµ ¸Ê »óÅÂ¸¦ Ãâ·Â
+        updateAndPrintMap(activeUnits); // ê³µê²© ì›¨ì´ë¸Œì—ì„œë„ ë§µ ìƒíƒœë¥¼ ì¶œë ¥
 
         waveOver = isAttackWaveOver(activeUnits);
-        if (previousPlayerLife > playerLife) waveOver = true;// °ø°İ ¼º°ø ½Ã °ø°İ ¿şÀÌºê ¹Ù·Î Á¾·á
+        if (previousPlayerLife > playerLife) waveOver = true;// ê³µê²© ì„±ê³µ ì‹œ ê³µê²© ì›¨ì´ë¸Œ ë°”ë¡œ ì¢…ë£Œ
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         currentTick++;
     }
 
-    std::cout << "°ø°İ ¿şÀÌºê Á¾·á!\n";
+    std::cout << "ê³µê²© ì›¨ì´ë¸Œ ì¢…ë£Œ!\n";
     if (previousPlayerLife > playerLife)
     {
         gold = static_cast<int>(gold * 1.2);
-        std::cout << "°ø°İ ¼º°ø! ¼öºñ ÀçÈ­°¡ Áõ°¡Çß½À´Ï´Ù. ÇöÀç °ñµå: " << gold << "\n";
+        std::cout << "ê³µê²© ì„±ê³µ! ìˆ˜ë¹„ ì¬í™”ê°€ ì¦ê°€í–ˆìŠµë‹ˆë‹¤. í˜„ì¬ ê³¨ë“œ: " << gold << "\n";
     }
 }
 
@@ -944,7 +944,7 @@ void GameManager::handleAttackInput()
         if (event.type == sf::Event::Closed)
         {
             ui.getWindow().close();
-            exit(0); // ÇÁ·Î±×·¥ Á¾·á
+            exit(0); // í”„ë¡œê·¸ë¨ ì¢…ë£Œ
         }
         else if (event.type == sf::Event::KeyPressed)
         {
@@ -968,11 +968,11 @@ void GameManager::handleAttackInput()
                     {
                         attackGold -= unitType.getProductionCost();
                         unitProductionQueue.push(unitId);
-                        std::cout << unitType.getUnitName() << " À¯´ÖÀÌ »ı»ê ´ë±â¿­¿¡ Ãß°¡µÇ¾ú½À´Ï´Ù.\n";
+                        std::cout << unitType.getUnitName() << " ìœ ë‹›ì´ ìƒì‚° ëŒ€ê¸°ì—´ì— ì¶”ê°€ë˜ì—ˆìŠµë‹ˆë‹¤.\n";
                     }
                     else
                     {
-                        std::cout << "ÀçÈ­°¡ ºÎÁ·ÇÏ¿© À¯´ÖÀ» »ı»êÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
+                        std::cout << "ì¬í™”ê°€ ë¶€ì¡±í•˜ì—¬ ìœ ë‹›ì„ ìƒì‚°í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
                     }
                 }
             }
@@ -982,7 +982,7 @@ void GameManager::handleAttackInput()
 
 void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
 {
-    // ½ºÆù ÁöÁ¡ÀÌ ºñ¾î ÀÖ´ÂÁö È®ÀÎ
+    // ìŠ¤í° ì§€ì ì´ ë¹„ì–´ ìˆëŠ”ì§€ í™•ì¸
     bool sOccupied = false;
     for (const auto& unit : activeUnits)
     {
@@ -993,7 +993,7 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
         }
     }
 
-    // ½ºÆù ÁöÁ¡ÀÌ ºñ¾î ÀÖ°í, ´ë±â¿­¿¡ À¯´ÖÀÌ ÀÖÀ» °æ¿ì¿¡¸¸ À¯´ÖÀ» »ı¼º
+    // ìŠ¤í° ì§€ì ì´ ë¹„ì–´ ìˆê³ , ëŒ€ê¸°ì—´ì— ìœ ë‹›ì´ ìˆì„ ê²½ìš°ì—ë§Œ ìœ ë‹›ì„ ìƒì„±
     if (!sOccupied && !unitProductionQueue.empty())
     {
         int unitId = unitProductionQueue.front();
@@ -1012,24 +1012,24 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
         }
     }
 
-    // À¯´Ö ¾÷µ¥ÀÌÆ®
+    // ìœ ë‹› ì—…ë°ì´íŠ¸
     for (auto it = activeUnits.begin(); it != activeUnits.end();)
     {
         bool arrived = it->update();
         if (arrived)
         {
-            std::cout << it->getName() << " À¯´ÖÀÌ ¸ñÀûÁö¿¡ µµ´ŞÇß½À´Ï´Ù!\n";
+            std::cout << it->getName() << " ìœ ë‹›ì´ ëª©ì ì§€ì— ë„ë‹¬í–ˆìŠµë‹ˆë‹¤!\n";
 
-            // ÇÃ·¹ÀÌ¾î ¶óÀÌÇÁ °¨¼Ò Ãß°¡**
+            // í”Œë ˆì´ì–´ ë¼ì´í”„ ê°ì†Œ ì¶”ê°€**
             playerLife -= 1;
-            std::cout << "ÇÃ·¹ÀÌ¾î ¶óÀÌÇÁ°¡ 1 °¨¼ÒÇß½À´Ï´Ù. ÇöÀç ¶óÀÌÇÁ: " << playerLife << "\n";
+            std::cout << "í”Œë ˆì´ì–´ ë¼ì´í”„ê°€ 1 ê°ì†Œí–ˆìŠµë‹ˆë‹¤. í˜„ì¬ ë¼ì´í”„: " << playerLife << "\n";
 
-            // ¶óÀÌÇÁ°¡ 0 ÀÌÇÏÀÌ¸é °ÔÀÓ Á¾·á**
+            // ë¼ì´í”„ê°€ 0 ì´í•˜ì´ë©´ ê²Œì„ ì¢…ë£Œ**
             if (playerLife <= 0)
             {
                 std::cout << "Game Over!\n";
                 ui.getWindow().close();
-                exit(0); // ÇÁ·Î±×·¥ Á¾·á
+                exit(0); // í”„ë¡œê·¸ë¨ ì¢…ë£Œ
             }
 
             it = activeUnits.erase(it);
@@ -1068,8 +1068,8 @@ void GameManager::handleTowerButtonClicked()
     }
     else
     {
-        std::cout << "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n";
-        ui.setInfoText({ "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n","...","..."});
+        std::cout << "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n";
+        ui.setInfoText({ "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n","...","..."});
     }
 }
 void GameManager::handleOneButtonClicked()
@@ -1080,8 +1080,8 @@ void GameManager::handleOneButtonClicked()
     }
     else
     {
-        std::cout << "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n";
-        ui.setInfoText({ "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n","...","..." });
+        std::cout << "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n";
+        ui.setInfoText({ "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n","...","..." });
     }
 }
 void GameManager::handleTwoButtonClicked()
@@ -1092,8 +1092,8 @@ void GameManager::handleTwoButtonClicked()
     }
     else
     {
-        std::cout << "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n";
-        ui.setInfoText({ "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n","...","..." });
+        std::cout << "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n";
+        ui.setInfoText({ "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n","...","..." });
     }
 }
 void GameManager::handleThreeButtonClicked()
@@ -1104,40 +1104,40 @@ void GameManager::handleThreeButtonClicked()
     }
     else
     {
-        std::cout << "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n";
-        ui.setInfoText({ "Å¸¿ö ¼³Ä¡ ¸ğµå°¡ ¾Æ´Õ´Ï´Ù.\n","...","..." });
+        std::cout << "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n";
+        ui.setInfoText({ "íƒ€ì›Œ ì„¤ì¹˜ ëª¨ë“œê°€ ì•„ë‹™ë‹ˆë‹¤.\n","...","..." });
     }
 }
 bool GameManager::isTileSelectable(int x, int y)
 {
-    // ¸Ê ¹üÀ§ ³»ÀÎÁö È®ÀÎ
+    // ë§µ ë²”ìœ„ ë‚´ì¸ì§€ í™•ì¸
     if (x < 0 || x >= static_cast<int>(map[0].size()) || y < 0 || y >= static_cast<int>(map.size()))
         return false;
 
-    // ÇØ´ç Å¸ÀÏÀÇ °ª °¡Á®¿À±â
+    // í•´ë‹¹ íƒ€ì¼ì˜ ê°’ ê°€ì ¸ì˜¤ê¸°
     std::string tileValue = map[y][x];
 
-    // Å¸¿ö°¡ ¼³Ä¡ °¡´ÉÇÑ Å¸ÀÏÀÎÁö ¶Ç´Â ÀÌ¹Ì Å¸¿ö°¡ ¼³Ä¡µÈ Å¸ÀÏÀÎÁö È®ÀÎ
+    // íƒ€ì›Œê°€ ì„¤ì¹˜ ê°€ëŠ¥í•œ íƒ€ì¼ì¸ì§€ ë˜ëŠ” ì´ë¯¸ íƒ€ì›Œê°€ ì„¤ì¹˜ëœ íƒ€ì¼ì¸ì§€ í™•ì¸
     if (tileValue == "O")
     {
-        // ¼³Ä¡ °¡´ÉÇÑ Å¸ÀÏ
+        // ì„¤ì¹˜ ê°€ëŠ¥í•œ íƒ€ì¼
         return true;
     }
     else
     {
-        // ÀÌ¹Ì ¼³Ä¡µÈ Å¸¿ö°¡ ÀÖ´ÂÁö È®ÀÎ
+        // ì´ë¯¸ ì„¤ì¹˜ëœ íƒ€ì›Œê°€ ìˆëŠ”ì§€ í™•ì¸
         auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
             [x, y](const PlacedTower& tower) {
                 return tower.getX() == x && tower.getY() == y;
             });
         if (towerIt != placedTowers.end())
         {
-            // Å¸¿ö°¡ ¼³Ä¡µÈ Å¸ÀÏ
+            // íƒ€ì›Œê°€ ì„¤ì¹˜ëœ íƒ€ì¼
             return true;
         }
     }
 
-    // Å¸¿ö ¼³Ä¡ ºÒ°¡´ÉÇÑ Å¸ÀÏ
+    // íƒ€ì›Œ ì„¤ì¹˜ ë¶ˆê°€ëŠ¥í•œ íƒ€ì¼
     return false;
 }
 void GameManager::selectTower(const std::vector<Tower>& towers, int towerId, int& selectedTowerIndex, UI& ui)
@@ -1146,17 +1146,17 @@ void GameManager::selectTower(const std::vector<Tower>& towers, int towerId, int
         [towerId](const Tower& tower) { return tower.getId() == towerId; });
 
     if (it != towers.end()) {
-        const Tower& selectedTower = *it; // const Tower& »ç¿ë
+        const Tower& selectedTower = *it; // const Tower& ì‚¬ìš©
         selectedTowerIndex = std::distance(towers.begin(), it);
-        std::cout << "Å¸¿ö " << selectedTower.getTowerName() << " ÀÌ ¼±ÅÃµÇ¾ú½À´Ï´Ù.\n";
-        ui.setInfoText({ selectedTower.getTool() + "Å¸¿ö°¡ ¼±ÅÃµÇ¾ú½À´Ï´Ù.\n", selectedTower.getTool2(), "..." });
+        std::cout << "íƒ€ì›Œ " << selectedTower.getTowerName() << " ì´ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤.\n";
+        ui.setInfoText({ selectedTower.getTool() + "íƒ€ì›Œê°€ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤.\n", selectedTower.getTool2(), "..." });
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     else {
-        // Å¸¿ö°¡ Á¸ÀçÇÏÁö ¾ÊÀ» ¶§
-        std::cout << "ÇØ´ç Å¸¿ö°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.\n";
+        // íƒ€ì›Œê°€ ì¡´ì¬í•˜ì§€ ì•Šì„ ë•Œ
+        std::cout << "í•´ë‹¹ íƒ€ì›Œê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.\n";
 
-        // 1ÃÊ ´ë±â
+        // 1ì´ˆ ëŒ€ê¸°
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
@@ -1176,31 +1176,31 @@ void GameManager::attemptPlaceTower()
 
                 map[selectedY][selectedX] = newTower.getTowerName();
                 placedTowers.push_back(newTower);
-                std::cout << newTower.getTowerName() << " Å¸¿ö°¡ ¼³Ä¡µÇ¾ú½À´Ï´Ù!\n";
+                std::cout << newTower.getTowerName() << " íƒ€ì›Œê°€ ì„¤ì¹˜ë˜ì—ˆìŠµë‹ˆë‹¤!\n";
                 
               
-                ui.setInfoText({ newTower.getTool() + " Å¸¿ö°¡ ¼³Ä¡µÇ¾ú½À´Ï´Ù!\n",
+                ui.setInfoText({ newTower.getTool() + " íƒ€ì›Œê°€ ì„¤ì¹˜ë˜ì—ˆìŠµë‹ˆë‹¤!\n",
                     newTower.getTool2(),
-                    "°ø°İ·Â: " + std::to_string(newTower.getDamage()) +
-                    "\n°ø°İ ¼Óµµ: " + std::to_string(newTower.getTimePerAttack()) +
-                    "\n»ç°Å¸®: " + std::to_string(newTower.getAttackRange()) +
-                    "\n°ø°İ À¯Çü: " + newTower.attackType() });
+                    "ê³µê²©ë ¥: " + std::to_string(newTower.getDamage()) +
+                    "\nê³µê²© ì†ë„: " + std::to_string(newTower.getTimePerAttack()) +
+                    "\nì‚¬ê±°ë¦¬: " + std::to_string(newTower.getAttackRange()) +
+                    "\nê³µê²© ìœ í˜•: " + newTower.attackType() });
             }
             else
             {
-                std::cout << "Å¸¿ö¸¦ ¼³Ä¡ÇÒ °ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.\n";
-                ui.setInfoText({"Å¸¿ö¸¦ ¼³Ä¡ÇÒ °ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.\n", "...", "..."});
+                std::cout << "íƒ€ì›Œë¥¼ ì„¤ì¹˜í•  ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.\n";
+                ui.setInfoText({"íƒ€ì›Œë¥¼ ì„¤ì¹˜í•  ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.\n", "...", "..."});
             }
         }
         else
         {
-            std::cout << "ÇØ´ç À§Ä¡¿¡ Å¸¿ö¸¦ ¼³Ä¡ÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
-            ui.setInfoText({ "ÇØ´ç À§Ä¡¿¡ Å¸¿ö¸¦ ¼³Ä¡ÇÒ ¼ö ¾ø½À´Ï´Ù.\n","...","..." });
+            std::cout << "í•´ë‹¹ ìœ„ì¹˜ì— íƒ€ì›Œë¥¼ ì„¤ì¹˜í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+            ui.setInfoText({ "í•´ë‹¹ ìœ„ì¹˜ì— íƒ€ì›Œë¥¼ ì„¤ì¹˜í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n","...","..." });
         }
     }
     else
     {
-        std::cout << "Å¸¿ö°¡ ¼±ÅÃµÇÁö ¾Ê¾Ò½À´Ï´Ù.\n";
-        ui.setInfoText({ "Å¸¿ö°¡ ¼±ÅÃµÇÁö ¾Ê¾Ò½À´Ï´Ù.\n","...","..." });
+        std::cout << "íƒ€ì›Œê°€ ì„ íƒë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.\n";
+        ui.setInfoText({ "íƒ€ì›Œê°€ ì„ íƒë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.\n","...","..." });
     }
 }

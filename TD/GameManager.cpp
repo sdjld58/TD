@@ -656,8 +656,8 @@ void GameManager::startPreparationPhase()
                         if (towerIt != placedTowers.end())
                         {
                             bool inTowerSelectionMode = true;
-                            towerX = selectedX;
-                            towerY = selectedY;
+                            int towerX = selectedX;
+                            int towerY = selectedY;
 
                             std::cout << "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n";
                             ui.setInfoText({ "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n","...","..." });

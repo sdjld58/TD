@@ -1,5 +1,6 @@
 #include "UI.h"
 #include <iostream>
+#include <Windows.h>
 
 void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 {
@@ -415,15 +416,36 @@ void UI::drawProjectiles(const std::vector<Projectile>& projectiles)
 }
 
 void UI::setInfoText(std::initializer_list<std::string> infoSentences) {
-    static std::locale loc("");
-    auto& facet = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
-
     // 기존 infoTexts 벡터 초기화
     infoTexts.clear();
 
-    // 문자열을 변환하여 벡터에 추가
+    // 로케일 설정 (필요한 경우)
+    // std::locale::global(std::locale(""));
+
     for (const auto& sentence : infoSentences) {
-        infoTexts.push_back(std::wstring_convert<std::remove_reference<decltype(facet)>::type, wchar_t>(&facet).from_bytes(sentence));
+        // 만약 입력 문자열이 UTF-8이 아니라면 CP_ACP 사용
+        int size_needed = MultiByteToWideChar(
+            CP_ACP,
+            0,
+            sentence.c_str(),
+            -1,
+            NULL,
+            0
+        );
+
+        if (size_needed > 0) {
+            std::wstring wstr(size_needed - 1, 0);
+            MultiByteToWideChar(
+                CP_ACP,
+                0,
+                sentence.c_str(),
+                -1,
+                &wstr[0],
+                size_needed
+            );
+
+            infoTexts.push_back(wstr);
+        }
     }
 }
 

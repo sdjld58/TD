@@ -176,7 +176,7 @@ void UI::drawButtons()
         tgui::Font font("resources/fonts/BMDOHYEON_ttf.ttf");
 
         auto firstUnitButton = tgui::Button::create("A");
-        firstUnitButton->setSize(120, 70);
+        firstUnitButton->setSize(80, 70);
         firstUnitButton->setPosition(windowWidth - 200, 380);
         firstUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
         firstUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
@@ -185,7 +185,7 @@ void UI::drawButtons()
         firstUnitButton->getRenderer()->setFont(font); // 폰트 설정
 
         auto secondUnitButton = tgui::Button::create("B");
-        secondUnitButton->setSize(120, 70);
+        secondUnitButton->setSize(80, 70);
         secondUnitButton->setPosition(windowWidth - 300, 380);
         secondUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
         secondUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
@@ -194,7 +194,7 @@ void UI::drawButtons()
         secondUnitButton->getRenderer()->setFont(font); // 폰트 설정
 
         auto thirdUnitButton = tgui::Button::create("C");
-        thirdUnitButton->setSize(120, 70);
+        thirdUnitButton->setSize(80, 70);
         thirdUnitButton->setPosition(windowWidth - 400, 380);
         thirdUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
         thirdUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경

@@ -13,16 +13,20 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
     // UI 초기화
     ui.initialize(map);
 
-    ui.onTowerButtonClicked = [this]() {
+    ui.onTowerButtonClicked = [this]()
+        {
         this->handleTowerButtonClicked();
         };
-    ui.onOneButtonClicked = [this]() {
+    ui.onOneButtonClicked = [this]() 
+        {
         this->handleOneButtonClicked();
         };
-    ui.onTwoButtonClicked = [this]() {
+    ui.onTwoButtonClicked = [this]()
+        {
         this->handleTwoButtonClicked();
         };
-    ui.onThreeButtonClicked = [this]() {
+    ui.onThreeButtonClicked = [this]()
+        {
         this->handleThreeButtonClicked();
         };
 }
@@ -582,8 +586,9 @@ void GameManager::startPreparationPhase()
 {
     std::vector<std::vector<std::string>> mapWithUnits = map;
     isPreparation = true;
-    isTowerPlacementMode = false;  // 타워 설치 모드 상태 변수
+    isTowerPlacementMode = true;  // 타워 설치 모드 상태 변수
     bool isTowerSelected = false;
+    int selectedOption = -1;
 
     selectedX = mapWithUnits[0].size() / 2;
     selectedY = mapWithUnits.size() / 2;
@@ -597,7 +602,7 @@ void GameManager::startPreparationPhase()
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
-            isTowerPlacementMode = true;
+            
 
             // **TGUI 이벤트 처리 추가**
             ui.gui.handleEvent(event);
@@ -651,75 +656,22 @@ void GameManager::startPreparationPhase()
                     else
                     {
                         auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
-                            [this](const PlacedTower& tower) {
+                            [this](const PlacedTower& tower) 
+                            {
                                 return tower.getX() == selectedX && tower.getY() == selectedY;
                             });
-
-                        if (towerIt != placedTowers.end())
-                        {
-                            bool inTowerSelectionMode = true;
-                            int towerX = selectedX;
-                            int towerY = selectedY;
-
-                            std::cout << "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n";
-                            ui.setInfoText({ "타워가 선택되었습니다. 1 키를 눌러 업그레이드하거나 S 키를 눌러 판매하세요. U 키를 다시 눌러 선택을 해제합니다.\n","...","..." });
-                            while (inTowerSelectionMode)
-                            {
-                                sf::Event towerEvent;
-                                while (ui.getWindow().pollEvent(towerEvent))
-                                {
-                                    // **TGUI 이벤트 처리 추가**
-                                    ui.gui.handleEvent(towerEvent);
-
-                                    if (towerEvent.type == sf::Event::KeyPressed)
-                                    {
-                                        if (towerEvent.key.code == sf::Keyboard::Num1)
-                                        {
-                                            towerIt->upgrade(gold, map, towers,1);
-                                            std::cout << "타워가 업그레이드되었습니다.\n";
-                                            inTowerSelectionMode = false;
-                                        }
-                                        else if (towerEvent.key.code == sf::Keyboard::Num2)
-                                        {
-                                            towerIt->upgrade(gold, map, towers,2);
-                                            std::cout << "타워가 업그레이드되었습니다.\n";
-                                            inTowerSelectionMode = false;
-                                        }
-                                        else if (towerEvent.key.code == sf::Keyboard::S)
-                                        {
-                                            int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
-                                            gold += refundAmount;
-                                            std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
-
-                                            map[towerY][towerX] = "O";
-                                            placedTowers.erase(towerIt);
-                                            inTowerSelectionMode = false;
-                                        }
-                                        else if (towerEvent.key.code == sf::Keyboard::U)
-                                        {
-                                            inTowerSelectionMode = false;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            std::cout << "현재 위치에 타워가 없습니다.\n";
-                            ui.setInfoText({ "현재 위치에 타워가 없습니다.\n","...","..." });
-                        }
                     }
                 }
 
                 // Space 키로 타워 배치
-                else if (event.key.code == sf::Keyboard::Space && selectedTowerIndex >= 0)
+                else if (event.key.code == sf::Keyboard::Space && selectedTowerIndex >= 0 && isTowerPlacementMode == true)
                 {
                     attemptPlaceTower();
                 }
 
                 // 현재 선택된 타일에 있는 타워와 상호작용
                 auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
-                    [this](const PlacedTower& tower) 
+                    [this](const PlacedTower& tower)
                     {
                         return tower.getX() == selectedX && tower.getY() == selectedY;
                     });
@@ -727,46 +679,63 @@ void GameManager::startPreparationPhase()
                 // 타워가 있는지 확인하고 모드 설정
                 if (towerIt != placedTowers.end())
                 {
-                    // 타워가 있으면 업그레이드/판매 모드로 전환
-                    isTowerPlacementMode = false;
+                    isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
                 }
                 else
                 {
-                    // 타워가 없으면 설치 모드로 전환
-                    isTowerPlacementMode = true;
+                    isTowerPlacementMode = true; // 타워가 없으면 설치 모드로 전환
                 }
+
+                static int selectedOption = -1; // -1: 아무것도 선택하지 않음
 
                 if (towerIt != placedTowers.end())
                 {
-                    
+                    // 업그레이드/판매 선택
+                    if (event.key.code == sf::Keyboard::Num1)
+                    {
+                        selectedOption = 1; // 옵션 1 선택
+                        std::cout << "옵션 1 선택됨.\n";
+                    }
+                    else if (event.key.code == sf::Keyboard::Num2)
+                    {
+                        selectedOption = 2; // 옵션 2 선택
+                        std::cout << "옵션 2 선택됨.\n";
+                    }
+                    else if (event.key.code == sf::Keyboard::Num3)
+                    {
+                        selectedOption = 3; // 옵션 3 선택
+                        std::cout << "옵션 3 (판매) 선택됨.\n";
+                    }
+                    else if (event.key.code == sf::Keyboard::Space && selectedOption > 0) // Space로 실행
+                    {
+                        if (selectedOption == 1) // 업그레이드 (1번)
+                        {
+                            towerIt->upgrade(gold, map, towers, 1);
+                            std::cout << "타워가 업그레이드되었습니다.\n";
+                        }
+                        else if (selectedOption == 2) // 업그레이드 (2번)
+                        {
+                            towerIt->upgrade(gold, map, towers, 2);
+                            std::cout << "타워가 업그레이드되었습니다.\n";
+                        }
+                        else if (selectedOption == 3) // 타워 판매 (3번)
+                        {
+                            int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
+                            gold += refundAmount;
+                            std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
 
-                    // Num1/Num2로 업그레이드
-                    if (event.key.code == sf::Keyboard::Num1 && isTowerPlacementMode == false) // 업그레이드 (1번)
-                    {
-                        towerIt->upgrade(gold, map, towers, 1);
-    
-                    }
-                    else if (event.key.code == sf::Keyboard::Num2 && isTowerPlacementMode == false) // 업그레이드 (2번)
-                    {
-                        towerIt->upgrade(gold, map, towers, 2);
-                        
-                    }
-                    else if (event.key.code == sf::Keyboard::Num3 && isTowerPlacementMode == false) // 타워 판매 (3번)
-                    {
-                        int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
-                        gold += refundAmount;
-                        std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
+                            map[towerIt->getY()][towerIt->getX()] = "O";
+                            placedTowers.erase(towerIt);
+                        }
 
-                        map[towerIt->getY()][towerIt->getX()] = "O";
-                        placedTowers.erase(towerIt);
+                        selectedOption = -1; // 선택 초기화
                     }
-                    else if (event.key.code >= sf::Keyboard::Num4 && event.key.code <= sf::Keyboard::Num9)
+                    else 
                     {
-                        //추후 필료시 추가
+                        selectedOption = -1; // 선택 취소
                     }
-                    
-
                 }
+
             }
 
             // 마우스 클릭으로 타일 선택
@@ -835,9 +804,11 @@ void GameManager::startPreparationPhase()
     }
 }
 
-void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType) {
+void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType)
+{
     // 모든 타워 처리
-    for (auto& tower : placedTowers) {
+    for (auto& tower : placedTowers) 
+    {
         if (tower.getIsNoDamage() == 1) continue; // 버프 타워는 공격하지 않음
 
         if (currentTick % tower.getTimePerAttack() != 0) continue; // 공격 틱이 아니면 넘어감
@@ -850,7 +821,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
         // **기본 공격 처리**
         std::vector<Unit*> aoeTargets; // 범위 공격 대상 저장
 
-        for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;) {
+        for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;)
+        {
             int unitX = it->getX();
             int unitY = it->getY();
             int towerX = tower.getX();
@@ -886,10 +858,14 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
         }
 
         // **범위 공격 처리**
-        if (tower.getIsNoDamage() == 2) {
-            for (Unit* target : aoeTargets) { // 기본 공격 대상으로부터 범위 공격 수행
-                for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); ) {
-                    if (&(*aoeIt) == target) {
+        if (tower.getIsNoDamage() == 2)
+        {
+            for (Unit* target : aoeTargets)
+            { // 기본 공격 대상으로부터 범위 공격 수행
+                for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); )
+                {
+                    if (&(*aoeIt) == target) 
+                    {
                         ++aoeIt;
                         continue; // 기본 공격 대상은 제외
                     }
@@ -902,17 +878,21 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                         int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);
                         aoeIt->reduceHp(finalAoeDamage);
 
-                        if (aoeIt->getHp() <= 0) {
-                            if (currentWaveType) {
+                        if (aoeIt->getHp() <= 0) 
+                        {
+                            if (currentWaveType)
+                            {
                                 gold += aoeIt->getKillReward();
                             }
                             aoeIt = activeUnits.erase(aoeIt);
                         }
-                        else {
+                        else
+                        {
                             ++aoeIt;
                         }
                     }
-                    else {
+                    else
+                    {
                         ++aoeIt;
                     }
                 }

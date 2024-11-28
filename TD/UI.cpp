@@ -24,6 +24,8 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     goldText.setFillColor(sf::Color::Yellow);
     goldText.setPosition(10, 40);
 
+    
+
     // 타일 텍스처 로드
     if (!roadTexture.loadFromFile("resources/images/tiles/road_spring(1).png"))
         std::cerr << "road_spring(1).png를 로드할 수 없습니다.\n";

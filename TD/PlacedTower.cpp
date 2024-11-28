@@ -81,7 +81,8 @@ bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map,
     
 
    
-    if (nextTowerID == 0) {
+    if (nextTowerID == 0) 
+    {
         std::cout << baseTower.getTowerName() << "은(는) 이미 최고 단계입니다.\n";
         return false;
     }

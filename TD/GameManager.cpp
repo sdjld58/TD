@@ -82,7 +82,7 @@ void GameManager::run()
                     UnitType& unitType = *it;
                     Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
                         unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(),
-                        unitType.getKillReward(), path);
+                        unitType.getKillReward(), path, unitType.getLifeDamage());
                     unitQueue.push(unit);
                 }
             }
@@ -199,7 +199,7 @@ void GameManager::updateUnits(std::vector<Unit>& activeUnits)
         bool arrived = it->update();
         if (arrived)
         {
-            playerLife -= 1;
+            playerLife -= it->getLifeDamage();
             it = activeUnits.erase(it);
         }
         else
@@ -438,7 +438,7 @@ void GameManager::loadUnitTypes(const std::string& filename)
             tokens.push_back(item);
         }
 
-        if (tokens.size() == 8)
+        if (tokens.size() == 9)
         {
             int id = std::stoi(tokens[0]);
             std::string unitName = tokens[1];
@@ -448,8 +448,10 @@ void GameManager::loadUnitTypes(const std::string& filename)
             int resist = std::stoi(tokens[5]);
             int productionCost = std::stoi(tokens[6]);
             int killReward = std::stoi(tokens[7]);
+            int LifeDamage = std::stoi(tokens[8]);
 
-            UnitType unitType(id, unitName, hp, timePerMove, armor, resist, productionCost, killReward);
+
+            UnitType unitType(id, unitName, hp, timePerMove, armor, resist, productionCost, killReward, LifeDamage);
             unitTypes.push_back(unitType);
         }
         else
@@ -696,7 +698,7 @@ void GameManager::startPreparationPhase()
                         selectedOption = 1; // 옵션 1 선택
                         std::cout << "옵션 1 선택됨.\n";
                     }
-                    else if (event.key.code == sf::Keyboard::Num2)
+                    else if (event.key.code == sf::Keyboard::Num2 && towerIt->getTowerName() == "2")
                     {
                         selectedOption = 2; // 옵션 2 선택
                         std::cout << "옵션 2 선택됨.\n";
@@ -1108,7 +1110,7 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
             const UnitType& unitType = *it;
             Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
                 unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(),
-                unitType.getKillReward(), path);
+                unitType.getKillReward(), path, unitType.getLifeDamage());
             activeUnits.push_back(unit);
         }
     }
@@ -1122,8 +1124,8 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
             std::cout << it->getName() << " 유닛이 목적지에 도달했습니다!\n";
 
             // 플레이어 라이프 감소 추가**
-            playerLife -= 1;
-            std::cout << "플레이어 라이프가 1 감소했습니다. 현재 라이프: " << playerLife << "\n";
+            playerLife -= it->getLifeDamage();
+            
 
             // 라이프가 0 이하이면 게임 종료**
             if (playerLife <= 0)

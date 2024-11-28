@@ -1,8 +1,8 @@
 #include "UnitType.h"
 #include <iostream>
 
-UnitType::UnitType(int id, const std::string& unitName, int hp, int timePerMove, int armor, int resist, int productionCost, int killReward)
-    : id(id), unitName(unitName), hp(hp), timePerMove(timePerMove), armor(armor), resist(resist), productionCost(productionCost), killReward(killReward) {}
+UnitType::UnitType(int id, const std::string& unitName, int hp, int timePerMove, int armor, int resist, int productionCost, int killReward, int LifeDamage)
+    : id(id), unitName(unitName), hp(hp), timePerMove(timePerMove), armor(armor), resist(resist), productionCost(productionCost), killReward(killReward), LifeDamage(LifeDamage){}
 
 // 접근자 함수들
 int UnitType::getId() const { return id; }
@@ -13,6 +13,8 @@ int UnitType::getArmor() const { return armor; }
 int UnitType::getResist() const { return resist; }
 int UnitType::getProductionCost() const { return productionCost; }
 int UnitType::getKillReward() const { return killReward; }
+int UnitType::getLifeDamage() const { return LifeDamage; }
+
 
 // 디버깅이나 테스트를 위한 함수
 void UnitType::printInfo() const {

@@ -1,5 +1,5 @@
-﻿id,unitName,hp,timePerMove,armor,resist,productionCost,killReward
-1,A,20,2,0,0,10,10
-2,B,12,1,0,0,10,10
-3,C,40,3,1,0,10,10
-101,Z,400,2,0,0,10000,10000
+﻿id,unitName,hp,timePerMove,armor,resist,productionCost,killReward,LifeDamage
+1,A,20,2,0,0,10,10,1
+2,B,12,1,0,0,10,10,2
+3,C,40,3,1,0,10,10,11
+101,Z,400,2,0,0,10000,10000,10000

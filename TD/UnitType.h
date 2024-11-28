@@ -13,10 +13,11 @@ private:
     int resist;             // 저항력 수치
     int productionCost;     // 공격 웨이브에서 생산할 때 소모되는 공격 재화
     int killReward;         // 수비 웨이브에서 죽였을 때 지급되는 수비 재화
+    int LifeDamage;
 
 public:
     // 생성자
-    UnitType(int id, const std::string& unitName, int hp, int timePerMove, int armor, int resist, int productionCost, int killReward);
+    UnitType(int id, const std::string& unitName, int hp, int timePerMove, int armor, int resist, int productionCost, int killReward,int LifeDamage);
 
     // 접근자 함수들
     int getId() const;
@@ -27,6 +28,7 @@ public:
     int getResist() const;
     int getProductionCost() const;
     int getKillReward() const;
+    int getLifeDamage() const;
 
     // 디버깅이나 테스트를 위한 함수
     void printInfo() const;

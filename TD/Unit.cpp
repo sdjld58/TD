@@ -1,8 +1,8 @@
 #include "Unit.h"
 #include <iostream>
 
-Unit::Unit(int id, const std::string& name, int hp, int timePerMove, int armor, int resist, int killReward, const std::vector<std::pair<int, int>>& path)
-    : id(id), name(name), hp(hp), timePerMove(timePerMove), moveCounter(0), armor(armor), resist(resist), killReward(killReward), path(path), pathIndex(0)
+Unit::Unit(int id, const std::string& name, int hp, int timePerMove, int armor, int resist, int killReward, const std::vector<std::pair<int, int>>& path, int LifeDamage)
+    : id(id), name(name), hp(hp), timePerMove(timePerMove), moveCounter(0), armor(armor), resist(resist), killReward(killReward), path(path), pathIndex(0), LifeDamage(LifeDamage)
 {
     if (!path.empty())
     {
@@ -44,6 +44,7 @@ int Unit::getHp() const { return hp; }
 int Unit::getArmor() const { return armor; }
 int Unit::getResist() const { return resist; }
 int Unit::getKillReward() const { return killReward; }
+int Unit::getLifeDamage() const { return LifeDamage; }
 
 
 

@@ -15,11 +15,12 @@ private:
     int armor;                // 방어력
     int resist;               // 저항력
     int killReward;           // 수비 라운드 처치시 보상 
+    int LifeDamage;
     size_t pathIndex;         // 경로에서의 현재 위치 인덱스
     std::vector<std::pair<int, int>> path; // 이동 경로
 
 public:
-    Unit(int id, const std::string& name, int hp, int timePerMove,int armor, int resist, int killReward, const std::vector<std::pair<int, int>>& path);
+    Unit(int id, const std::string& name, int hp, int timePerMove,int armor, int resist, int killReward, const std::vector<std::pair<int, int>>& path, int LifeDamage);
 
     // 행동 함수
     bool update(); // 이동 및 상태 업데이트, 목적지에 도달하면 true 반환
@@ -30,6 +31,7 @@ public:
     int getArmor() const;
     int getResist() const;
     int getKillReward() const;
+    int getLifeDamage() const;
 
     //HP관련 정보
     int getHp() const;

@@ -3,14 +3,14 @@
 #include <algorithm>
 
 // 생성자 정의
-Tower::Tower(int id, std::string towerName, int nextTowerID, int buildCost, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount, int isNoDamage, const std::string& tool, const std::string& tool2)
-    : id(id), towerName(towerName), nextTowerID(nextTowerID), buildCost(buildCost), attackRange(attackRange), damage(damage), isMagic(isMagic), timePerAttack(timePerAttack), targetAmount(targetAmount), isNoDamage(isNoDamage), tool(tool), tool2(tool2) {}
+Tower::Tower(int id, std::string towerName, int nextTowerID, int nextTowerID2, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount, int isNoDamage, const std::string& tool, const std::string& tool2)
+    : id(id), towerName(towerName), nextTowerID(nextTowerID), nextTowerID2(nextTowerID2), attackRange(attackRange), damage(damage), isMagic(isMagic), timePerAttack(timePerAttack), targetAmount(targetAmount), isNoDamage(isNoDamage), tool(tool), tool2(tool2) {}
 
 // Getter 함수들 정의
 int Tower::getId() const { return id; }
 std::string Tower::getTowerName() const { return towerName; }
 int Tower::getNextTowerID() const { return nextTowerID; }
-int Tower::getBuildCost() const { return buildCost; }
+int Tower::getNextTowerID2() const { return nextTowerID2; }
 int Tower::getAttackRange() const { return attackRange; }
 int Tower::getDamage() const { return damage; }
 bool Tower::getIsMagic() const { return isMagic; }
@@ -48,7 +48,6 @@ void Tower::upgrade(const std::vector<Tower>& towerList)
 void Tower::printInfo() const {
     std::cout << "타워 이름: " << towerName << "\n"
         << "ID: " << id << "\n"
-        << "설치 비용: " << buildCost << "\n"
         << "공격 사거리: " << attackRange << "\n"
         << "대미지: " << damage << (isMagic ? " (마법 대미지)" : " (물리 대미지)") << "\n"
         << "공격 속도: " << timePerAttack << "틱마다 한 번 공격\n"
@@ -64,6 +63,5 @@ void Tower::displayInfo() const
     std::cout << "설명: " << tool2 << "\n";
     std::cout << "공격력: " << damage << "\n";
     std::cout << "사거리: " << attackRange << "\n";
-    std::cout << "설치 비용: " << buildCost << "\n";
     std::cout << "--------------------------------\n";
 }

@@ -20,7 +20,6 @@ public:
     // 기본 타워 속성 접근 메서드
     int getId() const;
     std::string getTowerName() const;
-    int getBuildCost() const;
     int getAttackRange() const;
     bool getIsMagic() const;
     int getTargetAmount() const;

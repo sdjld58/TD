@@ -35,9 +35,7 @@ std::string PlacedTower::getTowerName() const {
     return baseTower.getTowerName();
 }
 
-int PlacedTower::getBuildCost() const {
-    return baseTower.getBuildCost();
-}
+
 
 int PlacedTower::getAttackRange() const {
     return baseTower.getAttackRange();
@@ -65,15 +63,31 @@ int PlacedTower::getIsNoDamage() const {
 }
 
 // 업그레이드 메서드
-bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList,int num) {
-    int nextTowerID = baseTower.getNextTowerID();
-    nextTowerID = nextTowerID + num;
-    if (nextTowerID - num == 0) {
+bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList,int num) 
+{
+    int nextTowerID = 0;
+
+    if (num == 1)
+    {
+        nextTowerID = baseTower.getNextTowerID();
+
+     
+    }
+    else if (num == 2)
+    {
+        nextTowerID = baseTower.getNextTowerID2();
+
+    }
+    
+
+   
+    if (nextTowerID == 0) {
         std::cout << baseTower.getTowerName() << "은(는) 이미 최고 단계입니다.\n";
         return false;
     }
 
     // 타워 리스트에서 nextTowerID에 해당하는 타워를 찾음
+
     auto it = std::find_if(towerList.begin(), towerList.end(), [nextTowerID](const Tower& t) {
         return t.getId() == nextTowerID;
         });
@@ -82,8 +96,18 @@ bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map,
         std::cout << "업그레이드할 타워 정보를 찾을 수 없습니다.\n";
         return false;
     }
+    int upgradeCost = 0;
 
-    int upgradeCost = it->getBuildCost();
+    if (nextTowerID % 100 == 0)
+    {
+        upgradeCost = 40;
+    }
+    else
+    {
+        upgradeCost = 50;
+    }
+
+   
     if (gold < upgradeCost) {
         std::cout << "골드가 부족합니다. 업그레이드 비용: " << upgradeCost << ", 현재 골드: " << gold << "\n";
         return false;

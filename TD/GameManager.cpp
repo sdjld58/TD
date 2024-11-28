@@ -493,7 +493,7 @@ void GameManager::loadTowerData(const std::string& filename)
             int id = std::stoi(tokens[0]);
             std::string towerName = tokens[1];
             int nextTowerID = std::stoi(tokens[2]);
-            int buildCost = std::stoi(tokens[3]);
+            int nextTowerID2 = std::stoi(tokens[3]);
             int attackRange = std::stoi(tokens[4]);
             int damage = std::stoi(tokens[5]);
             bool isMagic = std::stoi(tokens[6]) == 1;
@@ -503,7 +503,7 @@ void GameManager::loadTowerData(const std::string& filename)
             std::string tool = tokens[10];        // 추가된 tool 처리
             std::string tool2 = tokens[11];
 
-            Tower tower(id, towerName, nextTowerID, buildCost, attackRange, damage,
+            Tower tower(id, towerName, nextTowerID, nextTowerID2, attackRange, damage,
                 isMagic, timePerAttack, targetAmount, isNodamage, tool ,tool2);
             towers.push_back(tower);
 
@@ -711,16 +711,28 @@ void GameManager::startPreparationPhase()
                         if (selectedOption == 1) // 업그레이드 (1번)
                         {
                             towerIt->upgrade(gold, map, towers, 1);
-                            std::cout << "타워가 업그레이드되었습니다.\n";
+                            
                         }
                         else if (selectedOption == 2) // 업그레이드 (2번)
                         {
                             towerIt->upgrade(gold, map, towers, 2);
-                            std::cout << "타워가 업그레이드되었습니다.\n";
+                            
                         }
                         else if (selectedOption == 3) // 타워 판매 (3번)
                         {
-                            int refundAmount = static_cast<int>(towerIt->getBuildCost() * 0.3);
+                            int refundAmount = 30;
+                            if (towerIt->getTowerName() == "1")                //기본타워 판매 비용
+                            {
+                                refundAmount = 30;
+                            }
+                            else if (towerIt->getTowerName() == "2")           //중간단계타워 판매 비용
+                            {
+                                refundAmount = 40;
+                            }
+                            else if (towerIt->getTowerName() == "3")           //최종단계타워 판매 비용
+                            {
+                                refundAmount = 50;
+                            }
                             gold += refundAmount;
                             std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
 
@@ -1258,10 +1270,10 @@ void GameManager::attemptPlaceTower()
         {
             Tower selectedTower = towers[selectedTowerIndex];
 
-            if (gold - selectedTower.getBuildCost() >= 0)
+            if (gold - 30 >= 0)                                      //타워 건설비용 
             {
                 PlacedTower newTower(selectedTower, selectedX, selectedY);
-                gold -= selectedTower.getBuildCost();
+                gold -= 30;
 
                 map[selectedY][selectedX] = newTower.getTowerName();
                 placedTowers.push_back(newTower);

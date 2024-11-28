@@ -6,13 +6,14 @@
 
 class Tower {
 public:
-    Tower(int id, std::string towerName, int nextTowerID, int buildCost, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount, int isNoDamage, const std::string& tool, const std::string& tool2);
+    Tower(int id, std::string towerName, int nextTowerID, int nextTowerID2, int attackRange, int damage, bool isMagic, int timePerAttack, int targetAmount, int isNoDamage, const std::string& tool, const std::string& tool2);
 
     // Getter ÇÔ¼öµé
     int getId() const;
     std::string getTowerName() const;
     int getNextTowerID() const;
-    int getBuildCost() const;
+    int getNextTowerID2() const;
+    
     int getAttackRange() const;
     int getDamage() const;
     bool getIsMagic() const;
@@ -31,7 +32,8 @@ private:
     int id;
     std::string towerName;
     int nextTowerID;
-    int buildCost;
+    int nextTowerID2;
+   
     int attackRange;
     int damage;
     bool isMagic;

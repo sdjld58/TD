@@ -614,13 +614,26 @@ void GameManager::startPreparationPhase()
 
                 // WASD로 타일 이동
                 if (event.key.code == sf::Keyboard::W && selectedY > 0)
+                {
                     selectedY--;
+                    selectedOption = -1;
+                }
+                
                 else if (event.key.code == sf::Keyboard::S && selectedY < mapWithUnits.size() - 1)
+                {
                     selectedY++;
+                    selectedOption = -1;
+                }
                 else if (event.key.code == sf::Keyboard::A && selectedX > 0)
+                {
                     selectedX--;
+                    selectedOption = -1;
+                }
                 else if (event.key.code == sf::Keyboard::D && selectedX < mapWithUnits[0].size() - 1)
+                {
                     selectedX++;
+                    selectedOption = -1;
+                }
 
                 else if (event.key.code == sf::Keyboard::Escape)
                 {

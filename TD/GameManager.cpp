@@ -152,6 +152,7 @@ void GameManager::run()
 
             // 공격 웨이브 처리
             attackGold = wave.getGold();
+            ui.updateattackGold(attackGold); //ui로 공격재화 표시하기 위해
             startAttackWave(wave, currentTick);
         }
     }
@@ -236,7 +237,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 
     // 공격 웨이브 골드 출력
     std::cout << "공격 골드(AttackGold): " << attackGold << "\n";
-
+    
     // 유닛 상태 출력
     std::cout << "\n=== 유닛 상태 ===\n";
     for (const auto& unit : activeUnits)
@@ -277,7 +278,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 {
     // UI를 통해 게임 상태를 업데이트하고 화면을 그립니다.
-    ui.update(activeUnits, placedTowers, playerLife, gold, attackGold, selectedX, projectiles);
+    ui.update(activeUnits, placedTowers, playerLife, gold, selectedX,selectedY ,projectiles);
 }
 
 void GameManager::loadMap(const std::string& filename)
@@ -642,6 +643,7 @@ void GameManager::startPreparationPhase()
                         Tower& selectedTower = *it;
                         selectedTowerIndex = std::distance(towers.begin(), it);
                         std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
+                        ui.setInfoText({ selectedTower.getTool() + " 타워가 선택되었습니다"," "," "});
                     }
                     else
                     {
@@ -796,8 +798,8 @@ void GameManager::startPreparationPhase()
                         selectedX = clickedTileX;
                         selectedY = clickedTileY;
                         std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
-                        ui.setInfoText({ "수비 웨이브\n",
-                            "타일 선택됨: [" + std::to_string(selectedX) + ", " + std::to_string(selectedY) + "]\n",
+                        ui.setInfoText({ "침투에 대비하세요!\n",
+                            "",
                             "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
                     }
                 }
@@ -1001,6 +1003,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 
             // 타워가 유닛을 공격
             attackUnits(activeUnits, currentTick, currentwaveType);
+            ui.updateattackGold(attackGold);
             updateAndPrintMap(activeUnits); // 공격 웨이브에서도 맵 상태를 출력
         }
 

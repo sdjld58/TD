@@ -189,7 +189,7 @@ void UI::clearButtons()
 }
 
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
-    int playerLife, int gold, int selectedX, int selectedY, const std::vector<Projectile>& projectiles)
+    int playerLife, int gold,  int selectedX, int selectedY, const std::vector<Projectile>& projectiles)
 {
     window.clear();
 
@@ -262,7 +262,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
         // 체력 바 그리기
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), 20); // 체력 최대값 20으로 설정
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), 20); // 체력 최대값 10으로 설정
 
         // 유닛 스프라이트 그리기
         window.draw(knightUnitSprite);
@@ -347,19 +347,20 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
 
     }
     TextBox textBox(*this, curWaveIsDefense, { getInfoText(0),getInfoText(1), getInfoText(2)});
-        textBox.draw(window);
-    
-    // 플레이어 라이프 및 골드 표시
-    lifeText.setString("Life: " + std::to_string(playerLife));
-    goldText.setString("Gold: " + std::to_string(gold));
-
-    window.draw(lifeText);
-    window.draw(goldText);
-    
+        
+    textBox.updateState(playerLife, gold, attackGold);
+    textBox.draw(window);
+   
     gui.draw();
 
     window.display();
 }
+
+
+void UI::updateattackGold(int attackgold) {
+    attackGold = attackgold;
+}
+
 
 sf::RenderWindow& UI::getWindow()
 {

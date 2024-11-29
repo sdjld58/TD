@@ -123,10 +123,11 @@ void GameManager::run(const std::string& stageFile)
                     // 게임 종료 조건 체크
                     if (playerLife <= 0)
                     {
-                        std::cout << "Game Over!\n";
-                        ui.getWindow().close();
+                        // 선택 팝업 호출
+                        showGameOverPopup();
                         return;
                     }
+
 
                     if (activeUnits.empty() && unitQueue.empty())
                     {
@@ -157,7 +158,7 @@ void GameManager::run(const std::string& stageFile)
     }
 
 
-    std::cout << "프로그램을 종료합니다.\n";
+    mapSelected(); //맵선택으로 돌아옴
 }
 
 void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue,int currentTick)
@@ -1416,5 +1417,77 @@ void GameManager::mapSelected()
         loadMap(selectedMap);
         parsePath();
         run(stageFile);  // 선택된 맵으로 게임 실행
+    }
+}
+
+void GameManager::showGameOverPopup()
+{
+    // 팝업 GUI 생성
+    tgui::Gui gui(ui.getWindow());
+
+    // 배경 덮개 (반투명)
+    sf::RectangleShape background(sf::Vector2f(ui.getWindow().getSize().x, ui.getWindow().getSize().y));
+    background.setFillColor(sf::Color(0, 0, 0, 150)); // 반투명 검은색
+
+    // 팝업 창 컨테이너
+    auto popupPanel = tgui::Panel::create({ "50%", "30%" });
+    popupPanel->setPosition("25%", "35%");
+    popupPanel->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255));
+    popupPanel->getRenderer()->setBorders(2);
+    popupPanel->getRenderer()->setBorderColor(sf::Color(0, 0, 0));
+    gui.add(popupPanel);
+
+    // 텍스트 라벨
+    auto label = tgui::Label::create("Game Over!\nWhat would you like to do?");
+    label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+    label->setTextSize(24);
+    label->setPosition("10%", "15%");
+    popupPanel->add(label);
+
+    // 맵 선택 버튼
+    auto mapSelectButton = tgui::Button::create("Return to Map Selection");
+    mapSelectButton->setSize("80%", "20%");
+    mapSelectButton->setPosition("10%", "50%");
+    popupPanel->add(mapSelectButton);
+
+    // 게임 종료 버튼
+    auto exitButton = tgui::Button::create("Exit Game");
+    exitButton->setSize("80%", "20%");
+    exitButton->setPosition("10%", "75%");
+    popupPanel->add(exitButton);
+
+    bool actionSelected = false; // 사용자가 버튼을 눌렀는지 확인
+
+    mapSelectButton->onClick([&]()
+        {
+            actionSelected = true;
+            gui.remove(popupPanel);
+            mapSelected(); // 맵 선택 화면으로 돌아가기
+        });
+
+    exitButton->onClick([&]()
+        {
+            actionSelected = true;
+            ui.getWindow().close(); // 게임 창 닫기
+        });
+
+    while (ui.getWindow().isOpen() && !actionSelected)
+    {
+        sf::Event event;
+        while (ui.getWindow().pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                ui.getWindow().close();
+                return;
+            }
+
+            gui.handleEvent(event);
+        }
+
+        ui.getWindow().clear();
+        ui.getWindow().draw(background);
+        gui.draw();
+        ui.getWindow().display();
     }
 }

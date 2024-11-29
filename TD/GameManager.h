@@ -53,7 +53,7 @@ private:
 
 public:
     GameManager();
-    void run();
+    void run(const std::string& stageFile);
     void loadMap(const std::string& filename);
     void parsePath();
     void loadUnitTypes(const std::string& filename);

@@ -20,12 +20,12 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 
 }
 
-void GameManager::run()
+void GameManager::run(const std::string& stageFile)
 {
    
     loadUnitTypes("UnitTypes.csv");
     loadTowerData("TowerData.csv");
-    loadWaves("Stage1.csv");
+    loadWaves(stageFile);
 
     ui.setMap(map);
     ui.setPath(path);
@@ -1365,28 +1365,27 @@ void GameManager::mapSelected()
 
     bool mapChosen = false;
     std::string selectedMap;
-    // 버튼 클릭 이벤트 설정
+    std::string stageFile;
+
     button1->onClick([&]()
         {
             selectedMap = "Map1.csv";
+            stageFile = "Stage1.csv";
             mapChosen = true;
         });
 
     button2->onClick([&]()
         {
             selectedMap = "Map2.csv";
+            stageFile = "Stage2.csv";
             mapChosen = true;
         });
 
     button3->onClick([&]()
         {
             selectedMap = "Map3.csv";
+            stageFile = "Stage3.csv";
             mapChosen = true;
-        });
-
-    exitButton->onClick([&]()
-        {
-            ui.getWindow().close();
         });
 
     // GUI 루프
@@ -1416,6 +1415,6 @@ void GameManager::mapSelected()
         std::cout << selectedMap << " 맵이 선택되었습니다.\n";
         loadMap(selectedMap);
         parsePath();
-        run(); // 선택된 맵으로 게임 실행
+        run(stageFile);  // 선택된 맵으로 게임 실행
     }
 }

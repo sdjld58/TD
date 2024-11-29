@@ -1,8 +1,11 @@
 #include "GameManager.h"
 #include <SFML/Graphics.hpp>
 
-int main() {
+int main()
+{
     GameManager gameManager;
-    gameManager.run();
+
+    gameManager.mapSelected();
+
     return 0;
 }

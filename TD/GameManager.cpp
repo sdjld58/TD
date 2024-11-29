@@ -33,8 +33,7 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 
 void GameManager::run()
 {
-    loadMap("Map1.csv");
-    parsePath();
+   
     loadUnitTypes("UnitTypes.csv");
     loadTowerData("TowerData.csv");
     loadWaves("Stage1.csv");
@@ -121,7 +120,7 @@ void GameManager::run()
                     // **논리 업데이트 수행**
 
                     // 유닛 스폰
-                    spawnUnits(activeUnits, unitQueue);
+                    spawnUnits(activeUnits, unitQueue,currentTick);
 
                     // 유닛 이동
                     updateUnits(activeUnits);
@@ -168,28 +167,28 @@ void GameManager::run()
         }
     }
 
+
     std::cout << "프로그램을 종료합니다.\n";
 }
 
-void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue)
+void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue,int currentTick)
 {
-    // S 위치가 비어있으면 유닛 스폰
-    bool sOccupied = false;
-    for (const auto& unit : activeUnits)
-    {
-        if (unit.getX() == path[0].first && unit.getY() == path[0].second)
-        {
-            sOccupied = true;
-            break;
-        }
-    }
-    if (!sOccupied && !unitQueue.empty())
+    // **스폰 간격 변수**
+    static int lastSpawnTick = 0;       // 마지막으로 유닛이 생성된 틱
+    const int spawnInterval = 2;      // 유닛 생성 간격 (틱 단위)
+
+    // **틱 간격에 따라 유닛 생성**
+    if (currentTick - lastSpawnTick >= spawnInterval && !unitQueue.empty())
     {
         Unit unit = unitQueue.front();
         unitQueue.pop();
+
+        // 유닛을 스폰 위치에 추가
         activeUnits.push_back(unit);
+        lastSpawnTick = currentTick;   // 마지막 생성 틱 업데이트
     }
 }
+
 
 void GameManager::updateUnits(std::vector<Unit>& activeUnits)
 {
@@ -1307,3 +1306,89 @@ void GameManager::attemptPlaceTower()
         ui.setInfoText({ "타워가 선택되지 않았습니다.\n","...","..." });
     }
 }
+
+void GameManager::mapSelected()
+{
+    // TGUI GUI 생성
+    tgui::Gui gui(ui.getWindow());
+
+    // 맵 선택 버튼 생성
+    auto button1 = tgui::Button::create("Map 1");
+    button1->setPosition("40%", "30%");
+    button1->setSize("20%", "10%");
+    gui.add(button1);
+
+    auto button2 = tgui::Button::create("Map 2");
+    button2->setPosition("40%", "45%");
+    button2->setSize("20%", "10%");
+    gui.add(button2);
+
+    auto button3 = tgui::Button::create("Map 3");
+    button3->setPosition("40%", "60%");
+    button3->setSize("20%", "10%");
+    gui.add(button3);
+
+    auto exitButton = tgui::Button::create("Exit");
+    exitButton->setPosition("40%", "75%");
+    exitButton->setSize("20%", "10%");
+    gui.add(exitButton);
+
+    bool mapChosen = false;
+    std::string selectedMap;
+
+    // 버튼 클릭 이벤트 설정
+    button1->onClick([&]()
+        {
+            selectedMap = "Map1.csv";
+            mapChosen = true;
+        });
+
+    button2->onClick([&]()
+        {
+            selectedMap = "Map2.csv";
+            mapChosen = true;
+        });
+
+    button3->onClick([&]()
+        {
+            selectedMap = "Map3.csv";
+            mapChosen = true;
+        });
+
+    exitButton->onClick([&]()
+        {
+            ui.getWindow().close();
+        });
+
+    // GUI 루프
+    while (ui.getWindow().isOpen() && !mapChosen)
+    {
+        sf::Event event;
+        while (ui.getWindow().pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                ui.getWindow().close();
+                return;
+            }
+
+            gui.handleEvent(event);
+        }
+
+        // 화면 그리기
+        ui.getWindow().clear();
+        gui.draw();
+        ui.getWindow().display();
+    }
+
+    if (mapChosen)
+    {
+        std::cout << selectedMap << " 맵이 선택되었습니다.\n";
+        loadMap(selectedMap);
+        parsePath();
+        run(); // 선택된 맵으로 게임 실행
+    }
+}
+
+
+

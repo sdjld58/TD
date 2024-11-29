@@ -262,7 +262,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
         // 체력 바 그리기
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), 10); // 체력 최대값 10으로 설정
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), 20); // 체력 최대값 20으로 설정
 
         // 유닛 스프라이트 그리기
         window.draw(knightUnitSprite);

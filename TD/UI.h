@@ -108,7 +108,8 @@ public:
     const sf::Texture& getProjectileTexture() const;
     void drawProjectiles(const std::vector<Projectile>& projectiles);
 
-    void unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp); //유닛 체력바
+    void unit
+    (sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp); //유닛 체력바
 
     // 타일 크기
     const float tileWidth = 128.0f;  // 이소메트릭 타일의 폭

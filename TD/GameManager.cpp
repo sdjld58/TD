@@ -17,18 +17,7 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
         {
         this->handleTowerButtonClicked();
         };
-    ui.onOneButtonClicked = [this]() 
-        {
-        this->handleOneButtonClicked();
-        };
-    ui.onTwoButtonClicked = [this]()
-        {
-        this->handleTwoButtonClicked();
-        };
-    ui.onThreeButtonClicked = [this]()
-        {
-        this->handleThreeButtonClicked();
-        };
+
 }
 
 void GameManager::run()
@@ -1174,42 +1163,7 @@ void GameManager::handleTowerButtonClicked()
         ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..."});
     }
 }
-void GameManager::handleOneButtonClicked()
-{
-    if (isTowerPlacementMode)
-    {
-        selectTower(towers, 1, selectedTowerIndex, ui);
-    }
-    else
-    {
-        std::cout << "타워 설치 모드가 아닙니다.\n";
-        ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..." });
-    }
-}
-void GameManager::handleTwoButtonClicked()
-{
-    if (isTowerPlacementMode)
-    {
-        selectTower(towers, 2, selectedTowerIndex, ui);
-    }
-    else
-    {
-        std::cout << "타워 설치 모드가 아닙니다.\n";
-        ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..." });
-    }
-}
-void GameManager::handleThreeButtonClicked()
-{
-    if (isTowerPlacementMode)
-    {
-        selectTower(towers, 3, selectedTowerIndex, ui);
-    }
-    else
-    {
-        std::cout << "타워 설치 모드가 아닙니다.\n";
-        ui.setInfoText({ "타워 설치 모드가 아닙니다.\n","...","..." });
-    }
-}
+
 bool GameManager::isTileSelectable(int x, int y)
 {
     // 맵 범위 내인지 확인
@@ -1312,30 +1266,105 @@ void GameManager::mapSelected()
     // TGUI GUI 생성
     tgui::Gui gui(ui.getWindow());
 
-    // 맵 선택 버튼 생성
-    auto button1 = tgui::Button::create("Map 1");
-    button1->setPosition("40%", "30%");
-    button1->setSize("20%", "10%");
+    // 배경색을 흰색으로 설정
+    sf::RectangleShape background(sf::Vector2f(ui.getWindow().getSize().x, ui.getWindow().getSize().y));
+    background.setFillColor(sf::Color::White);
+
+    // 텍스트 생성 및 설정
+    auto titleLabel = tgui::Label::create("Select   A   Track");
+    titleLabel->setPosition("50%", "7%");
+    titleLabel->setOrigin(0.5f, 0.5f);
+    titleLabel->setTextSize(140);
+    titleLabel->getRenderer()->setTextColor(sf::Color::Black);
+    tgui::Font font("resources/fonts/Bangers.ttf");
+    titleLabel->getRenderer()->setFont(font);
+    gui.add(titleLabel);
+
+    // 맵 선택 버튼 생성 및 크기 설정
+    auto button1 = tgui::Button::create();
+    button1->setPosition("5%", "17%");
+    button1->setSize("28%", "70%");
+    button1->getRenderer()->setTexture("resources/images/stageImgs/spring.png"); // 버튼 이미지
+    button1->getRenderer()->setOpacity(0.5f); // 기본 투명도 설정
+    button1->onMouseEnter([button1]() { button1->getRenderer()->setOpacity(1.0f); }); // 마우스 오버 시 투명도 제거
+    button1->onMouseLeave([button1]() { button1->getRenderer()->setOpacity(0.5f); }); // 마우스가 떠나면 다시 반투명
     gui.add(button1);
 
-    auto button2 = tgui::Button::create("Map 2");
-    button2->setPosition("40%", "45%");
-    button2->setSize("20%", "10%");
+    auto button2 = tgui::Button::create();
+    button2->setPosition("36.5%", "17%");
+    button2->setSize("28%", "70%");
+    button2->getRenderer()->setTexture("resources/images/stageImgs/dessert.png");
+    button2->getRenderer()->setOpacity(0.5f);
+    button2->onMouseEnter([button2]() { button2->getRenderer()->setOpacity(1.0f); });
+    button2->onMouseLeave([button2]() { button2->getRenderer()->setOpacity(0.5f); });
     gui.add(button2);
 
-    auto button3 = tgui::Button::create("Map 3");
-    button3->setPosition("40%", "60%");
-    button3->setSize("20%", "10%");
+    auto button3 = tgui::Button::create();
+    button3->setPosition("68%", "17%");
+    button3->setSize("28%", "70%");
+    button3->getRenderer()->setTexture("resources/images/stageImgs/winter.png");
+    button3->getRenderer()->setOpacity(0.5f);
+    button3->onMouseEnter([button3]() { button3->getRenderer()->setOpacity(1.0f); });
+    button3->onMouseLeave([button3]() { button3->getRenderer()->setOpacity(0.5f); });
     gui.add(button3);
 
-    auto exitButton = tgui::Button::create("Exit");
-    exitButton->setPosition("40%", "75%");
-    exitButton->setSize("20%", "10%");
+    // Exit 버튼 생성 및 이미지 적용
+    auto exitButton = tgui::Button::create(); // 텍스트 없는 버튼
+    exitButton->setPosition("90%", "4%");          // 오른쪽 위 끝
+    exitButton->setSize("7%", "10%");              // Exit 버튼 크기
+    exitButton->getRenderer()->setTexture("resources/images/stageImgs/exit.png"); // X 이미지 적용
+    // 테두리 제거
+    exitButton->getRenderer()->setBorders(0); // 테두리 두께를 0으로 설정
+    exitButton->getRenderer()->setBorderColor(sf::Color::Transparent); // 테두리 색상을 투명으로 설정
+
+    exitButton->getRenderer()->setOpacity(0.5f);   // 기본 투명도 설정
+    exitButton->onMouseEnter([exitButton]() {
+        exitButton->getRenderer()->setOpacity(1.0f); // 마우스 오버 시 불투명
+        });
+    exitButton->onMouseLeave([exitButton]() {
+        exitButton->getRenderer()->setOpacity(0.5f); // 마우스 떠나면 다시 반투명
+        });
     gui.add(exitButton);
+
+    // 버튼 아래 텍스트(Label) 추가
+    auto label1 = tgui::Label::create("B e g i n n e r");
+    label1->setTextSize(60);
+    label1->getRenderer()->setTextColor(sf::Color::Black);
+    label1->getRenderer()->setFont(font);
+    label1->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center); // 텍스트 중앙 정렬
+    label1->setPosition(
+        tgui::bindLeft(button1) + tgui::bindWidth(button1) / 2, // 버튼의 가로 중앙
+        tgui::bindBottom(button1) + 10                         // 버튼 아래 약간 띄움
+    );
+    label1->setOrigin(0.5f, 0.0f); // 라벨 중앙 기준 정렬
+    gui.add(label1);
+
+    auto label2 = tgui::Label::create("I n t e r m e d i a t e");
+    label2->setTextSize(60);
+    label2->getRenderer()->setTextColor(sf::Color::Black);
+    label2->getRenderer()->setFont(font);
+    label2->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center); // 텍스트 중앙 정렬
+    label2->setPosition(
+        tgui::bindLeft(button2) + tgui::bindWidth(button2) / 2, // 버튼의 가로 중앙
+        tgui::bindBottom(button2) + 10                         // 버튼 아래 약간 띄움
+    );
+    label2->setOrigin(0.5f, 0.0f); // 라벨 중앙 기준 정렬
+    gui.add(label2);
+
+    auto label3 = tgui::Label::create("A d v a n c e d");
+    label3->setTextSize(60);
+    label3->getRenderer()->setTextColor(sf::Color::Black);
+    label3->getRenderer()->setFont(font);
+    label3->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center); // 텍스트 중앙 정렬
+    label3->setPosition(
+        tgui::bindLeft(button3) + tgui::bindWidth(button3) / 2, // 버튼의 가로 중앙
+        tgui::bindBottom(button3) + 10                         // 버튼 아래 약간 띄움
+    );
+    label3->setOrigin(0.5f, 0.0f); // 라벨 중앙 기준 정렬
+    gui.add(label3);
 
     bool mapChosen = false;
     std::string selectedMap;
-
     // 버튼 클릭 이벤트 설정
     button1->onClick([&]()
         {
@@ -1377,6 +1406,7 @@ void GameManager::mapSelected()
 
         // 화면 그리기
         ui.getWindow().clear();
+        ui.getWindow().draw(background);
         gui.draw();
         ui.getWindow().display();
     }
@@ -1389,6 +1419,3 @@ void GameManager::mapSelected()
         run(); // 선택된 맵으로 게임 실행
     }
 }
-
-
-

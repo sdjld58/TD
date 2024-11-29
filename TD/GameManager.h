@@ -43,6 +43,7 @@ private:
     int selectedX;
     int selectedY;
     int selectedTowerIndex;
+    int selectedOption;
     bool isTowerPlacementMode;
     bool currentwaveType;
 

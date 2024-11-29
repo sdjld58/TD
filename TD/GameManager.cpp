@@ -579,7 +579,7 @@ void GameManager::startPreparationPhase()
     isPreparation = true;
     isTowerPlacementMode = true;  // 타워 설치 모드 상태 변수
     bool isTowerSelected = false;
-    int selectedOption = -1;
+    selectedOption = -1;
 
     selectedX = mapWithUnits[0].size() / 2;
     selectedY = mapWithUnits.size() / 2;
@@ -588,13 +588,12 @@ void GameManager::startPreparationPhase()
     while (isPreparation)
     {
         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY);
-       
+
 
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
             
-
             // **TGUI 이벤트 처리 추가**
             ui.gui.handleEvent(event);
 
@@ -658,7 +657,10 @@ void GameManager::startPreparationPhase()
                 else if (event.key.code == sf::Keyboard::Space && selectedTowerIndex >= 0 && isTowerPlacementMode == true)
                 {
                     attemptPlaceTower();
+                    selectedTowerIndex = -1;
                 }
+
+                
 
                 // 현재 선택된 타일에 있는 타워와 상호작용
                 auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
@@ -666,6 +668,7 @@ void GameManager::startPreparationPhase()
                     {
                         return tower.getX() == selectedX && tower.getY() == selectedY;
                     });
+               
 
                 // 타워가 있는지 확인하고 모드 설정
                 if (towerIt != placedTowers.end())
@@ -677,28 +680,36 @@ void GameManager::startPreparationPhase()
                     isTowerPlacementMode = true; // 타워가 없으면 설치 모드로 전환
                 }
 
-                static int selectedOption = -1; // -1: 아무것도 선택하지 않음
+                
 
                 if (towerIt != placedTowers.end())
                 {
+                    
                     // 업그레이드/판매 선택
                     if (event.key.code == sf::Keyboard::Num1)
                     {
                         selectedOption = 1; // 옵션 1 선택
+                        selectedTowerIndex = -1;
+
                         std::cout << "옵션 1 선택됨.\n";
                     }
                     else if (event.key.code == sf::Keyboard::Num2 && towerIt->getTowerName() == "2")
                     {
                         selectedOption = 2; // 옵션 2 선택
+                        selectedTowerIndex = -1;
+
                         std::cout << "옵션 2 선택됨.\n";
                     }
                     else if (event.key.code == sf::Keyboard::Num3)
                     {
                         selectedOption = 3; // 옵션 3 선택
+                        selectedTowerIndex = -1;
+
                         std::cout << "옵션 3 (판매) 선택됨.\n";
                     }
                     else if (event.key.code == sf::Keyboard::Space && selectedOption > 0) // Space로 실행
                     {
+                      
                         if (selectedOption == 1) // 업그레이드 (1번)
                         {
                             towerIt->upgrade(gold, map, towers, 1);
@@ -737,6 +748,7 @@ void GameManager::startPreparationPhase()
                     {
                         selectedOption = -1; // 선택 취소
                     }
+                    
                 }
 
             }
@@ -744,12 +756,14 @@ void GameManager::startPreparationPhase()
             // 마우스 클릭으로 타일 선택
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
+               
+                selectedOption = -1;
                 sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
                 float mouseX = static_cast<float>(mousePosition.x);
                 float mouseY = static_cast<float>(mousePosition.y);
 
-                float mapWidth = static_cast<float>(mapWithUnits[0].size());
-                float mapHeight = static_cast<float>(mapWithUnits.size());
+                float mapWidth = static_cast<float>(map[0].size());
+                float mapHeight = static_cast<float>(map.size());
 
                 float centerX = ui.getWindow().getSize().x / 2.0f;
                 float centerY = 0.0f;
@@ -766,42 +780,34 @@ void GameManager::startPreparationPhase()
                 if (clickedTileX >= 0 && clickedTileX < static_cast<int>(mapWidth) &&
                     clickedTileY >= 0 && clickedTileY < static_cast<int>(mapHeight))
                 {
-                    // 마우스 왼쪽 버튼 클릭 시 처리
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
-                    float mouseX = static_cast<float>(mousePosition.x);
-                    float mouseY = static_cast<float>(mousePosition.y);
-
-                    // 이소메트릭 좌표 변환을 위한 보정값
-                    float mapWidth = static_cast<float>(mapWithUnits[0].size());
-                    float mapHeight = static_cast<float>(mapWithUnits.size());
-
-                    // 화면 중심 좌표
-                    float centerX = ui.getWindow().getSize().x / 2.0f;
-                    float centerY = 0.0f; // 맵이 화면 상단에서 시작한다고 가정
-
-                    // 화면 좌표를 타일 좌표로 변환
-                    float tempX = (mouseX - centerX) / (ui.tileWidth / 2.0f);
-                    float tempY = mouseY / (ui.tileHeight / 2.0f);
-
-                    float tileX = (tempX + tempY) / 2.0f - 2;
-                    float tileY = (tempY - tempX) / 2.0f - 3.5;
-
-                    // 타일 좌표를 정수로 변환
-                    int clickedTileX = static_cast<int>(std::floor(tileX));
-                    int clickedTileY = static_cast<int>(std::floor(tileY));
-
-                    // 타일 좌표가 맵 범위 내에 있는지 확인
-                    if (clickedTileX >= 0 && clickedTileX < static_cast<int>(mapWidth) &&
-                        clickedTileY >= 0 && clickedTileY < static_cast<int>(mapHeight))
+                    selectedX = clickedTileX;
+                    selectedY = clickedTileY;
+                    auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+                        [this](const PlacedTower& tower)
+                        {
+                            return tower.getX() == selectedX && tower.getY() == selectedY;
+                        });
+                    if (towerIt != placedTowers.end())
                     {
-                        selectedX = clickedTileX;
-                        selectedY = clickedTileY;
-                        std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
-                        ui.setInfoText({ "수비 웨이브\n",
-                            "타일 선택됨: [" + std::to_string(selectedX) + ", " + std::to_string(selectedY) + "]\n",
-                            "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
+                        isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
+                        
                     }
+                    else
+                    {
+                       
+                        isTowerPlacementMode = true; // 타워가 없으면 설치 모드로 전환
+                    }
+
+                    // 타워 설치 시도
+                    if (map[selectedY][selectedX] == "O" && selectedTowerIndex >= 0 && isTowerPlacementMode == true)
+                    {
+                        attemptPlaceTower();
+                        selectedTowerIndex = -1;
+                    }
+                    
                 }
+            
+
             }
         }
     }
@@ -1260,6 +1266,9 @@ void GameManager::attemptPlaceTower()
         std::cout << "타워가 선택되지 않았습니다.\n";
         ui.setInfoText({ "타워가 선택되지 않았습니다.\n","...","..." });
     }
+
+
+
 }
 
 void GameManager::mapSelected()
@@ -1388,7 +1397,10 @@ void GameManager::mapSelected()
             stageFile = "Stage3.csv";
             mapChosen = true;
         });
-
+    exitButton->onClick([&]()
+        {
+            ui.getWindow().close(); // 게임 창 닫기
+        });
     // GUI 루프
     while (ui.getWindow().isOpen() && !mapChosen)
     {

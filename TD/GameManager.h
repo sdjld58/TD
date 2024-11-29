@@ -79,6 +79,7 @@ public:
     // 추가된 메서드
     void updateGameState(std::vector<Unit>& activeUnits);
     void mapSelected();
+    void gameStart();
     
   
 };

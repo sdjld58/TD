@@ -5,7 +5,7 @@ int main()
 {
     GameManager gameManager;
 
-    gameManager.mapSelected();
+    gameManager.gameStart();
 
     return 0;
 }

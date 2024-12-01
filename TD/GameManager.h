@@ -66,15 +66,15 @@ public:
     void loadTowerData(const std::string& filename); //타워 로드
     void attackUnits(std::vector<Unit>& activeUnits ,int currentTick, bool currentwaveType); //공격로직
     int calculateDamage(bool damageType, int baseDamage, const Unit& unit); //데미지 계산 로직
-    void spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue, int currentTick);
+    void spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& unitQueue, int currentTick);
     void updateUnits(std::vector<Unit>& activeUnits);
 
     void createProjectile(const PlacedTower& tower, const Unit& targetUnit);
     void updateProjectiles(sf::Time deltaTime);
 
     void startAttackWave(const Wave& wave,int& currentTick);
-    void handleAttackInput();
-    void updateAttackUnits(std::vector<Unit>& activeUnits);
+    bool handleAttackInput();
+    void updateAttackUnits(std::vector<Unit>& activeUnits, int currentTick);
     bool isAttackWaveOver(const std::vector<Unit>& activeUnits);
 
     // 추가된 메서드

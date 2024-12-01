@@ -32,7 +32,7 @@ private:
     sf::Text goldText;
 
     // 유닛 상태 표시 텍스트 추가
-    sf::Text unitStatusText;
+      sf::Text unitStatusText;
 
     // 타일 텍스처 및 스프라이트
     sf::Texture roadTexture;
@@ -75,6 +75,8 @@ private:
 
     float offsetX = -100.0f;
     float offsetY = 200.0f;
+   
+    int attackGold;
     
     //현재 웨이브 상태
     bool curWaveIsDefense = true;
@@ -88,6 +90,8 @@ public:
         int playerLife, int gold, int selectedX = -1, int selectedY = -1,
         const std::vector<Projectile>& projectiles = {});
 
+    void updateattackGold(int attackgold);
+    
     void drawButtons();
     void clearButtons();
     

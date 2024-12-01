@@ -153,6 +153,7 @@ void GameManager::run(const std::string& stageFile)
 
             // 공격 웨이브 처리
             attackGold = wave.getGold();
+            ui.updateattackGold(attackGold); //ui로 공격재화 표시하기 위해
             startAttackWave(wave, currentTick);
         }
     }
@@ -237,7 +238,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 
     // 공격 웨이브 골드 출력
     std::cout << "공격 골드(AttackGold): " << attackGold << "\n";
-
+    
     // 유닛 상태 출력
     std::cout << "\n=== 유닛 상태 ===\n";
     for (const auto& unit : activeUnits)
@@ -278,7 +279,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 {
     // UI를 통해 게임 상태를 업데이트하고 화면을 그립니다.
-    ui.update(activeUnits, placedTowers, playerLife, gold, attackGold, selectedX, projectiles);
+    ui.update(activeUnits, placedTowers, playerLife, gold, selectedX,selectedY ,projectiles);
 }
 
 void GameManager::loadMap(const std::string& filename)
@@ -655,6 +656,7 @@ void GameManager::startPreparationPhase()
                         Tower& selectedTower = *it;
                         selectedTowerIndex = std::distance(towers.begin(), it);
                         std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
+                        ui.setInfoText({ selectedTower.getTool() + " 타워가 선택되었습니다"," "," "});
                     }
                     else
                     {
@@ -1021,6 +1023,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 
             // 타워가 유닛을 공격
             attackUnits(activeUnits, currentTick, currentwaveType);
+            ui.updateattackGold(attackGold);
             updateAndPrintMap(activeUnits); // 공격 웨이브에서도 맵 상태를 출력
         }
 
@@ -1412,7 +1415,7 @@ void GameManager::mapSelected()
         });
     exitButton->onClick([&]()
         {
-            ui.getWindow().close(); // 게임 창 닫기
+            gameStart();
         });
     // GUI 루프
     while (ui.getWindow().isOpen() && !mapChosen)
@@ -1514,5 +1517,102 @@ void GameManager::showGameOverPopup()
         ui.getWindow().draw(background);
         gui.draw();
         ui.getWindow().display();
+    }
+}
+
+void GameManager::gameStart() {
+    // TGUI GUI 생성
+    tgui::Gui gui(ui.getWindow());
+
+    // 배경색을 설정
+    sf::RectangleShape background(sf::Vector2f(ui.getWindow().getSize().x, ui.getWindow().getSize().y));
+    background.setFillColor(sf::Color::Blue);
+
+    // 폰트 로드
+    sf::Font bmFont;
+    if (!bmFont.loadFromFile("resources/fonts/BMDOHYEON_ttf.ttf")) {
+        std::cerr << "Failed to load BMDOHYEON_ttf.ttf" << std::endl;
+        return;
+    }
+
+    // 메인 타이틀 설정
+    sf::Text mainTitle;
+    mainTitle.setFont(bmFont);
+    mainTitle.setString(L"전 장 의   스 파 이");
+    mainTitle.setCharacterSize(140); // 크기 조정
+    mainTitle.setFillColor(sf::Color::White);
+    mainTitle.setOrigin(mainTitle.getLocalBounds().width / 2.f, mainTitle.getLocalBounds().height / 2.f);
+    mainTitle.setPosition(ui.getWindow().getSize().x / 2.f, ui.getWindow().getSize().y * 0.2f); // 위치 설정
+
+    // "Spy of the Battlefield" 텍스트 추가 (서브 타이틀)
+    auto subTitle = tgui::Label::create("Spy of the Battlefield");
+    subTitle->setPosition("50%", "35%");          // 메인 타이틀 아래에 배치
+    subTitle->setOrigin(0.5f, 0.5f);              // 중앙 정렬
+    subTitle->setTextSize(70);                    // 텍스트 크기
+    subTitle->getRenderer()->setTextColor(sf::Color(255, 255, 255, 0)); // 투명도 0으로 시작
+
+    // Bangers 폰트 적용
+    tgui::Font bangersFont("resources/fonts/Bangers.ttf");    // Bangers 폰트 경로
+    subTitle->getRenderer()->setFont(bangersFont);           // 폰트 설정
+    gui.add(subTitle);
+
+    // "Start Game" 버튼 추가
+    auto startButton = tgui::Button::create("Start Game");
+    startButton->setPosition("40%", "60%");
+    startButton->setSize("20%", "10%");
+
+    // 버튼 배경과 텍스트 색상 설정
+    startButton->getRenderer()->setBackgroundColor(sf::Color::Green);
+    startButton->getRenderer()->setTextColor(sf::Color::White);
+    startButton->getRenderer()->setFont(bangersFont);      // 버튼 텍스트의 폰트 설정
+
+    // 텍스트 크기 조정
+    startButton->setTextSize(40); // 원하는 글씨 크기 (단위: 픽셀)
+
+    // 버튼을 GUI에 추가
+    gui.add(startButton);
+
+    // 버튼 클릭 이벤트 설정
+    bool gameStarted = false;
+    startButton->onClick([&]() {
+        gameStarted = true;
+        });
+
+    // 애니메이션 변수
+    sf::Clock clock; // 시간 측정을 위한 SFML 시계
+    float fadeInTime = 3.0f; // 서브 타이틀 페이드인 지속 시간
+
+    // GUI 루프
+    while (ui.getWindow().isOpen() && !gameStarted) {
+        sf::Event event;
+        while (ui.getWindow().pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                ui.getWindow().close();
+                return;
+            }
+            gui.handleEvent(event);
+        }
+
+        // 서브 타이틀 페이드인 애니메이션
+        float elapsed = clock.getElapsedTime().asSeconds();
+        if (elapsed < fadeInTime) {
+            int alpha = static_cast<int>((elapsed / fadeInTime) * 255); // 0 ~ 255로 변환
+            subTitle->getRenderer()->setTextColor(sf::Color(255, 255, 255, alpha));
+        }
+        else {
+            subTitle->getRenderer()->setTextColor(sf::Color(255, 255, 255, 255)); // 완전히 표시
+        }
+
+        // 화면 그리기
+        ui.getWindow().clear();
+        ui.getWindow().draw(background); // 배경 그리기
+        ui.getWindow().draw(mainTitle);  // 메인 타이틀 그리기
+        gui.draw();                      // TGUI GUI 그리기
+        ui.getWindow().display();
+    }
+
+    // "Map Selected" 화면 호출
+    if (gameStarted) {
+        mapSelected(); // 게임 시작 후 mapSelected 호출
     }
 }

@@ -81,6 +81,7 @@ public:
     void updateGameState(std::vector<Unit>& activeUnits);
     void mapSelected();
     void showGameOverPopup();
+    void gameStart();
     
   
 };

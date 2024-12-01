@@ -94,6 +94,7 @@ public:
     
     void drawButtons();
     void clearButtons();
+    void  gameInfoStage(); //조작키 설명화면
     
     sf::RenderWindow& getWindow();
     void setMap(const std::vector<std::vector<std::string>>& gameMap);

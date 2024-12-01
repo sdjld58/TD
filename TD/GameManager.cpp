@@ -1427,9 +1427,14 @@ void GameManager::gameStart() {
     // TGUI GUI 생성
     tgui::Gui gui(ui.getWindow());
 
-    // 배경색을 설정
-    sf::RectangleShape background(sf::Vector2f(ui.getWindow().getSize().x, ui.getWindow().getSize().y));
-    background.setFillColor(sf::Color::Blue);
+    // 첫 번째 반은 다크 블루
+    sf::RectangleShape leftBackground(sf::Vector2f(ui.getWindow().getSize().x / 2, ui.getWindow().getSize().y));
+    leftBackground.setFillColor(sf::Color(0, 0, 139)); // 다크 블루
+
+    // 두 번째 반은 레드
+    sf::RectangleShape rightBackground(sf::Vector2f(ui.getWindow().getSize().x / 2, ui.getWindow().getSize().y));
+    rightBackground.setFillColor(sf::Color::Red);
+    rightBackground.setPosition(ui.getWindow().getSize().x / 2, 0);
 
     // 폰트 로드
     sf::Font bmFont;
@@ -1508,7 +1513,9 @@ void GameManager::gameStart() {
 
         // 화면 그리기
         ui.getWindow().clear();
-        ui.getWindow().draw(background); // 배경 그리기
+        ui.getWindow().draw(leftBackground);
+        ui.getWindow().draw(rightBackground);
+
         ui.getWindow().draw(mainTitle);  // 메인 타이틀 그리기
         gui.draw();                      // TGUI GUI 그리기
         ui.getWindow().display();

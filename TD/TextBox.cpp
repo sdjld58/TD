@@ -5,8 +5,8 @@
 TextBox::TextBox(const UI &ui, bool isDefense, const std::vector<std::wstring>& strings)
     : windowWidth(ui.windowWidth), windowHeight(ui.windowHeight) {
     // isDefense에 따라 위치 및 색상 설정
-    position = isDefense ? sf::Vector2f(5.f, windowHeight - 350.f) : sf::Vector2f(windowWidth - 500.f, 0.f);
-    sideSize= isDefense ?  sf::Vector2f(160.f, 700.f) :  sf::Vector2f(1300.f, 160.f);
+    position = isDefense ? sf::Vector2f(15.f, windowHeight - 350.f) : sf::Vector2f(windowWidth - 500.f, 15.f);
+    sideSize= isDefense ?  sf::Vector2f(160.f, windowHeight) :  sf::Vector2f(windowWidth, 160.f);
     color = isDefense ? sf::Color(0, 102, 204) : sf::Color(204, 0, 0);
     sideColor = isDefense ? sf::Color(0, 51, 153) : sf::Color(153, 0, 0);
 
@@ -30,6 +30,8 @@ TextBox::TextBox(const UI &ui, bool isDefense, const std::vector<std::wstring>& 
 }
 
 void TextBox::draw(sf::RenderWindow& window) {
+
+    sideDraw(window);  //사이드 바 그리기
     
     // 둥근 사각형 본체
     sf::RectangleShape body(sf::Vector2f(size.x - 2 * cornerRadius, size.y));
@@ -70,7 +72,7 @@ void TextBox::draw(sf::RenderWindow& window) {
     for (const auto& text : texts) {
         window.draw(text);
     }
-    sideDraw(window);  //사이드 바 그리기
+   
    
 }
 

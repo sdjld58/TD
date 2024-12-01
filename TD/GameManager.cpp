@@ -1141,9 +1141,7 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
             // 라이프가 0 이하이면 게임 종료**
             if (playerLife <= 0)
             {
-                std::cout << "Game Over!\n";
-                ui.getWindow().close();
-                exit(0); // 프로그램 종료
+                showGameOverPopup();
             }
 
             it = activeUnits.erase(it);

@@ -517,28 +517,28 @@ void UI::gameInfoStage() {
 
 
     // 그림 추가 (중앙)
-  
+
 
     auto wasdkey = tgui::Picture::create("resources/images/icons/wasdkey.png"); // 이미지 파일 경로
     wasdkey->setSize({ 240, 160 });  // 그림 크기
-    wasdkey->setPosition((boxWidth - 200) / 2-40, 20); // 패널 중앙에 배치
+    wasdkey->setPosition((boxWidth - 200) / 2 - 40, 20); // 패널 중앙에 배치
     panel->add(wasdkey);
 
     auto spacekey = tgui::Picture::create("resources/images/icons/spacekey.png"); // 이미지 파일 경로
     spacekey->setSize({ 150, 150 });  // 그림 크기
-    spacekey->setPosition((boxWidth - 200) / 2 +90, 150); // 패널 중앙에 배치
+    spacekey->setPosition((boxWidth - 200) / 2 + 90, 150); // 패널 중앙에 배치
     panel->add(spacekey);
 
     auto fkey = tgui::Picture::create("resources/images/icons/fkey.png"); // 이미지 파일 경로
     fkey->setSize({ 120, 120 });  // 그림 크기
     fkey->setPosition((boxWidth - 200) / 2, 270); // 패널 중앙에 배치
     panel->add(fkey);
-    
+
     auto onekey = tgui::Picture::create("resources/images/icons/1key.png"); // 이미지 파일 경로
     onekey->setSize({ 120, 120 });  // 그림 크기
-    onekey->setPosition((boxWidth - 200) / 2 -200, 370); // 패널 중앙에 배치
+    onekey->setPosition((boxWidth - 200) / 2 - 200, 370); // 패널 중앙에 배치
     panel->add(onekey);
-  
+
     auto twokey = tgui::Picture::create("resources/images/icons/2key.png"); // 이미지 파일 경로
     twokey->setSize({ 120, 120 });  // 그림 크기
     twokey->setPosition((boxWidth - 200) / 2 - 120, 370); // 패널 중앙에 배치
@@ -546,12 +546,12 @@ void UI::gameInfoStage() {
 
     auto threekey = tgui::Picture::create("resources/images/icons/three.png"); // 이미지 파일 경로
     threekey->setSize({ 600, 120 });  // 그림 크기
-    threekey->setPosition((boxWidth - 200) / 2 -300, 470); // 패널 중앙에 배치
+    threekey->setPosition((boxWidth - 200) / 2 - 300, 470); // 패널 중앙에 배치
     panel->add(threekey);
 
     auto esckey = tgui::Picture::create("resources/images/icons/esckey.png"); // 이미지 파일 경로
     esckey->setSize({ 120, 120 });  // 그림 크기
-    esckey->setPosition((boxWidth - 200) / 2+20 ,570 ); // 패널 중앙에 배치
+    esckey->setPosition((boxWidth - 200) / 2 + 20, 570); // 패널 중앙에 배치
     panel->add(esckey);
 
     // WASD 옆에 "맵 이동키" 추가
@@ -585,7 +585,7 @@ void UI::gameInfoStage() {
     fText2->setText(L"공격 웨이브 시작 키");
     fText2->setTextSize(25);
     fText2->getRenderer()->setTextColor({ 255, 105, 180 }); // 형광 빨간색 텍스트
-    fText2->setPosition((boxWidth - 200) / 2 + 240, 300); // FKey 왼쪽
+    fText2->setPosition((boxWidth - 200) / 2 + 210, 300); // FKey 왼쪽
     fText2->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(fText2);
 
@@ -616,10 +616,9 @@ void UI::gameInfoStage() {
     escText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(escText);
 
-    // 종료 버튼 추가 (아래 중앙)
     auto closeButton = tgui::Button::create("종료");
     closeButton->setSize(70, 70); // 버튼 크기
-    closeButton->setPosition((boxWidth-100), 17); // 패널 오른쪽 상단 배치
+    closeButton->setPosition((boxWidth - 100), 17); // 패널 오른쪽 상단 배치
     closeButton->getRenderer()->setBorders(0);
     // close 버튼 이미지 설정
     closeButton->getRenderer()->setTexture("resources/images/icons/close.png");
@@ -636,9 +635,13 @@ void UI::gameInfoStage() {
     closeButton->onClick([this, panel]() {
         gui.remove(panel); // 패널 삭제
         });
+    // TGUI ESC 키 이벤트 처리
+   
 
     panel->add(closeButton);
 
     // GUI에 패널 추가
-    gui.add(panel, "gameInfoPanel");
+        gui.add(panel, "gameInfoPanel");
+
+    
 }

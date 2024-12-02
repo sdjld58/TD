@@ -719,7 +719,7 @@ void GameManager::startPreparationPhase()
                                 "\n사거리: " + std::to_string(towerIt->getAttackRange()) +
                                 "\n공격 유형: " + towerIt->attackType() + "\n\n[space] : 옵션창" });
                             }
-                            else  ui.setInfoText({ "업그레이드에 실패하였습니다","골드가 부족합니다.","타워를 판매하거나 [F]키를 통해 수비웨이브를 시작하세요!" });
+                            else  ui.setInfoText({ "업그레이드에 실패하였습니다","골드가 부족합니다.","타워를 판매하거나 [F]키를 통해\n수비웨이브를 시작하세요!" });
                     
                         }
                         else if (selectedOption == 2) // 업그레이드 (2번)
@@ -732,7 +732,7 @@ void GameManager::startPreparationPhase()
                                "\n사거리: " + std::to_string(towerIt->getAttackRange()) +
                                "\n공격 유형: " + towerIt->attackType() + "\n\n[space] : 옵션창" });
                             }
-                             else  ui.setInfoText({ "업그레이드에 실패하였습니다","골드가 부족합니다.","타워를 판매하거나 [F]키를 통해 수비웨이브를 시작하세요!" });
+                             else  ui.setInfoText({ "업그레이드에 실패하였습니다","골드가 부족합니다.","타워를 판매하거나 [F]키를 통해\n수비웨이브를 시작하세요!" });
                             
                         }
                         else if (selectedOption == 3) // 타워 판매 (3번)
@@ -1266,7 +1266,7 @@ void GameManager::attemptPlaceTower()
             else
             {
                 std::cout << "타워를 설치할 골드가 부족합니다.\n";
-                ui.setInfoText({"타워를 설치할 골드가 부족합니다.\n", " ", "타워를 판매하거나 [F]키를 통해 수비웨이브를 시작하세요!"});
+                ui.setInfoText({"타워를 설치할 골드가 부족합니다.\n", " ", "타워를 판매하거나 [F]키를 통해\n수비웨이브를 시작하세요!"});
             }
         }
         else
@@ -1289,14 +1289,14 @@ void GameManager::mapSelected()
 
     // 배경색을 흰색으로 설정
     sf::RectangleShape background(sf::Vector2f(ui.getWindow().getSize().x, ui.getWindow().getSize().y));
-    background.setFillColor(sf::Color::White);
+    background.setFillColor(sf::Color(75, 0, 130));
 
     // 텍스트 생성 및 설정
     auto titleLabel = tgui::Label::create("Select   A   Track");
     titleLabel->setPosition("50%", "7%");
     titleLabel->setOrigin(0.5f, 0.5f);
     titleLabel->setTextSize(140);
-    titleLabel->getRenderer()->setTextColor(sf::Color::Black);
+    titleLabel->getRenderer()->setTextColor(sf::Color::White);
     tgui::Font font("resources/fonts/Bangers.ttf");
     titleLabel->getRenderer()->setFont(font);
     gui.add(titleLabel);
@@ -1350,7 +1350,7 @@ void GameManager::mapSelected()
     // 버튼 아래 텍스트(Label) 추가
     auto label1 = tgui::Label::create("B e g i n n e r");
     label1->setTextSize(60);
-    label1->getRenderer()->setTextColor(sf::Color::Black);
+    label1->getRenderer()->setTextColor(sf::Color::White);
     label1->getRenderer()->setFont(font);
     label1->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center); // 텍스트 중앙 정렬
     label1->setPosition(
@@ -1362,7 +1362,7 @@ void GameManager::mapSelected()
 
     auto label2 = tgui::Label::create("I n t e r m e d i a t e");
     label2->setTextSize(60);
-    label2->getRenderer()->setTextColor(sf::Color::Black);
+    label2->getRenderer()->setTextColor(sf::Color::White);
     label2->getRenderer()->setFont(font);
     label2->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center); // 텍스트 중앙 정렬
     label2->setPosition(
@@ -1374,7 +1374,7 @@ void GameManager::mapSelected()
 
     auto label3 = tgui::Label::create("A d v a n c e d");
     label3->setTextSize(60);
-    label3->getRenderer()->setTextColor(sf::Color::Black);
+    label3->getRenderer()->setTextColor(sf::Color::White);
     label3->getRenderer()->setFont(font);
     label3->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center); // 텍스트 중앙 정렬
     label3->setPosition(
@@ -1386,23 +1386,29 @@ void GameManager::mapSelected()
 
     bool mapChosen = false;
     std::string selectedMap;
+    std::vector<std::wstring> selectMapText;
     // 버튼 클릭 이벤트 설정
     button1->onClick([&]()
         {
+
             selectedMap = "Map1.csv";
             mapChosen = true;
+            selectMapText = Map1Text;
         });
 
     button2->onClick([&]()
         {
+
             selectedMap = "Map2.csv";
             mapChosen = true;
+            selectMapText = Map2Text;
         });
 
     button3->onClick([&]()
         {
             selectedMap = "Map3.csv";
             mapChosen = true;
+            selectMapText = Map3Text;
         });
 
     exitButton->onClick([&]()
@@ -1435,6 +1441,7 @@ void GameManager::mapSelected()
     if (mapChosen)
     {
         std::cout << selectedMap << " 맵이 선택되었습니다.\n";
+        gamePrologue(selectMapText);
         loadMap(selectedMap);
         parsePath();
         run(); // 선택된 맵으로 게임 실행
@@ -1557,6 +1564,86 @@ void GameManager::gameStart() {
 
     // "Map Selected" 화면 호출
     if (gameStarted) {
+
+        gamePrologue(prologueText);
         mapSelected(); // 게임 시작 후 mapSelected 호출
+    }
+}
+
+
+void GameManager::gamePrologue(const std::vector<std::wstring>& prologueLines) {
+    // 폰트 로드
+    sf::Font font;
+    if (!font.loadFromFile("resources/fonts/BMDOHYEON_ttf.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
+        return;
+    }
+
+    sf::Text prologueText;
+    prologueText.setFont(font);
+    prologueText.setCharacterSize(30); // 글씨 크기 조정
+    prologueText.setFillColor(sf::Color::White);
+    prologueText.setStyle(sf::Text::Bold);
+
+    sf::Vector2u windowSize = ui.getWindow().getSize();
+    prologueText.setPosition(150, 150); // 텍스트 시작 위치
+
+    // 다음 버튼 생성
+    auto nextButton = tgui::Button::create();
+    nextButton->setSize(150, 160); // 버튼 크기 키움
+    nextButton->setPosition(windowSize.x - 200, windowSize.y - 200); // 화면 오른쪽 하단
+    nextButton->getRenderer()->setBackgroundColor(sf::Color::Transparent);
+    nextButton->getRenderer()->setTexture("resources/images/icons/next.png"); // 버튼 이미지
+    nextButton->getRenderer()->setBorders(0); // 테두리 제거
+
+    // 마우스 오버 효과
+    nextButton->onMouseEnter([nextButton]() {
+        nextButton->getRenderer()->setOpacity(0.7f); // 불투명도 낮춤
+        });
+    nextButton->onMouseLeave([nextButton]() {
+        nextButton->getRenderer()->setOpacity(1.0f); // 원래 상태로 복구
+        });
+
+    // GUI에 버튼 추가
+    tgui::Gui gui(ui.getWindow());
+    gui.add(nextButton);
+
+    // 다음 버튼 클릭 여부
+    bool nextClicked = false;
+    nextButton->onClick([&nextClicked]() {
+        nextClicked = true;
+        });
+
+    // 프롤로그 애니메이션 변수
+    sf::Clock clock;
+    float lineDelay = 0.3f; // 각 줄 표시 간격 (초)
+    size_t currentLineIndex = 0; // 현재 표시 중인 줄의 인덱스
+
+    // 프롤로그 화면 루프
+    while (ui.getWindow().isOpen() && !nextClicked) {
+        sf::Event event;
+        while (ui.getWindow().pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                ui.getWindow().close();
+                return;
+            }
+            gui.handleEvent(event);
+        }
+
+        // 애니메이션: 일정 시간 간격으로 줄 추가
+        if (currentLineIndex < prologueLines.size() &&
+            clock.getElapsedTime().asSeconds() > currentLineIndex * lineDelay) {
+            std::wstring displayedText;
+            for (size_t i = 0; i <= currentLineIndex; ++i) {
+                displayedText += prologueLines[i] + L"\n";
+            }
+            prologueText.setString(displayedText);
+            currentLineIndex++;
+        }
+
+        ui.getWindow().clear(sf::Color::Black); // 배경 검은색
+        ui.getWindow().draw(prologueText);      // 프롤로그 텍스트
+        gui.draw();                             // 버튼
+        ui.getWindow().display();
     }
 }

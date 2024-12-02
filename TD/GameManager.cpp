@@ -627,7 +627,7 @@ void GameManager::startPreparationPhase()
                 {
                     selectedTowerIndex = -1; // 선택된 타워 초기화
                     std::cout << "타워 선택이 초기화되었습니다.\n";
-
+                    ui.setInfoText({ "타워 선택이 초기화되었습니다."," "," "});
                     ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
                 }
 
@@ -643,7 +643,12 @@ void GameManager::startPreparationPhase()
                         Tower& selectedTower = *it;
                         selectedTowerIndex = std::distance(towers.begin(), it);
                         std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
-                        ui.setInfoText({ selectedTower.getTool() + " 타워가 선택되었습니다"," "," "});
+                        ui.setInfoText({ selectedTower.getTool() + " 타워가 선택되었습니다!\n",
+                                         selectedTower.getTool2(),
+                    "공격력: " + std::to_string(selectedTower.getDamage()) +
+                    "\n공격 속도: " + std::to_string(selectedTower.getTimePerAttack()) +
+                    "\n사거리: " + std::to_string(selectedTower.getAttackRange()) +
+                    "\n공격 유형: " + selectedTower.attackType()+"\n\n[space] : 설치"});
                     }
                     else
                     {
@@ -682,32 +687,52 @@ void GameManager::startPreparationPhase()
 
                 if (towerIt != placedTowers.end())
                 {
+                    ui.setInfoText({ towerIt->getTool()+" 타워", towerIt->uiOptionSelect(towers,0)," "});
                     // 업그레이드/판매 선택
                     if (event.key.code == sf::Keyboard::Num1)
                     {
                         selectedOption = 1; // 옵션 1 선택
                         std::cout << "옵션 1 선택됨.\n";
+                        ui.setInfoText({ towerIt->getTool() +" 타워",towerIt->uiOptionSelect(towers,1)," "});
                     }
                     else if (event.key.code == sf::Keyboard::Num2 && towerIt->getTowerName() == "2")
                     {
                         selectedOption = 2; // 옵션 2 선택
                         std::cout << "옵션 2 선택됨.\n";
+                        ui.setInfoText({ towerIt->getTool() + " 타워",towerIt->uiOptionSelect(towers,2)," " });
                     }
                     else if (event.key.code == sf::Keyboard::Num3)
                     {
                         selectedOption = 3; // 옵션 3 선택
                         std::cout << "옵션 3 (판매) 선택됨.\n";
+                        ui.setInfoText({ "타워를 판매하시겠습니까?",towerIt->uiOptionSelect(towers,3),"판매를 하려면 [space]를 누르십쇼"});
                     }
                     else if (event.key.code == sf::Keyboard::Space && selectedOption > 0) // Space로 실행
                     {
                         if (selectedOption == 1) // 업그레이드 (1번)
                         {
-                            towerIt->upgrade(gold, map, towers, 1);
-                            
+                            if (towerIt->upgrade(gold, map, towers, 1)) {
+                                ui.setInfoText({ towerIt->getTool() + "로 업그레이드 되었습니다",
+                                    towerIt->getTool2(),
+                                    "공격력: " + std::to_string(towerIt->getDamage()) +
+                                "\n공격 속도: " + std::to_string(towerIt->getTimePerAttack()) +
+                                "\n사거리: " + std::to_string(towerIt->getAttackRange()) +
+                                "\n공격 유형: " + towerIt->attackType() + "\n\n[space] : 옵션창" });
+                            }
+                            else  ui.setInfoText({ "업그레이드에 실패하였습니다","골드가 부족합니다.","타워를 판매하거나 [F]키를 통해 수비웨이브를 시작하세요!" });
+                    
                         }
                         else if (selectedOption == 2) // 업그레이드 (2번)
                         {
-                            towerIt->upgrade(gold, map, towers, 2);
+                            if (towerIt->upgrade(gold, map, towers, 2)) {
+                                ui.setInfoText({ towerIt->getTool() + "로 업그레이드 되었습니다",
+                                   towerIt->getTool2(),
+                                   "공격력: " + std::to_string(towerIt->getDamage()) +
+                               "\n공격 속도: " + std::to_string(towerIt->getTimePerAttack()) +
+                               "\n사거리: " + std::to_string(towerIt->getAttackRange()) +
+                               "\n공격 유형: " + towerIt->attackType() + "\n\n[space] : 옵션창" });
+                            }
+                             else  ui.setInfoText({ "업그레이드에 실패하였습니다","골드가 부족합니다.","타워를 판매하거나 [F]키를 통해 수비웨이브를 시작하세요!" });
                             
                         }
                         else if (selectedOption == 3) // 타워 판매 (3번)
@@ -727,7 +752,7 @@ void GameManager::startPreparationPhase()
                             }
                             gold += refundAmount;
                             std::cout << "타워가 판매되었습니다. 반환된 골드: " << refundAmount << "\n";
-
+                            ui.setInfoText({ "타워가 판매되었습니다.","반환된 골드: " + std::to_string(refundAmount)," " });
                             map[towerIt->getY()][towerIt->getX()] = "O";
                             placedTowers.erase(towerIt);
                         }
@@ -799,8 +824,8 @@ void GameManager::startPreparationPhase()
                         selectedY = clickedTileY;
                         std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
                         ui.setInfoText({ "침투에 대비하세요!\n",
-                            "",
-                            "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
+                            "[F] : 수비웨이브를 시작 키",
+                            "[1] : 검사 타워 선택 \n[2] : 궁수 타워 선택 \n[3] : 마법사 타워 선택\n[space] : 설치된 타워 정보" });
                     }
                 }
             }
@@ -1237,18 +1262,11 @@ void GameManager::attemptPlaceTower()
                 placedTowers.push_back(newTower);
                 std::cout << newTower.getTowerName() << " 타워가 설치되었습니다!\n";
                 
-              
-                ui.setInfoText({ newTower.getTool() + " 타워가 설치되었습니다!\n",
-                    newTower.getTool2(),
-                    "공격력: " + std::to_string(newTower.getDamage()) +
-                    "\n공격 속도: " + std::to_string(newTower.getTimePerAttack()) +
-                    "\n사거리: " + std::to_string(newTower.getAttackRange()) +
-                    "\n공격 유형: " + newTower.attackType() });
             }
             else
             {
                 std::cout << "타워를 설치할 골드가 부족합니다.\n";
-                ui.setInfoText({"타워를 설치할 골드가 부족합니다.\n", "...", "..."});
+                ui.setInfoText({"타워를 설치할 골드가 부족합니다.\n", " ", "타워를 판매하거나 [F]키를 통해 수비웨이브를 시작하세요!"});
             }
         }
         else
@@ -1465,20 +1483,36 @@ void GameManager::gameStart() {
     gui.add(subTitle);
 
     // "Start Game" 버튼 추가
-    auto startButton = tgui::Button::create("Start Game");
+    auto startButton = tgui::Button::create();
     startButton->setPosition("40%", "60%");
-    startButton->setSize("20%", "10%");
+    startButton->setSize("20%", "30%");
+    startButton->getRenderer()->setBorders(0);
 
-    // 버튼 배경과 텍스트 색상 설정
-    startButton->getRenderer()->setBackgroundColor(sf::Color::Green);
-    startButton->getRenderer()->setTextColor(sf::Color::White);
-    startButton->getRenderer()->setFont(bangersFont);      // 버튼 텍스트의 폰트 설정
+    // 버튼 기본 아이콘 설정
+    startButton->getRenderer()->setTexture("resources/images/icons/start.png"); // 기본 아이콘 경로
 
-    // 텍스트 크기 조정
-    startButton->setTextSize(40); // 원하는 글씨 크기 (단위: 픽셀)
+    // 마우스 오버 효과
+    startButton->onMouseEnter([&leftBackground, &rightBackground, startButton]() {
+        // 배경색 좌우 반전: 왼쪽 빨간색, 오른쪽 파란색
+        leftBackground.setFillColor(sf::Color::Red);
+        rightBackground.setFillColor(sf::Color(0, 0, 139)); // 다크 블루
+
+        // 버튼 아이콘을 마우스 오버 상태로 변경
+        startButton->getRenderer()->setTexture("resources/images/icons/start2.png"); // 오버 상태 아이콘 경로
+        });
+
+    startButton->onMouseLeave([&leftBackground, &rightBackground, startButton]() {
+        // 배경색 복구: 왼쪽 파란색, 오른쪽 빨간색
+        leftBackground.setFillColor(sf::Color(0, 0, 139)); // 다크 블루
+        rightBackground.setFillColor(sf::Color::Red);
+
+        // 버튼 아이콘을 기본 상태로 복구
+        startButton->getRenderer()->setTexture("resources/images/icons/start.png"); // 기본 아이콘 경로
+        });
 
     // 버튼을 GUI에 추가
     gui.add(startButton);
+
 
     // 버튼 클릭 이벤트 설정
     bool gameStarted = false;

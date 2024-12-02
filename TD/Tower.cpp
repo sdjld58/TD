@@ -19,7 +19,10 @@ int Tower::getTargetAmount() const { return targetAmount; }
 int Tower::getIsNoDamage() const { return isNoDamage; }
 std::string Tower::getTool() const { return tool; }
 std::string Tower::getTool2() const { return tool2; }
-
+std::string Tower::attackType() const {
+    if (getIsMagic()) return "마법";
+    else return "물리";
+}
 // 업그레이드 함수 정의 - 타워 리스트에서 nextTowerID에 해당하는 타워를 찾음
 void Tower::upgrade(const std::vector<Tower>& towerList)
 {

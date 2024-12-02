@@ -169,55 +169,7 @@ void UI::drawButtons()
         gui.setWindow(window);
         tgui::Font font("resources/fonts/BMDOHYEON_ttf.ttf");
 
-        auto firstUnitButton = tgui::Button::create("A");
-        firstUnitButton->setSize(80, 70);
-        firstUnitButton->setPosition(windowWidth - 200, 380);
-        firstUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-        firstUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-        firstUnitButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-        firstUnitButton->setTextSize(26); //글씨 크기 설정
-        firstUnitButton->getRenderer()->setFont(font); // 폰트 설정
-
-        auto secondUnitButton = tgui::Button::create("B");
-        secondUnitButton->setSize(80, 70);
-        secondUnitButton->setPosition(windowWidth - 300, 380);
-        secondUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-        secondUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-        secondUnitButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-        secondUnitButton->setTextSize(26); //글씨 크기 설정
-        secondUnitButton->getRenderer()->setFont(font); // 폰트 설정
-
-        auto thirdUnitButton = tgui::Button::create("C");
-        thirdUnitButton->setSize(80, 70);
-        thirdUnitButton->setPosition(windowWidth - 400, 380);
-        thirdUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-        thirdUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-        thirdUnitButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-        thirdUnitButton->setTextSize(26); //글씨 크기 설정
-        thirdUnitButton->getRenderer()->setFont(font); // 폰트 설정
-
-        firstUnitButton->onClick([this]() {
-            if (onFirstUnitButtonClicked)
-            {
-                onFirstUnitButtonClicked();
-            }
-            });
-        secondUnitButton->onClick([this]() {
-            if (onSecondUnitButtonClicked)
-            {
-                onSecondUnitButtonClicked();
-            }
-            });
-        thirdUnitButton->onClick([this]() {
-            if (onThirdUnitButtonClicked)
-            {
-                onThirdUnitButtonClicked();
-            }
-            });
-
-        gui.add(firstUnitButton, "firstUnitButton");
-        gui.add(secondUnitButton, "secondUnitButton");
-        gui.add(thirdUnitButton, "thirdUnitButton");
+       
     }
 }
 
@@ -628,6 +580,14 @@ void UI::gameInfoStage() {
     fText->setPosition((boxWidth - 200) / 2 - 240, 300); // FKey 왼쪽
     fText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(fText);
+
+    auto fText2 = tgui::Label::create();
+    fText2->setText(L"공격 웨이브 시작 키");
+    fText2->setTextSize(25);
+    fText2->getRenderer()->setTextColor({ 255, 105, 180 }); // 형광 빨간색 텍스트
+    fText2->setPosition((boxWidth - 200) / 2 + 240, 300); // FKey 왼쪽
+    fText2->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(fText2);
 
     // 1번 키 옆에 "타워 선택 키" 추가
     auto oneText = tgui::Label::create();

@@ -58,21 +58,12 @@ void GameManager::run(const std::string& stageFile)
                 playerLife = wave.getLife();
             }
 
-            std::queue<Unit> unitQueue;
+            std::queue<int> unitQueue;
 
             // 웨이브에 포함된 유닛 생성
             for (int unitID : wave.getUnits())
             {
-                auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
-                    [unitID](const UnitType& ut) { return ut.getId() == unitID; });
-                if (it != unitTypes.end())
-                {
-                    UnitType& unitType = *it;
-                    Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
-                        unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(),
-                        unitType.getKillReward(), path, unitType.getLifeDamage());
-                    unitQueue.push(unit);
-                }
+                unitQueue.push(unitID);
             }
 
             std::vector<Unit> activeUnits;
@@ -162,7 +153,7 @@ void GameManager::run(const std::string& stageFile)
     mapSelected(); //맵선택으로 돌아옴
 }
 
-void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& unitQueue,int currentTick)
+void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& unitQueue, int currentTick)
 {
     // **스폰 간격 변수**
     static int lastSpawnTick = 0;       // 마지막으로 유닛이 생성된 틱
@@ -171,12 +162,22 @@ void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<Unit>& u
     // **틱 간격에 따라 유닛 생성**
     if (currentTick - lastSpawnTick >= spawnInterval && !unitQueue.empty())
     {
-        Unit unit = unitQueue.front();
+        int unitId = unitQueue.front();
         unitQueue.pop();
 
-        // 유닛을 스폰 위치에 추가
-        activeUnits.push_back(unit);
-        lastSpawnTick = currentTick;   // 마지막 생성 틱 업데이트
+        // 유닛 ID로 유닛 생성
+        auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
+            [unitId](const UnitType& ut) { return ut.getId() == unitId; });
+
+        if (it != unitTypes.end())
+        {
+            const UnitType& unitType = *it;
+            Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
+                unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(),
+                unitType.getKillReward(), path, unitType.getLifeDamage());
+            activeUnits.push_back(unit);
+            lastSpawnTick = currentTick; // 마지막 생성 틱 업데이트
+        }
     }
 }
 
@@ -998,19 +999,19 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 {
     std::vector<Unit> activeUnits;
     bool waveOver = false;
-    int previousPlayerLife = playerLife;
 
     sf::Clock clock;
     sf::Time lastLogicUpdateTime = sf::Time::Zero;
     sf::Time logicUpdateInterval = sf::milliseconds(500); // 논리 업데이트 간격 (500ms)
-    
-    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화
+
+    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); } // 유닛 생산 대기열 초기화
 
     while (!waveOver)
     {
         sf::Time elapsedTime = clock.restart();
 
-        handleAttackInput();
+        // 키 값 입력 및 공격 웨이브 종료 요청 확인
+        bool endWaveRequested = handleAttackInput();
 
         // **논리 업데이트 시간 체크**
         lastLogicUpdateTime += elapsedTime;
@@ -1019,38 +1020,72 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
             lastLogicUpdateTime -= logicUpdateInterval;
             currentTick++;
 
-            updateAttackUnits(activeUnits);
+            // 유닛 스폰 및 이동
+            updateAttackUnits(activeUnits, currentTick);
 
-            // 타워가 유닛을 공격
-            attackUnits(activeUnits, currentTick, currentwaveType);
-            ui.updateattackGold(attackGold);
-            updateAndPrintMap(activeUnits); // 공격 웨이브에서도 맵 상태를 출력
+            // 대기열 정보 업데이트
+            std::queue<int> tempQueue = unitProductionQueue; // 대기열 복사
+            std::vector<std::string> queueInfo;
+            while (!tempQueue.empty())
+            {
+                int unitId = tempQueue.front();
+                tempQueue.pop();
+
+                auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
+                    [unitId](const UnitType& ut) { return ut.getId() == unitId; });
+
+                if (it != unitTypes.end())
+                {
+                    queueInfo.push_back(it->getUnitName());
+                }
+                else
+                {
+                    queueInfo.push_back("Unknown Unit");
+                }
+            }
+
+            // 대기열 정보를 UI에 표시
+            std::string queueText = "유닛 대기열\n";
+            for (const auto& name : queueInfo)
+            {
+                queueText += name + "\n";
+            }
+
+            ui.setInfoText({ "유닛을 침투시키세요", queueText,""});
+
+            // UI 업데이트
+            updateGameState(activeUnits);
+
+            // 공격 웨이브 종료 조건 확인
+            if (endWaveRequested)
+            {
+                if (activeUnits.empty() && unitProductionQueue.empty())
+                {
+                    waveOver = true;
+                    std::cout << "공격 웨이브가 종료되었습니다.\n";
+                }
+                else
+                {
+                    std::cout << "필드 또는 대기열에 유닛이 남아 있어 웨이브를 종료할 수 없습니다.\n";
+                }
+            }
+            else
+            {
+                waveOver = isAttackWaveOver(activeUnits);
+            }
         }
 
         // **투사체 업데이트 (매 프레임)**
         updateProjectiles(elapsedTime);
-
-        // UI 업데이트 및 콘솔 출력
-        updateGameState(activeUnits);
-
-        waveOver = isAttackWaveOver(activeUnits);
-        if (previousPlayerLife > playerLife) waveOver = true;// 공격 성공 시 공격 웨이브 바로 종료
-
-        //std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
-    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); }// 유닛 생산 대기열 초기화,공격웨이브가 끝나고 바로 초기화
+    while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); } // 유닛 생산 대기열 초기화
 
     std::cout << "공격 웨이브 종료!\n";
-    if (previousPlayerLife > playerLife)
-    {
-        gold = static_cast<int>(gold * 1.2);
-        std::cout << "공격 성공! 수비 재화가 증가했습니다. 현재 골드: " << gold << "\n";
-    }
 }
 
 
-void GameManager::handleAttackInput()
+bool GameManager::handleAttackInput()
 {
     sf::Event event;
     while (ui.getWindow().pollEvent(event))
@@ -1062,6 +1097,12 @@ void GameManager::handleAttackInput()
         }
         else if (event.type == sf::Event::KeyPressed)
         {
+            // 'q' 키 입력 시 처리
+            if (event.key.code == sf::Keyboard::Q)
+            {
+                return true; // 공격 웨이브 종료 요청, 해당 지점 참고해서 종료 버튼 추가하면 좋을듯?
+            }
+
             int unitId = 0;
             if (event.key.code == sf::Keyboard::Num1)
                 unitId = 1;
@@ -1092,39 +1133,13 @@ void GameManager::handleAttackInput()
             }
         }
     }
+    return false; // 공격 웨이브 종료 요청 없음
 }
 
-void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
+void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits, int currentTick)
 {
-    // 스폰 지점이 비어 있는지 확인
-    bool sOccupied = false;
-    for (const auto& unit : activeUnits)
-    {
-        if (unit.getX() == path[0].first && unit.getY() == path[0].second)
-        {
-            sOccupied = true;
-            break;
-        }
-    }
-
-    // 스폰 지점이 비어 있고, 대기열에 유닛이 있을 경우에만 유닛을 생성
-    if (!sOccupied && !unitProductionQueue.empty())
-    {
-        int unitId = unitProductionQueue.front();
-        unitProductionQueue.pop();
-
-        auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
-            [unitId](const UnitType& ut) { return ut.getId() == unitId; });
-
-        if (it != unitTypes.end())
-        {
-            const UnitType& unitType = *it;
-            Unit unit(unitType.getId(), unitType.getUnitName(), unitType.getHp(),
-                unitType.getTimePerMove(), unitType.getArmor(), unitType.getResist(),
-                unitType.getKillReward(), path, unitType.getLifeDamage());
-            activeUnits.push_back(unit);
-        }
-    }
+    // 유닛 스폰
+    spawnUnits(activeUnits, unitProductionQueue, currentTick);
 
     // 유닛 업데이트
     for (auto it = activeUnits.begin(); it != activeUnits.end();)
@@ -1134,11 +1149,10 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
         {
             std::cout << it->getName() << " 유닛이 목적지에 도달했습니다!\n";
 
-            // 플레이어 라이프 감소 추가**
+            // 플레이어 라이프 감소
             playerLife -= it->getLifeDamage();
-            
 
-            // 라이프가 0 이하이면 게임 종료**
+            // 라이프가 0 이하이면 게임 종료
             if (playerLife <= 0)
             {
                 showGameOverPopup();
@@ -1152,6 +1166,7 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits)
         }
     }
 }
+
 
 bool GameManager::isAttackWaveOver(const std::vector<Unit>& activeUnits)
 {

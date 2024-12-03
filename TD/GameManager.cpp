@@ -121,6 +121,8 @@ void GameManager::run(const std::string& stageFile)
                 // 게임 종료 조건 체크
                 if (playerLife <= 0)
                 {
+                    activeUnits.clear();
+                    placedTowers.clear();
                     showGameOverPopup();
                     return;
                 }
@@ -150,7 +152,7 @@ void GameManager::run(const std::string& stageFile)
 void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& unitQueue, int currentTick)
 {
     // **스폰 간격 변수**
-    static int lastSpawnTick = 0;       // 마지막으로 유닛이 생성된 틱
+    lastSpawnTick = 0;       // 마지막으로 유닛이 생성된 틱
     const int spawnInterval = 2;      // 유닛 생성 간격 (틱 단위)
 
     // **틱 간격에 따라 유닛 생성**
@@ -1248,6 +1250,8 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits, int currentT
             // 라이프가 0 이하이면 게임 종료
             if (playerLife <= 0)
             {
+                activeUnits.clear();
+                placedTowers.clear();
                 showGameOverPopup();
             }
 
@@ -1388,6 +1392,23 @@ void GameManager::attemptPlaceTower()
 
 void GameManager::mapSelected()
 {
+    selectedX = 0;
+    selectedY = 0;
+    selectedTowerIndex = -1;
+    selectedOption = -1;
+    isTowerPlacementMode = true;
+
+    // 게임 데이터 초기화
+    map.clear();
+    waves.clear();
+    activeUnits.clear();
+    placedTowers.clear();
+    unitProductionQueue = std::queue<int>();
+
+    gold = 100; // 초기 골드 값 설정
+    playerLife = 10; // 초기 라이프 설정
+    attackGold = 0;
+
     // TGUI GUI 생성
     tgui::Gui gui(ui.getWindow());
 
@@ -1493,6 +1514,8 @@ void GameManager::mapSelected()
     std::vector<std::wstring> selectMapText;
     // 버튼 클릭 이벤트 설정
     std::string stageFile;
+
+
 
     button1->onClick([&]()
         {
@@ -1820,9 +1843,11 @@ void GameManager::gamePrologue(const std::vector<std::wstring>& prologueLines) {
             currentLineIndex++;
         }
 
+
         ui.getWindow().clear(sf::Color::Black); // 배경 검은색
         ui.getWindow().draw(prologueText);      // 프롤로그 텍스트
         gui.draw();                             // 버튼
         ui.getWindow().display();
     }
 }
+

@@ -23,6 +23,8 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 void GameManager::run(const std::string& stageFile)
 {
    
+   
+   
     loadUnitTypes("UnitTypes.csv");
     loadTowerData("TowerData.csv");
     loadWaves(stageFile);
@@ -275,6 +277,7 @@ void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 
 void GameManager::loadMap(const std::string& filename)
 {
+    map.clear();
     std::ifstream file(filename);
 
     if (!file.is_open())

@@ -619,22 +619,26 @@ void GameManager::startPreparationPhase()
                 {
                     selectedY--;
                     selectedOption = -1;
+                    selectedTowerIndex = -1;
                 }
 
                 else if (event.key.code == sf::Keyboard::S && selectedY < mapWithUnits.size() - 1)
                 {
                     selectedY++;
                     selectedOption = -1;
+                    selectedTowerIndex = -1;
                 }
                 else if (event.key.code == sf::Keyboard::A && selectedX > 0)
                 {
                     selectedX--;
                     selectedOption = -1;
+                    selectedTowerIndex = -1;
                 }
                 else if (event.key.code == sf::Keyboard::D && selectedX < mapWithUnits[0].size() - 1)
                 {
                     selectedX++;
                     selectedOption = -1;
+                    selectedTowerIndex = -1;
                 }
 
                 else if (event.key.code == sf::Keyboard::Escape)
@@ -645,41 +649,46 @@ void GameManager::startPreparationPhase()
                     ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
                 }
 
-                // 1~9 키로 타워 선택
-                else if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9 && isTowerPlacementMode == true)
+                else if (map[selectedY][selectedX] == "O")
                 {
-                    int towerID = event.key.code - sf::Keyboard::Num0;
-                    auto it = std::find_if(towers.begin(), towers.end(),
-                        [towerID](const Tower& tower) { return tower.getId() == towerID; });
+                    // 1~9 키로 타워 선택
+                     if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9 && isTowerPlacementMode == true)
+                     {
+                            int towerID = event.key.code - sf::Keyboard::Num0;
+                            auto it = std::find_if(towers.begin(), towers.end(),
+                                [towerID](const Tower& tower) { return tower.getId() == towerID; });
 
-                    if (it != towers.end())
-                    {
-                        Tower& selectedTower = *it;
-                        selectedTowerIndex = std::distance(towers.begin(), it);
-                        std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
-                        ui.setInfoText({ selectedTower.getTool() + " 타워가 선택되었습니다!\n",
-                                         selectedTower.getTool2(),
-                    "공격력: " + std::to_string(selectedTower.getDamage()) +
-                    "\n공격 속도: " + std::to_string(selectedTower.getTimePerAttack()) +
-                    "\n사거리: " + std::to_string(selectedTower.getAttackRange()) +
-                    "\n공격 유형: " + selectedTower.attackType() + "\n\n[space] : 설치" });
-                    }
-                    else
-                    {
-                        auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
-                            [this](const PlacedTower& tower)
+                            if (it != towers.end())
                             {
-                                return tower.getX() == selectedX && tower.getY() == selectedY;
-                            });
-                    }
+                                Tower& selectedTower = *it;
+                                selectedTowerIndex = std::distance(towers.begin(), it);
+                                std::cout << "타워 " << selectedTower.getTowerName() << " 이 선택되었습니다.\n";
+                                ui.setInfoText({ selectedTower.getTool() + " 타워가 선택되었습니다!\n",
+                                                 selectedTower.getTool2(),
+                            "공격력: " + std::to_string(selectedTower.getDamage()) +
+                            "\n공격 속도: " + std::to_string(selectedTower.getTimePerAttack()) +
+                            "\n사거리: " + std::to_string(selectedTower.getAttackRange()) +
+                            "\n공격 유형: " + selectedTower.attackType() + "\n\n[space] : 설치" });
+                            }
+                            else
+                            {
+                              auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+                                  [this](const PlacedTower& tower)
+                                  {
+                                     return tower.getX() == selectedX && tower.getY() == selectedY;
+                                  });
+                            }
+                     }
+                     // Space 키로 타워 배치
+                     else if (event.key.code == sf::Keyboard::Space && selectedTowerIndex >= 0 && isTowerPlacementMode == true)
+                     {
+                         attemptPlaceTower();
+                         selectedTowerIndex = -1;
+                     }
                 }
+                
 
-                // Space 키로 타워 배치
-                else if (event.key.code == sf::Keyboard::Space && selectedTowerIndex >= 0 && isTowerPlacementMode == true)
-                {
-                    attemptPlaceTower();
-                    selectedTowerIndex = -1;
-                }
+                
 
 
 
@@ -800,7 +809,7 @@ void GameManager::startPreparationPhase()
             // 마우스 클릭으로 타일 선택
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
-
+                selectedTowerIndex = -1;
                 selectedOption = -1;
                 sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
                 float mouseX = static_cast<float>(mousePosition.x);

@@ -28,6 +28,9 @@ public:
     std::string getTool2() const;
     std::string attackType() const; //공격속성 문자열로 출력
 
+    std::string uiOptionSelect(const std::vector<Tower>& towerList, int num)const;
+    int getNextTowerID() const;
+    int getNextTowerID2() const;
 
     // 업그레이드 메서드
     bool upgrade(int& gold, std::vector<std::vector<std::string>>& map, const std::vector<Tower>& towerList,int num);

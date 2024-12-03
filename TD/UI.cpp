@@ -97,89 +97,79 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 
 void UI::drawButtons()
 {
+    // 버튼 생성 및 설정
+    gui.setWindow(window);
+    // 조작 및 설명 버튼 생성
+    auto infoButton = tgui::Button::create();
+    infoButton->setSize(70, 70); // 정사각형 크기
+    infoButton->setPosition(windowWidth-80, windowHeight - 80); // 오른쪽하단에 조작키
+    infoButton->getRenderer()->setBackgroundColor(sf::Color::White); // 배경색 흰색
+    infoButton->getRenderer()->setBorders({ 0 }); // 테두리 설정
+
+    // 조작 및 설명 버튼 이미지 설정
+    infoButton->getRenderer()->setTexture("resources/images/icons/info_icon.png");
+
+    // 조작 및 설명 버튼 마우스 오버 효과
+    infoButton->onMouseEnter([infoButton]() {
+        infoButton->getRenderer()->setOpacity(0.7f); // 마우스가 올라왔을 때 70% 불투명
+        });
+    infoButton->onMouseLeave([infoButton]() {
+        infoButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때 100% 불투명
+        });
+
+    // 조작 및 설명 버튼 클릭 콜백
+    infoButton->onClick([this]() {
+        // 조작 및 설명 클릭 시 동작
+        gameInfoStage();
+        std::cout << "Info button clicked!" << std::endl;
+        // 여기서 필요한 행동 추가
+        });
+
+    // GUI에 조작 및 설명 버튼 추가
+    gui.add(infoButton, "infoButton");
+
     if (curWaveIsDefense)
     {
-        //버튼 그리기
+        // 버튼 생성 및 설정
         gui.setWindow(window);
-        tgui::Font font("resources/fonts/BMDOHYEON_ttf.ttf");
-        auto towerButton = tgui::Button::create("Tower");
-        towerButton->setSize(120, 70);
-        towerButton->setPosition(25, windowHeight - 380);
-        towerButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-        towerButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-        towerButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-        towerButton->setTextSize(26); //글씨 크기 설정
-        towerButton->getRenderer()->setFont(font); // 폰트 설정
 
+        // 타워 버튼 생성
+        auto towerButton = tgui::Button::create();
+        towerButton->setSize(110, 110); // 정사각형 크기
+        towerButton->setPosition(400, windowHeight - 100);
+        towerButton->getRenderer()->setBackgroundColor(sf::Color::White); // 배경색 흰색
+        towerButton->getRenderer()->setBorders({ 0 }); // 테두리 설정
 
+        // 타워 버튼 이미지 설정
+        towerButton->getRenderer()->setTexture("resources/images/icons/yellowcheck.png");
 
+        // 타워 버튼 마우스 오버 효과
+        towerButton->onMouseEnter([towerButton]() {
+            towerButton->getRenderer()->setOpacity(0.7f); // 마우스가 올라왔을 때 70% 불투명
+            });
+        towerButton->onMouseLeave([towerButton]() {
+            towerButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때 100% 불투명
+            });
 
-        // 버튼에 콜백 함수 연결
+        // 타워 버튼 클릭 콜백
         towerButton->onClick([this]() {
-            if (onTowerButtonClicked)
-            {
+            if (onTowerButtonClicked) {
                 onTowerButtonClicked();
             }
             });
+
+        // GUI에 타워 버튼 추가
+        gui.add(towerButton, "towerButton");
+
        
 
-        gui.add(towerButton, "towerButton");
-    
     }
     else
     {
         gui.setWindow(window);
         tgui::Font font("resources/fonts/BMDOHYEON_ttf.ttf");
 
-        auto firstUnitButton = tgui::Button::create("A");
-        firstUnitButton->setSize(80, 70);
-        firstUnitButton->setPosition(windowWidth - 200, 380);
-        firstUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-        firstUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-        firstUnitButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-        firstUnitButton->setTextSize(26); //글씨 크기 설정
-        firstUnitButton->getRenderer()->setFont(font); // 폰트 설정
-
-        auto secondUnitButton = tgui::Button::create("B");
-        secondUnitButton->setSize(80, 70);
-        secondUnitButton->setPosition(windowWidth - 300, 380);
-        secondUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-        secondUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-        secondUnitButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-        secondUnitButton->setTextSize(26); //글씨 크기 설정
-        secondUnitButton->getRenderer()->setFont(font); // 폰트 설정
-
-        auto thirdUnitButton = tgui::Button::create("C");
-        thirdUnitButton->setSize(80, 70);
-        thirdUnitButton->setPosition(windowWidth - 400, 380);
-        thirdUnitButton->getRenderer()->setRoundedBorderRadius(30); // 둥근 모서리
-        thirdUnitButton->getRenderer()->setBackgroundColor(sf::Color::White); // 흰색 배경
-        thirdUnitButton->getRenderer()->setTextColor(sf::Color(0, 120, 215)); // 파란색 텍스트
-        thirdUnitButton->setTextSize(26); //글씨 크기 설정
-        thirdUnitButton->getRenderer()->setFont(font); // 폰트 설정
-
-        firstUnitButton->onClick([this]() {
-            if (onFirstUnitButtonClicked)
-            {
-                onFirstUnitButtonClicked();
-            }
-            });
-        secondUnitButton->onClick([this]() {
-            if (onSecondUnitButtonClicked)
-            {
-                onSecondUnitButtonClicked();
-            }
-            });
-        thirdUnitButton->onClick([this]() {
-            if (onThirdUnitButtonClicked)
-            {
-                onThirdUnitButtonClicked();
-            }
-            });
-
-        gui.add(firstUnitButton, "firstUnitButton");
-        gui.add(secondUnitButton, "secondUnitButton");
-        gui.add(thirdUnitButton, "thirdUnitButton");
+       
     }
 }
 
@@ -478,4 +468,180 @@ std::wstring UI::getInfoText(int index) const {
         throw std::out_of_range("Index out of range");
     }
     return infoTexts[index];
+}
+
+void UI::gameInfoStage() {
+    // 폰트 파일 경로 설정
+    std::string fontPath = "resources/fonts/BMDOHYEON_ttf.ttf";
+
+    // 폰트 로드 확인
+    if (!sf::Font().loadFromFile(fontPath)) {
+        std::cerr << "폰트 파일을 로드할 수 없습니다: " << fontPath << std::endl;
+        return;
+    }
+
+    // 창 크기 계산
+    sf::Vector2u windowSize = window.getSize();
+    float boxWidth = windowSize.x * 2 / 3.0f;
+    float boxHeight = windowSize.y * 2 / 3.0f;
+
+    // 반투명 패널 생성
+    auto panel = tgui::Panel::create({ boxWidth, boxHeight });
+    panel->setPosition((windowSize.x - boxWidth) / 2.0f, (windowSize.y - boxHeight) / 2.0f);
+    panel->getRenderer()->setBackgroundColor({ 0, 0, 0, 150 }); // 검은색 배경, 150 투명도
+    panel->getRenderer()->setBorders({ 10 });                  // 테두리 추가
+    panel->getRenderer()->setBorderColor({ 255, 255, 255 });   // 테두리 흰색
+    panel->getRenderer()->setRoundedBorderRadius(20);          // 모서리를 둥글게
+
+    // 수비 웨이브 설명 텍스트 추가 (왼쪽, 1/4 지점)
+    std::wstring defenseWaveText =
+        L"[수비 웨이브]\n\n";
+    auto defenseText = tgui::Label::create();
+    defenseText->setText(defenseWaveText); // 텍스트 설정
+    defenseText->setPosition(boxWidth / 4 - 100, 50); // 패널의 1/4 지점에 배치
+    defenseText->setTextSize(25);
+    defenseText->getRenderer()->setTextColor({ 135, 206, 250 }); // 밝은 파란색 (LightSkyBlue)
+    defenseText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(defenseText);
+
+    // 공격 웨이브 설명 텍스트 추가 (오른쪽, 3/4 지점)
+    std::wstring attackWaveText =
+        L"[공격 웨이브]\n\n";
+    auto attackText = tgui::Label::create();
+    attackText->setText(attackWaveText);  // 텍스트 설정
+    attackText->setPosition(boxWidth * 3 / 4 - 100, 50); // 패널의 3/4 지점에 배치
+    attackText->setTextSize(25);
+    attackText->getRenderer()->setTextColor({ 255, 105, 180 }); // 핑크색 폰트
+    attackText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(attackText);
+
+
+    // 그림 추가 (중앙)
+
+
+    auto wasdkey = tgui::Picture::create("resources/images/icons/wasdkey.png"); // 이미지 파일 경로
+    wasdkey->setSize({ 240, 160 });  // 그림 크기
+    wasdkey->setPosition((boxWidth - 200) / 2 - 40, 20); // 패널 중앙에 배치
+    panel->add(wasdkey);
+
+    auto spacekey = tgui::Picture::create("resources/images/icons/spacekey.png"); // 이미지 파일 경로
+    spacekey->setSize({ 150, 150 });  // 그림 크기
+    spacekey->setPosition((boxWidth - 200) / 2 + 90, 150); // 패널 중앙에 배치
+    panel->add(spacekey);
+
+    auto fkey = tgui::Picture::create("resources/images/icons/fkey.png"); // 이미지 파일 경로
+    fkey->setSize({ 120, 120 });  // 그림 크기
+    fkey->setPosition((boxWidth - 200) / 2, 270); // 패널 중앙에 배치
+    panel->add(fkey);
+
+    auto onekey = tgui::Picture::create("resources/images/icons/1key.png"); // 이미지 파일 경로
+    onekey->setSize({ 120, 120 });  // 그림 크기
+    onekey->setPosition((boxWidth - 200) / 2 - 200, 370); // 패널 중앙에 배치
+    panel->add(onekey);
+
+    auto twokey = tgui::Picture::create("resources/images/icons/2key.png"); // 이미지 파일 경로
+    twokey->setSize({ 120, 120 });  // 그림 크기
+    twokey->setPosition((boxWidth - 200) / 2 - 120, 370); // 패널 중앙에 배치
+    panel->add(twokey);
+
+    auto threekey = tgui::Picture::create("resources/images/icons/three.png"); // 이미지 파일 경로
+    threekey->setSize({ 600, 120 });  // 그림 크기
+    threekey->setPosition((boxWidth - 200) / 2 - 300, 470); // 패널 중앙에 배치
+    panel->add(threekey);
+
+    auto esckey = tgui::Picture::create("resources/images/icons/esckey.png"); // 이미지 파일 경로
+    esckey->setSize({ 120, 120 });  // 그림 크기
+    esckey->setPosition((boxWidth - 200) / 2 + 20, 570); // 패널 중앙에 배치
+    panel->add(esckey);
+
+    // WASD 옆에 "맵 이동키" 추가
+    auto wasdText = tgui::Label::create();
+    wasdText->setText(L"맵 이동키");
+    wasdText->setTextSize(25);
+    wasdText->getRenderer()->setTextColor({ 255, 255, 255 }); // 흰색 텍스트
+    wasdText->setPosition((boxWidth - 200) / 2 + 200, 100); // WASD 아래에 배치
+    wasdText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(wasdText);
+
+    // Space 키 옆에 "타워 설치 키" 추가
+    auto spaceText = tgui::Label::create();
+    spaceText->setText(L"타워 설치 키");
+    spaceText->setTextSize(25);
+    spaceText->getRenderer()->setTextColor({ 135, 206, 250 }); // 형광 파란색 텍스트
+    spaceText->setPosition((boxWidth - 200) / 2 - 70, 200); // SpaceKey 왼쪽
+    spaceText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(spaceText);
+
+    // F 키 옆에 "수비 웨이브 시작 키" 추가
+    auto fText = tgui::Label::create();
+    fText->setText(L"수비 웨이브 시작 키");
+    fText->setTextSize(25);
+    fText->getRenderer()->setTextColor({ 135, 206, 250 }); // 형광 파란색 텍스트
+    fText->setPosition((boxWidth - 200) / 2 - 240, 300); // FKey 왼쪽
+    fText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(fText);
+
+    auto fText2 = tgui::Label::create();
+    fText2->setText(L"공격 웨이브 시작 키");
+    fText2->setTextSize(25);
+    fText2->getRenderer()->setTextColor({ 255, 105, 180 }); // 형광 빨간색 텍스트
+    fText2->setPosition((boxWidth - 200) / 2 + 210, 300); // FKey 왼쪽
+    fText2->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(fText2);
+
+    // 1번 키 옆에 "타워 선택 키" 추가
+    auto oneText = tgui::Label::create();
+    oneText->setText(L"     <1,2,3번> 타워 선택 키\n\n  [타워 설치 시]\n <1,2번> 업그레이드 키 \n <3번> 타워 판매키");
+    oneText->setTextSize(25);
+    oneText->getRenderer()->setTextColor({ 135, 206, 250 }); // 형광 파란색 텍스트
+    oneText->setPosition((boxWidth - 200) / 2 - 540, 400); // 1번 키 왼쪽
+    oneText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(oneText);
+
+    // 공격 웨이브 유닛 선택 키 (Three Key 오른쪽)
+    auto threeText = tgui::Label::create();
+    threeText->setText(L"                <1~9번>          \n공격 웨이브 시 유닛 선택 및 공격 키");
+    threeText->setTextSize(25);
+    threeText->getRenderer()->setTextColor({ 255, 105, 180 }); // 형광 빨간색 텍스트
+    threeText->setPosition((boxWidth - 200) / 2 + 290, 470); // ThreeKey 오른쪽
+    threeText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(threeText);
+
+    // ESC 키 옆에 "실행 취소 키" 추가
+    auto escText = tgui::Label::create();
+    escText->setText(L"실행 취소 키");
+    escText->setTextSize(25);
+    escText->getRenderer()->setTextColor({ 255, 255, 255 }); // 흰색 텍스트
+    escText->setPosition((boxWidth - 200) / 2 + 150, 600); // ESC 오른쪽
+    escText->getRenderer()->setFont(tgui::Font(fontPath));
+    panel->add(escText);
+
+    auto closeButton = tgui::Button::create("종료");
+    closeButton->setSize(70, 70); // 버튼 크기
+    closeButton->setPosition((boxWidth - 100), 17); // 패널 오른쪽 상단 배치
+    closeButton->getRenderer()->setBorders(0);
+    // close 버튼 이미지 설정
+    closeButton->getRenderer()->setTexture("resources/images/icons/close.png");
+
+    //close 버튼 마우스 오버 효과
+    closeButton->onMouseEnter([closeButton]() {
+        closeButton->getRenderer()->setOpacity(0.7f); // 마우스가 올라왔을 때 70% 불투명
+        });
+    closeButton->onMouseLeave([closeButton]() {
+        closeButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때 100% 불투명
+        });
+
+    // 버튼 클릭 시 패널 제거
+    closeButton->onClick([this, panel]() {
+        gui.remove(panel); // 패널 삭제
+        });
+    // TGUI ESC 키 이벤트 처리
+   
+
+    panel->add(closeButton);
+
+    // GUI에 패널 추가
+        gui.add(panel, "gameInfoPanel");
+
+    
 }

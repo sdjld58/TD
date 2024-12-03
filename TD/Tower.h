@@ -20,6 +20,7 @@ public:
     int getTimePerAttack() const;
     int getTargetAmount() const;
     int getIsNoDamage() const;
+    std::string attackType() const; //공격속성 문자열로 출력
     std::string getTool() const;
     std::string getTool2() const;
 

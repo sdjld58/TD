@@ -1403,6 +1403,7 @@ void GameManager::mapSelected()
     waves.clear();
     activeUnits.clear();
     placedTowers.clear();
+    projectiles.clear();
     unitProductionQueue = std::queue<int>();
 
     gold = 100; // 초기 골드 값 설정

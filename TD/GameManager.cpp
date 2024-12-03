@@ -66,19 +66,19 @@ void GameManager::run(const std::string& stageFile)
                 unitQueue.push(unitID);
             }
 
-            std::vector<Unit> activeUnits;
 
             // **게임 루프 수정 부분 시작**
             sf::Clock clock;
+            sf::Clock frameClock; // 프레임 시간 측정용 시계
             sf::Time lastLogicUpdateTime = sf::Time::Zero;
             sf::Time logicUpdateInterval = sf::milliseconds(500); // 논리 업데이트 간격 (500ms)
             bool waveOver = false;
 
             while (!waveOver && ui.getWindow().isOpen())
             {
-                sf::Time elapsedTime = clock.restart();
+                sf::Time deltaTime = frameClock.restart();
 
-                // **이벤트 처리**
+                // 이벤트 처리
                 sf::Event event;
                 while (ui.getWindow().pollEvent(event))
                 {
@@ -90,53 +90,45 @@ void GameManager::run(const std::string& stageFile)
                     // 기타 이벤트 처리 필요 시 추가
                 }
 
-                // **논리 업데이트 시간 체크**
-                lastLogicUpdateTime += elapsedTime;
+                // 논리 업데이트 시간 체크
+                lastLogicUpdateTime += deltaTime;
                 if (lastLogicUpdateTime >= logicUpdateInterval)
                 {
                     lastLogicUpdateTime -= logicUpdateInterval;
                     currentTick++;
 
-                    // **논리 업데이트 수행**
-
-                    // 유닛 스폰
-                    spawnUnits(activeUnits, unitQueue,currentTick);
-
-                    // 유닛 이동
-                    updateUnits(activeUnits);
-
-                    // 공격 처리
+                    // 논리 업데이트 수행
+                    spawnUnits(activeUnits, unitQueue, currentTick);
                     attackUnits(activeUnits, currentTick, currentwaveType);
-
-                    // 콘솔 출력
+                    ui.updateattackGold(attackGold);
                     updateAndPrintMap(activeUnits);
-
-                    // 게임 종료 조건 체크
-                    if (playerLife <= 0)
-                    {
-                        // 선택 팝업 호출
-                        showGameOverPopup();
-                        return;
-                    }
-
-
-                    if (activeUnits.empty() && unitQueue.empty())
-                    {
-                        std::cout << "웨이브 " << waveID << " 클리어!\n";
-                        waveOver = true;
-                    }
                 }
 
-                // **투사체 업데이트 (매 프레임)**
-                updateProjectiles(elapsedTime);
+                // 유닛 위치 업데이트
+                updateUnitPositions(deltaTime);
 
-                // **화면 그리기**
+                // 유닛 도착 여부 확인 및 처리
+                updateUnits(activeUnits);
+
+                // 투사체 업데이트
+                updateProjectiles(deltaTime);
+
+                // 화면 그리기
                 updateGameState(activeUnits);
 
-                // **FPS 제한 (선택 사항)**
-                // std::this_thread::sleep_for(std::chrono::milliseconds(16)); // 약 60 FPS
+                // 게임 종료 조건 체크
+                if (playerLife <= 0)
+                {
+                    showGameOverPopup();
+                    return;
+                }
+
+                if (activeUnits.empty() && unitQueue.empty())
+                {
+                    std::cout << "웨이브 " << waveID << " 클리어!\n";
+                    waveOver = true;
+                }
             }
-            // **게임 루프 수정 부분 끝**
         }
         else
         {
@@ -184,11 +176,9 @@ void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& un
 
 void GameManager::updateUnits(std::vector<Unit>& activeUnits)
 {
-    // 유닛 업데이트
     for (auto it = activeUnits.begin(); it != activeUnits.end();)
     {
-        bool arrived = it->update();
-        if (arrived)
+        if (it->hasArrived())
         {
             playerLife -= it->getLifeDamage();
             it = activeUnits.erase(it);
@@ -214,8 +204,8 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
     // 유닛 위치를 맵에 표시
     for (const auto& unit : activeUnits)
     {
-        int x = unit.getX();
-        int y = unit.getY();
+        int x = unit.getPosX();
+        int y = unit.getPosY();
         if (y >= 0 && y < (int)mapWithUnits.size() && x >= 0 && x < (int)mapWithUnits[0].size())
         {
             mapWithUnits[y][x] = unit.getName();
@@ -245,7 +235,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
     for (const auto& unit : activeUnits)
     {
         std::cout << "유닛: " << unit.getName()
-            << ", 위치: (" << unit.getX() << ", " << unit.getY() << ")"
+            << ", 위치: (" << unit.getPosX() << ", " << unit.getPosY() << ")"
             << ", 체력: " << unit.getHp() << "\n";
     }
     // 유닛 생산 대기열 출력 추가
@@ -872,7 +862,7 @@ void GameManager::startPreparationPhase()
 void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType)
 {
     // 모든 타워 처리
-    for (auto& tower : placedTowers) 
+    for (auto& tower : placedTowers)
     {
         if (tower.getIsNoDamage() == 1) continue; // 버프 타워는 공격하지 않음
 
@@ -888,15 +878,17 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
 
         for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;)
         {
-            int unitX = it->getX();
-            int unitY = it->getY();
+            float unitX = it->getPosX();
+            float unitY = it->getPosY();
             int towerX = tower.getX();
             int towerY = tower.getY();
 
-            int distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
+            float distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range) 
             {
+                Unit* currentUnit = &(*it); // 현재 유닛의 포인터를 저장
+
                 //투사체 생성
                 createProjectile(tower, *it);
 
@@ -904,22 +896,33 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                 int newHp = calculateDamage(tower.getIsMagic(), damage, *it);
                 it->reduceHp(newHp);
 
+                bool unitErased = false;
+
                 // 유닛 제거 처리
                 if (it->getHp() <= 0) 
                 {
                     if (currentWaveType)
-                    
                     {
                         gold += it->getKillReward();
                     }
                     it = activeUnits.erase(it);
-                    break;
+                    unitErased = true;
+                }
+                else
+                {
+                    ++it;
                 }
 
-                aoeTargets.push_back(&(*it)); // 범위 공격 대상을 저장
+                if (!unitErased)
+                {
+                    aoeTargets.push_back(currentUnit);
+                }
                 targetsAttacked++;
             }
-            ++it;
+            else
+            {
+                ++it;
+            }
         }
 
         // **범위 공격 처리**
@@ -935,8 +938,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                         continue; // 기본 공격 대상은 제외
                     }
 
-                    int aoeDistanceSquared = (target->getX() - aoeIt->getX()) * (target->getX() - aoeIt->getX()) +
-                        (target->getY() - aoeIt->getY()) * (target->getY() - aoeIt->getY());
+                    int aoeDistanceSquared = (target->getPosX() - aoeIt->getPosX()) * (target->getPosX() - aoeIt->getPosX()) +
+                        (target->getPosY() - aoeIt->getPosY()) * (target->getPosY() - aoeIt->getPosY());
 
                     if (aoeDistanceSquared <= 1 * 1) { // 범위 공격 거리 1칸
                         const int reducedDamage = damage - 1;
@@ -974,8 +977,8 @@ void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetU
     float projectileOffsetY = 50;
     int towerX = tower.getX();
     int towerY = tower.getY();
-    int unitX = targetUnit.getX();
-    int unitY = targetUnit.getY();
+    float unitX = targetUnit.getPosX();
+    float unitY = targetUnit.getPosY();
 
     // 화면 좌표로 변환 (이소메트릭 변환 적용)
     float startX = (towerX - towerY) * (ui.tileWidth / 2.0f) + ui.getWindow().getSize().x / 2.0f;
@@ -1013,6 +1016,14 @@ void GameManager::updateProjectiles(sf::Time deltaTime)
     }
 }
 
+void GameManager::updateUnitPositions(sf::Time deltaTime)
+{
+    for (auto& unit : activeUnits)
+    {
+        unit.updatePosition(deltaTime.asSeconds());
+    }
+}
+
 int GameManager::calculateDamage(bool damagetype, int damage, const Unit& unit)
 {
 
@@ -1037,31 +1048,35 @@ int GameManager::calculateDamage(bool damagetype, int damage, const Unit& unit)
 
 void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 {
-    std::vector<Unit> activeUnits;
     bool waveOver = false;
+    int previousPlayerLife = playerLife;
 
     sf::Clock clock;
+    sf::Clock frameClock; // 프레임 시간 측정용 시계
     sf::Time lastLogicUpdateTime = sf::Time::Zero;
     sf::Time logicUpdateInterval = sf::milliseconds(500); // 논리 업데이트 간격 (500ms)
 
+    activeUnits.clear(); // 이전 유닛 목록 초기화
     while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); } // 유닛 생산 대기열 초기화
 
-    while (!waveOver)
+    while (!waveOver && ui.getWindow().isOpen())
     {
-        sf::Time elapsedTime = clock.restart();
+        sf::Time deltaTime = frameClock.restart();
 
         // 키 값 입력 및 공격 웨이브 종료 요청 확인
         bool endWaveRequested = handleAttackInput();
 
         // **논리 업데이트 시간 체크**
-        lastLogicUpdateTime += elapsedTime;
+        lastLogicUpdateTime += deltaTime;
         if (lastLogicUpdateTime >= logicUpdateInterval)
         {
             lastLogicUpdateTime -= logicUpdateInterval;
             currentTick++;
 
             // 유닛 스폰 및 이동
-           updateAttackUnits(activeUnits, currentTick);
+            updateAttackUnits(activeUnits, currentTick);
+            // 공격 처리
+            attackUnits(activeUnits, currentTick, currentwaveType);
 
             // 대기열 정보 업데이트
             std::queue<int> tempQueue = unitProductionQueue; // 대기열 복사
@@ -1083,6 +1098,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
                     queueInfo.push_back("Unknown Unit");
                 }
             }
+            updateAndPrintMap(activeUnits);
 
             // 대기열 정보를 UI에 표시
             std::string queueText = "유닛 대기열\n";
@@ -1092,36 +1108,56 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
             }
             
             ui.setInfoText({ "유닛을 침투시키세요", queueText,""});
-            
-            // UI 업데이트
-            updateGameState(activeUnits);
 
-            // 공격 웨이브 종료 조건 확인
-            if (endWaveRequested)
+            
+        }
+        // 공격 웨이브 종료 조건 확인
+        if (endWaveRequested)
+        {
+            if (activeUnits.empty() && unitProductionQueue.empty())
             {
-                if (activeUnits.empty() && unitProductionQueue.empty())
-                {
-                    waveOver = true;
-                    std::cout << "공격 웨이브가 종료되었습니다.\n";
-                }
-                else
-                {
-                    std::cout << "필드 또는 대기열에 유닛이 남아 있어 웨이브를 종료할 수 없습니다.\n";
-                }
+                waveOver = true;
+                std::cout << "공격 웨이브가 종료되었습니다.\n";
             }
             else
             {
-                waveOver = isAttackWaveOver(activeUnits);
+                std::cout << "필드 또는 대기열에 유닛이 남아 있어 웨이브를 종료할 수 없습니다.\n";
             }
         }
+        else
+        {
+            waveOver = isAttackWaveOver(activeUnits);
+        }
 
-        // **투사체 업데이트 (매 프레임)**
-        updateProjectiles(elapsedTime);
+
+        // 유닛 위치 업데이트 (매 프레임마다 호출)
+        updateUnitPositions(deltaTime);
+
+        // 유닛 도착 여부 확인 및 처리
+        updateUnits(activeUnits);
+
+        // 투사체 업데이트
+        updateProjectiles(deltaTime);
+
+        // UI 업데이트
+        updateGameState(activeUnits);
+
+        // 게임 종료 조건 체크
+        if (playerLife <= 0)
+        {
+            showGameOverPopup();
+            return;
+        }
     }
 
     while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); } // 유닛 생산 대기열 초기화
 
     std::cout << "공격 웨이브 종료!\n";
+    if (previousPlayerLife > playerLife)
+    {
+        gold = static_cast<int>(gold * 1.2);
+        std::cout << "공격 성공! 수비 재화가 증가했습니다. 현재 골드: " << gold << "\n";
+    }
 }
 
 
@@ -1171,6 +1207,7 @@ bool GameManager::handleAttackInput()
                     }
                 }
             }
+            ui.updateattackGold(attackGold);
         }
     }
     return false; // 공격 웨이브 종료 요청 없음

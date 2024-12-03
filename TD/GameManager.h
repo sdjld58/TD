@@ -25,6 +25,7 @@ private:
     std::vector<PlacedTower> placedTowers;
     std::queue<int> unitProductionQueue;
     std::vector<Unit*> aoeTargets;
+    std::vector<Unit> activeUnits;
 
     int playerLife;
     int gold;
@@ -110,7 +111,7 @@ public:
     void loadUnitTypes(const std::string& filename);
     void loadWaves(const std::string& filename);
     void updateAndPrintMap(const std::vector<Unit>& activeUnits);
-    
+    void updateUnitPositions(sf::Time deltaTime);
 
     void startPreparationPhase();
     void loadTowerData(const std::string& filename); //타워 로드

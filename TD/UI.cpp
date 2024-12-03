@@ -238,12 +238,12 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
 
     // **유닛 그리기 (스프라이트 사용)**
     for (auto& unit : units) {
-        int tileX = unit.getX();
-        int tileY = unit.getY();
+        float posX = unit.getPosX();
+        float posY = unit.getPosY();
 
         // 이소메트릭 좌표 변환
-        float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
-        float screenY = (tileX + tileY) * (tileHeight / 2.0f);
+        float screenX = (posX - posY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
+        float screenY = (posX + posY) * (tileHeight / 2.0f);
 
         screenX += offsetX;
         screenY += offsetY;

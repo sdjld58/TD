@@ -33,7 +33,6 @@ private:
     int attackGold;
     bool showUnitInfo;
     void handleTowerButtonClicked();
-    int lastSpawnTick;
     
 
     void attemptPlaceTower();
@@ -135,7 +134,6 @@ public:
     void showGameOverPopup();
     void gameStart();
     void gamePrologue(const std::vector<std::wstring>& prologueLines);
-    
   
 };
 

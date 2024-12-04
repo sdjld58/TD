@@ -44,6 +44,8 @@ void GameManager::run(const std::string& stageFile)
         ui.setIsDefence(currentwaveType);
         ui.clearButtons();
         ui.drawButtons();
+        projectiles.clear();
+
       
         if (wave.getIsDefence())
         {
@@ -121,8 +123,6 @@ void GameManager::run(const std::string& stageFile)
                 // 게임 종료 조건 체크
                 if (playerLife <= 0)
                 {
-                    activeUnits.clear();
-                    placedTowers.clear();
                     showGameOverPopup();
                     return;
                 }
@@ -879,7 +879,35 @@ void GameManager::startPreparationPhase()
 
 void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, bool currentWaveType)
 {
-    // 모든 타워 처리
+    // 모든 타워 초기화 (버프 해제)
+    for (auto& tower : placedTowers)
+    {
+        tower.clearBuff();
+    }
+
+    // **버프 타워 처리**
+    for (const auto& buffTower : placedTowers)
+    {
+        if (buffTower.getIsNoDamage() != 1) continue; // 버프 타워가 아니면 넘어감
+
+        for (auto& targetTower : placedTowers)
+        {
+            if (&buffTower == &targetTower || targetTower.getIsNoDamage() == 1) continue; // 자기 자신 또는 다른 버프 타워 제외
+
+            // 거리 계산
+            int dx = buffTower.getX() - targetTower.getX();
+            int dy = buffTower.getY() - targetTower.getY();
+            int distanceSquared = dx * dx + dy * dy;
+
+            if (distanceSquared <= buffTower.getAttackRange() * buffTower.getAttackRange())
+            {
+                // 타워에 버프 적용
+                targetTower.applyBuff(buffTower.getDamage(), buffTower.getTimePerAttack());
+            }
+        }
+    }
+
+    // **공격 타워 처리**
     for (auto& tower : placedTowers)
     {
         if (tower.getIsNoDamage() == 1) continue; // 버프 타워는 공격하지 않음
@@ -891,8 +919,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
         int targetAmount = tower.getTargetAmount();
         int targetsAttacked = 0;
 
-        // **기본 공격 처리**
-        std::vector<Unit*> aoeTargets; // 범위 공격 대상 저장
+        // 기본 공격 처리
+        std::vector<Unit*> aoeTargets;
 
         for (auto it = activeUnits.begin(); it != activeUnits.end() && targetsAttacked < targetAmount;)
         {
@@ -903,11 +931,11 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
 
             float distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
-            if (distanceSquared <= range * range) 
+            if (distanceSquared <= range * range)
             {
-                Unit* currentUnit = &(*it); // 현재 유닛의 포인터를 저장
+                Unit* currentUnit = &(*it);
 
-                //투사체 생성
+                // 투사체 생성
                 createProjectile(tower, *it);
 
                 // 기본 데미지 처리
@@ -917,7 +945,7 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                 bool unitErased = false;
 
                 // 유닛 제거 처리
-                if (it->getHp() <= 0) 
+                if (it->getHp() <= 0)
                 {
                     if (currentWaveType)
                     {
@@ -943,14 +971,14 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             }
         }
 
-        // **범위 공격 처리**
+        // 범위 공격 처리
         if (tower.getIsNoDamage() == 2)
         {
             for (Unit* target : aoeTargets)
-            { // 기본 공격 대상으로부터 범위 공격 수행
-                for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end(); )
+            {
+                for (auto aoeIt = activeUnits.begin(); aoeIt != activeUnits.end();)
                 {
-                    if (&(*aoeIt) == target) 
+                    if (&(*aoeIt) == target)
                     {
                         ++aoeIt;
                         continue; // 기본 공격 대상은 제외
@@ -959,12 +987,13 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                     int aoeDistanceSquared = (target->getPosX() - aoeIt->getPosX()) * (target->getPosX() - aoeIt->getPosX()) +
                         (target->getPosY() - aoeIt->getPosY()) * (target->getPosY() - aoeIt->getPosY());
 
-                    if (aoeDistanceSquared <= 1 * 1) { // 범위 공격 거리 1칸
+                    if (aoeDistanceSquared <= 1 * 1)
+                    { // 범위 공격 거리 1칸
                         const int reducedDamage = damage - 1;
                         int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);
                         aoeIt->reduceHp(finalAoeDamage);
 
-                        if (aoeIt->getHp() <= 0) 
+                        if (aoeIt->getHp() <= 0)
                         {
                             if (currentWaveType)
                             {
@@ -986,6 +1015,7 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
         }
     }
 }
+
 
 
 
@@ -1250,8 +1280,6 @@ void GameManager::updateAttackUnits(std::vector<Unit>& activeUnits, int currentT
             // 라이프가 0 이하이면 게임 종료
             if (playerLife <= 0)
             {
-                activeUnits.clear();
-                placedTowers.clear();
                 showGameOverPopup();
             }
 

@@ -126,13 +126,7 @@ public:
     //¹öÆ°
     tgui::Gui gui;
     std::function<void()> onTowerButtonClicked;
-    std::function<void()> onOneButtonClicked;
-    std::function<void()> onTwoButtonClicked;
-    std::function<void()> onThreeButtonClicked;
-
-    std::function<void()> onFirstUnitButtonClicked;
-    std::function<void()> onSecondUnitButtonClicked;
-    std::function<void()> onThirdUnitButtonClicked;
+   
 };
 
 

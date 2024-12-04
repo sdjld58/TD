@@ -4,6 +4,7 @@
 Unit::Unit(int id, const std::string& name, int hp, int timePerMove, int armor, int resist, int killReward, const std::vector<std::pair<int, int>>& path, int LifeDamage)
     : id(id), name(name), hp(hp), armor(armor), resist(resist), killReward(killReward), LifeDamage(LifeDamage), path(path), pathIndex(0), isArrived(false)
 {
+    maxHp = hp;
     if (!path.empty())
     {
         posX = static_cast<float>(path[0].first);

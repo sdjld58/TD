@@ -144,7 +144,7 @@ void GameManager::run(const std::string& stageFile)
             startAttackWave(wave, currentTick);
         }
     }
-
+   
 
     mapSelected(); //맵선택으로 돌아옴
 }
@@ -1172,15 +1172,14 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
                 }
             }
             updateAndPrintMap(activeUnits);
-
             // 대기열 정보를 UI에 표시
             std::string queueText = "유닛 대기열\n";
             for (const auto& name : queueInfo)
             {
-                queueText += name + "\n";
+                queueText = queueText+ name + "\n";
             }
-            
-            ui.setInfoText({ "유닛을 침투시키세요", queueText,""});
+
+            ui.setInfoText({ "유닛을 침투시키세요", queueText,"" });
 
             
         }
@@ -1637,43 +1636,50 @@ void GameManager::showGameOverPopup()
     // 팝업 GUI 생성
     tgui::Gui gui(ui.getWindow());
 
-    // 배경 덮개 (반투명)
-    sf::RectangleShape background(sf::Vector2f(ui.getWindow().getSize().x, ui.getWindow().getSize().y));
-    background.setFillColor(sf::Color(0, 0, 0, 150)); // 반투명 검은색
+    // 빨간색 반투명 배경 패널
+    sf::RectangleShape backgroundPanel(sf::Vector2f(ui.getWindow().getSize().x * 3 / 4, ui.getWindow().getSize().y * 2 / 3));
+    backgroundPanel.setFillColor(sf::Color(255, 0, 0, 150)); // 빨간색 반투명
+    backgroundPanel.setPosition(
+        (ui.getWindow().getSize().x - backgroundPanel.getSize().x) / 2.f, // 중앙 정렬
+        (ui.getWindow().getSize().y - backgroundPanel.getSize().y) / 2.f);
 
-    // 팝업 창 컨테이너
-    auto popupPanel = tgui::Panel::create({ "50%", "30%" });
-    popupPanel->setPosition("25%", "35%");
-    popupPanel->getRenderer()->setBackgroundColor(sf::Color(255, 255, 255));
-    popupPanel->getRenderer()->setBorders(2);
-    popupPanel->getRenderer()->setBorderColor(sf::Color(0, 0, 0));
-    gui.add(popupPanel);
+    // GAME OVER 텍스트 설정
+    sf::Text gameOverText;
+    sf::Font font;
+    if (!font.loadFromFile("resources/fonts/BMDOHYEON_ttf.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
+        return;
+    }
+    gameOverText.setFont(font);
+    gameOverText.setString("GAME OVER");
+    gameOverText.setCharacterSize(100); // 큰 크기
+    gameOverText.setFillColor(sf::Color::White); // 흰색 텍스트
+    gameOverText.setStyle(sf::Text::Bold);
 
-    // 텍스트 라벨
-    auto label = tgui::Label::create("Game Over!\nWhat would you like to do?");
-    label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
-    label->setTextSize(24);
-    label->setPosition("10%", "15%");
-    popupPanel->add(label);
+    // 텍스트 중앙 정렬
+    sf::FloatRect textBounds = gameOverText.getLocalBounds();
+    gameOverText.setOrigin(textBounds.width / 2.f, textBounds.height / 2.f);
+    gameOverText.setPosition(
+        ui.getWindow().getSize().x / 2.f,
+        ui.getWindow().getSize().y / 2.f - 50); // 화면 중앙에 배치
 
     // 맵 선택 버튼
     auto mapSelectButton = tgui::Button::create("Return to Map Selection");
-    mapSelectButton->setSize("80%", "20%");
-    mapSelectButton->setPosition("10%", "50%");
-    popupPanel->add(mapSelectButton);
+    mapSelectButton->setSize("40%", "10%");
+    mapSelectButton->setPosition("30%", "70%");
+    gui.add(mapSelectButton);
 
     // 게임 종료 버튼
     auto exitButton = tgui::Button::create("Exit Game");
-    exitButton->setSize("80%", "20%");
-    exitButton->setPosition("10%", "75%");
-    popupPanel->add(exitButton);
+    exitButton->setSize("40%", "10%");
+    exitButton->setPosition("30%", "85%");
+    gui.add(exitButton);
 
     bool actionSelected = false; // 사용자가 버튼을 눌렀는지 확인
 
     mapSelectButton->onClick([&]()
         {
             actionSelected = true;
-            gui.remove(popupPanel);
             mapSelected(); // 맵 선택 화면으로 돌아가기
         });
 
@@ -1697,12 +1703,15 @@ void GameManager::showGameOverPopup()
             gui.handleEvent(event);
         }
 
-        ui.getWindow().clear();
-        ui.getWindow().draw(background);
-        gui.draw();
+        // 이전 게임 화면 유지
+        ui.getWindow().clear(sf::Color::Transparent); // 이전 화면을 지우지 않음
+        ui.getWindow().draw(backgroundPanel);         // 반투명 패널 그리기
+        ui.getWindow().draw(gameOverText);            // GAME OVER 텍스트
+        gui.draw();                                   // 버튼 그리기
         ui.getWindow().display();
     }
 }
+
 
 void GameManager::gameStart() {
     // TGUI GUI 생성
@@ -1710,45 +1719,45 @@ void GameManager::gameStart() {
 
     // 첫 번째 반은 다크 블루
     sf::RectangleShape leftBackground(sf::Vector2f(ui.getWindow().getSize().x / 2, ui.getWindow().getSize().y));
-    leftBackground.setFillColor(sf::Color(0, 0, 139)); // 다크 블루
+    leftBackground.setFillColor(sf::Color(0, 0, 80)); // 다크 블루
 
     // 두 번째 반은 레드
     sf::RectangleShape rightBackground(sf::Vector2f(ui.getWindow().getSize().x / 2, ui.getWindow().getSize().y));
-    rightBackground.setFillColor(sf::Color::Red);
+    rightBackground.setFillColor(sf::Color(139, 0, 0));
     rightBackground.setPosition(ui.getWindow().getSize().x / 2, 0);
 
     // 폰트 로드
-    sf::Font bmFont;
-    if (!bmFont.loadFromFile("resources/fonts/BMDOHYEON_ttf.ttf")) {
+    sf::Font bangerFont;
+    if (!bangerFont.loadFromFile("resources/fonts/Bangers.ttf")) {
         std::cerr << "Failed to load BMDOHYEON_ttf.ttf" << std::endl;
         return;
     }
 
     // 메인 타이틀 설정
     sf::Text mainTitle;
-    mainTitle.setFont(bmFont);
-    mainTitle.setString(L"전 장 의   스 파 이");
+    mainTitle.setFont(bangerFont);
+    mainTitle.setString("Spy of the Battlefield");
     mainTitle.setCharacterSize(140); // 크기 조정
     mainTitle.setFillColor(sf::Color::White);
     mainTitle.setOrigin(mainTitle.getLocalBounds().width / 2.f, mainTitle.getLocalBounds().height / 2.f);
     mainTitle.setPosition(ui.getWindow().getSize().x / 2.f, ui.getWindow().getSize().y * 0.2f); // 위치 설정
 
     // "Spy of the Battlefield" 텍스트 추가 (서브 타이틀)
-    auto subTitle = tgui::Label::create("Spy of the Battlefield");
+    auto subTitle = tgui::Label::create(L"전 장 의   스 파 이");
     subTitle->setPosition("50%", "35%");          // 메인 타이틀 아래에 배치
     subTitle->setOrigin(0.5f, 0.5f);              // 중앙 정렬
     subTitle->setTextSize(70);                    // 텍스트 크기
     subTitle->getRenderer()->setTextColor(sf::Color(255, 255, 255, 0)); // 투명도 0으로 시작
 
     // Bangers 폰트 적용
-    tgui::Font bangersFont("resources/fonts/Bangers.ttf");    // Bangers 폰트 경로
-    subTitle->getRenderer()->setFont(bangersFont);           // 폰트 설정
+    tgui::Font bmFont("resources/fonts/BMDOHYEON_ttf.ttf");    // bm폰트 경로
+    subTitle->getRenderer()->setFont(bmFont);           // 폰트 설정
     gui.add(subTitle);
 
     // "Start Game" 버튼 추가
     auto startButton = tgui::Button::create();
-    startButton->setPosition("40%", "60%");
-    startButton->setSize("20%", "30%");
+    startButton->setPosition("43.5%", "65%");
+    startButton->setSize("13%", "21%");
     startButton->getRenderer()->setBorders(0);
 
     // 버튼 기본 아이콘 설정
@@ -1757,8 +1766,8 @@ void GameManager::gameStart() {
     // 마우스 오버 효과
     startButton->onMouseEnter([&leftBackground, &rightBackground, startButton]() {
         // 배경색 좌우 반전: 왼쪽 빨간색, 오른쪽 파란색
-        leftBackground.setFillColor(sf::Color::Red);
-        rightBackground.setFillColor(sf::Color(0, 0, 139)); // 다크 블루
+        leftBackground.setFillColor(sf::Color(139,0,0));
+        rightBackground.setFillColor(sf::Color(0, 0, 80)); // 다크 블루
 
         // 버튼 아이콘을 마우스 오버 상태로 변경
         startButton->getRenderer()->setTexture("resources/images/icons/start2.png"); // 오버 상태 아이콘 경로
@@ -1766,8 +1775,8 @@ void GameManager::gameStart() {
 
     startButton->onMouseLeave([&leftBackground, &rightBackground, startButton]() {
         // 배경색 복구: 왼쪽 파란색, 오른쪽 빨간색
-        leftBackground.setFillColor(sf::Color(0, 0, 139)); // 다크 블루
-        rightBackground.setFillColor(sf::Color::Red);
+        leftBackground.setFillColor(sf::Color(0, 0, 80)); // 다크 블루
+        rightBackground.setFillColor(sf::Color(139, 0, 0));
 
         // 버튼 아이콘을 기본 상태로 복구
         startButton->getRenderer()->setTexture("resources/images/icons/start.png"); // 기본 아이콘 경로

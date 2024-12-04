@@ -869,7 +869,7 @@ void GameManager::startPreparationPhase()
 
                     if ((map[selectedY][selectedX] != "O"))
                     {
-                        ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
+                        ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "웨이브 시작 : F" });
                         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
                         selectedTowerIndex = -1;
                     }

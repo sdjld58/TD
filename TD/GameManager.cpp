@@ -487,8 +487,8 @@ void GameManager::loadTowerData(const std::string& filename)
             bool isMagic = std::stoi(tokens[6]) == 1;
             int timePerAttack = std::stoi(tokens[7]);
             int targetAmount = std::stoi(tokens[8]);
-            int isNodamage = std::stoi(tokens[9]); // 추가된 isNodamage 처리
-            std::string tool = tokens[10];        // 추가된 tool 처리
+            int isNodamage = std::stoi(tokens[9]); 
+            std::string tool = tokens[10];        
             std::string tool2 = tokens[11];
 
             Tower tower(id, towerName, nextTowerID, nextTowerID2, attackRange, damage,
@@ -644,8 +644,22 @@ void GameManager::startPreparationPhase()
                     ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
                 }
 
+                if (map[selectedY][selectedX] == "O")
+                {
+                    ui.setInfoText({ " ","빈 건설 부지입니다.", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
+                    ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
+                }
+                if ((map[selectedY][selectedX] != "O"))
+                {
+                    ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "웨이브 시작 : F" });
+                    ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
+                    selectedTowerIndex = -1;
+                }
+
                 else if (map[selectedY][selectedX] == "O")
                 {
+                    
+
                     // 1~9 키로 타워 선택
                      if (event.key.code >= sf::Keyboard::Num1 && event.key.code <= sf::Keyboard::Num9 && isTowerPlacementMode == true)
                      {
@@ -737,7 +751,7 @@ void GameManager::startPreparationPhase()
                         selectedTowerIndex = -1;
 
                         std::cout << "옵션 3 (판매) 선택됨.\n";
-                        ui.setInfoText({ "타워를 판매하시겠습니까?",towerIt->uiOptionSelect(towers,3),"판매를 하려면 [space]를 누르십쇼" });
+                        ui.setInfoText({ "타워를 판매하시겠습니까?",towerIt->uiOptionSelect(towers,3),"판매를 하려면 [space]를 누르세요" });
                     }
                     else if (event.key.code == sf::Keyboard::Space && selectedOption > 0) // Space로 실행
                     {
@@ -834,6 +848,14 @@ void GameManager::startPreparationPhase()
                         {
                             return tower.getX() == selectedX && tower.getY() == selectedY;
                         });
+
+                    if (map[selectedY][selectedX] == "O")
+                    {
+                        ui.setInfoText({ " ","빈 건설 부지입니다.", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
+                        ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
+                    }
+
+
                     if (towerIt != placedTowers.end())
                     {
                         isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
@@ -847,6 +869,8 @@ void GameManager::startPreparationPhase()
 
                     if ((map[selectedY][selectedX] != "O"))
                     {
+                        ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
+                        ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
                         selectedTowerIndex = -1;
                     }
 
@@ -856,6 +880,7 @@ void GameManager::startPreparationPhase()
                         attemptPlaceTower();
                         selectedTowerIndex = -1;
                     }
+                    
 
                 }
 
@@ -867,9 +892,9 @@ void GameManager::startPreparationPhase()
                     selectedX = clickedTileX;
                     selectedY = clickedTileY;
                     std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
-                    ui.setInfoText({ "침투에 대비하세요!\n",
+                   /* ui.setInfoText({"침투에 대비하세요!\n",
                         "[F] : 수비웨이브를 시작 키",
-                        "[1] : 검사 타워 선택 \n[2] : 궁수 타워 선택 \n[3] : 마법사 타워 선택\n[space] : 설치된 타워 정보" });
+                        "[1] : 검사 타워 선택 \n[2] : 궁수 타워 선택 \n[3] : 마법사 타워 선택\n[space] : 설치된 타워 정보" });*/
                 }
 
             }

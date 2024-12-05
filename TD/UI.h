@@ -32,17 +32,66 @@ private:
     sf::Text goldText;
 
     // 유닛 상태 표시 텍스트 추가
-      sf::Text unitStatusText;
+    sf::Text unitStatusText;
 
     // 타일 텍스처 및 스프라이트
-    sf::Texture roadTexture;
-    sf::Sprite roadSprite;
+    sf::Texture grassRoadTexture1;
+    sf::Sprite grassRoadSprite1;
+    sf::Texture grassRoadTexture2;
+    sf::Sprite grassRoadSprite2;
+    sf::Texture grassRoadTexture3;
+    sf::Sprite grassRoadSprite3;
+    sf::Texture grassRoadTexture4;
+    sf::Sprite grassRoadSprite4;
+    sf::Texture grassRoadTexture5;
+    sf::Sprite grassRoadSprite5;
+    sf::Texture grassRoadTexture6;
+    sf::Sprite grassRoadSprite6;
+
+    sf::Texture desertRoadTexture1;
+    sf::Sprite desertRoadSprite1;
+    sf::Texture desertRoadTexture2;
+    sf::Sprite desertRoadSprite2;
+    sf::Texture desertRoadTexture3;
+    sf::Sprite desertRoadSprite3;
+    sf::Texture desertRoadTexture4;
+    sf::Sprite desertRoadSprite4;
+    sf::Texture desertRoadTexture5;
+    sf::Sprite desertRoadSprite5;
+    sf::Texture desertRoadTexture6;
+    sf::Sprite desertRoadSprite6;
+
+    sf::Texture winterRoadTexture1;
+    sf::Sprite winterRoadSprite1;
+    sf::Texture winterRoadTexture2;
+    sf::Sprite winterRoadSprite2;
+    sf::Texture winterRoadTexture3;
+    sf::Sprite winterRoadSprite3;
+    sf::Texture winterRoadTexture4;
+    sf::Sprite winterRoadSprite4;
+    sf::Texture winterRoadTexture5;
+    sf::Sprite winterRoadSprite5;
+    sf::Texture winterRoadTexture6;
+    sf::Sprite winterRoadSprite6;
+
 
     sf::Texture grassTexture;
     sf::Sprite grassSprite;
+    
+    sf::Texture sandTexture;
+    sf::Sprite sandSprite;
+
+    sf::Texture snowTexture;
+    sf::Sprite snowSprite;
 
     sf::Texture buildingPlaceGrassTexture;
     sf::Sprite buildingPlaceGrassSprite;
+
+    sf::Texture buildingPlaceSandTexture;
+    sf::Sprite buildingPlaceSandSprite;
+
+    sf::Texture buildingPlaceSnowTexture;
+    sf::Sprite buildingPlaceSnowSprite;
 
     // 타워 텍스처 및 스프라이트
     sf::Texture archer1TowerTexture;
@@ -67,7 +116,9 @@ private:
     sf::Sprite barrack3TowerSprite;
 
     // 투사체 텍스처
-    sf::Texture projectileTexture;
+    sf::Texture projectileTexture1;
+    sf::Texture projectileTexture2;
+    sf::Texture projectileTexture3;
 
     // 유닛 텍스처 및 스프라이트
     sf::Texture knightUnitTexture;
@@ -110,7 +161,10 @@ public:
     UI() : infoTexts() {}
 
     //투사체
-    const sf::Texture& getProjectileTexture() const;
+    const sf::Texture& getProjectileTexture1() const;
+    const sf::Texture& getProjectileTexture2() const;
+    const sf::Texture& getProjectileTexture3() const;
+
     void drawProjectiles(const std::vector<Projectile>& projectiles);
 
     void unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp); //유닛 체력바

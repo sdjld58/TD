@@ -24,20 +24,106 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     goldText.setFillColor(sf::Color::Yellow);
     goldText.setPosition(10, 40);
 
-    
-
-    // 타일 텍스처 로드
-    if (!roadTexture.loadFromFile("resources/images/tiles/road_spring(1).png"))
+   
+    // 잔디 타일 텍스처 로드
+    if (!grassRoadTexture1.loadFromFile("resources/images/tiles/road_spring(1).png"))
         std::cerr << "road_spring(1).png를 로드할 수 없습니다.\n";
-    roadSprite.setTexture(roadTexture);
+    grassRoadSprite1.setTexture(grassRoadTexture1);
+
+    if (!grassRoadTexture2.loadFromFile("resources/images/tiles/road_spring(2).png"))
+        std::cerr << "road_spring(2).png를 로드할 수 없습니다.\n";
+    grassRoadSprite2.setTexture(grassRoadTexture2);
+
+    if (!grassRoadTexture3.loadFromFile("resources/images/tiles/road_spring(3).png"))
+        std::cerr << "road_spring(3).png를 로드할 수 없습니다.\n";
+    grassRoadSprite3.setTexture(grassRoadTexture3);
+
+    if (!grassRoadTexture4.loadFromFile("resources/images/tiles/road_spring(4).png"))
+        std::cerr << "road_spring(4).png를 로드할 수 없습니다.\n";
+    grassRoadSprite4.setTexture(grassRoadTexture4);
+
+    if (!grassRoadTexture5.loadFromFile("resources/images/tiles/road_spring(5).png"))
+        std::cerr << "road_spring(5).png를 로드할 수 없습니다.\n";
+    grassRoadSprite5.setTexture(grassRoadTexture5);
+
+    if (!grassRoadTexture6.loadFromFile("resources/images/tiles/road_spring(6).png"))
+        std::cerr << "road_spring(6).png를 로드할 수 없습니다.\n";
+    grassRoadSprite6.setTexture(grassRoadTexture6);
+
+    // 사막 타일 텍스처 로드
+    if (!desertRoadTexture1.loadFromFile("resources/images/tiles/road_desert(1).png"))
+        std::cerr << "road_desert(1).png를 로드할 수 없습니다.\n";
+    desertRoadSprite1.setTexture(desertRoadTexture1);
+
+    if (!desertRoadTexture2.loadFromFile("resources/images/tiles/road_desert(2).png"))
+        std::cerr << "road_desert(2).png를 로드할 수 없습니다.\n";
+    desertRoadSprite2.setTexture(desertRoadTexture2);
+
+    if (!desertRoadTexture3.loadFromFile("resources/images/tiles/road_desert(3).png"))
+        std::cerr << "road_desert(3).png를 로드할 수 없습니다.\n";
+    desertRoadSprite3.setTexture(desertRoadTexture3);
+
+    if (!desertRoadTexture4.loadFromFile("resources/images/tiles/road_desert(4).png"))
+        std::cerr << "road_desert(4).png를 로드할 수 없습니다.\n";
+    desertRoadSprite4.setTexture(desertRoadTexture4);
+
+    if (!desertRoadTexture5.loadFromFile("resources/images/tiles/road_desert(5).png"))
+        std::cerr << "road_desert(5).png를 로드할 수 없습니다.\n";
+    desertRoadSprite5.setTexture(desertRoadTexture5);
+
+    if (!desertRoadTexture6.loadFromFile("resources/images/tiles/road_desert(6).png"))
+        std::cerr << "road_desert(6).png를 로드할 수 없습니다.\n";
+    desertRoadSprite6.setTexture(desertRoadTexture6);
+
+    // 겨울 타일 텍스처 로드
+    if (!winterRoadTexture1.loadFromFile("resources/images/tiles/road_winter(1).png"))
+        std::cerr << "road_winter(1).png를 로드할 수 없습니다.\n";
+    winterRoadSprite1.setTexture(winterRoadTexture1);
+
+    if (!winterRoadTexture2.loadFromFile("resources/images/tiles/road_winter(2).png"))
+        std::cerr << "road_winter(2).png를 로드할 수 없습니다.\n";
+    winterRoadSprite2.setTexture(winterRoadTexture2);
+
+    if (!winterRoadTexture3.loadFromFile("resources/images/tiles/road_winter(3).png"))
+        std::cerr << "road_winter(3).png를 로드할 수 없습니다.\n";
+    winterRoadSprite3.setTexture(winterRoadTexture3);
+
+    if (!winterRoadTexture4.loadFromFile("resources/images/tiles/road_winter(4).png"))
+        std::cerr << "road_winter(4).png를 로드할 수 없습니다.\n";
+    winterRoadSprite4.setTexture(winterRoadTexture4);
+
+    if (!winterRoadTexture5.loadFromFile("resources/images/tiles/road_winter(5).png"))
+        std::cerr << "road_winter(5).png를 로드할 수 없습니다.\n";
+    winterRoadSprite5.setTexture(winterRoadTexture5);
+
+    if (!winterRoadTexture6.loadFromFile("resources/images/tiles/road_winter(6).png"))
+        std::cerr << "road_winter(6).png를 로드할 수 없습니다.\n";
+    winterRoadSprite6.setTexture(winterRoadTexture6);
+
 
     if (!grassTexture.loadFromFile("resources/images/tiles/grass.png"))
         std::cerr << "grass.png를 로드할 수 없습니다.\n";
     grassSprite.setTexture(grassTexture);
 
+    if (!sandTexture.loadFromFile("resources/images/tiles/sand.png"))
+        std::cerr << "sand.png를 로드할 수 없습니다.\n";
+    sandSprite.setTexture(sandTexture);
+
+    if (!snowTexture.loadFromFile("resources/images/tiles/snow.png"))
+        std::cerr << "snow.png를 로드할 수 없습니다.\n";
+    snowSprite.setTexture(snowTexture);
+
     if (!buildingPlaceGrassTexture.loadFromFile("resources/images/tiles/buildingPlaceGrass.png"))
         std::cerr << "buildingPlaceGrass.png를 로드할 수 없습니다.\n";
     buildingPlaceGrassSprite.setTexture(buildingPlaceGrassTexture);
+
+    if (!buildingPlaceSandTexture.loadFromFile("resources/images/tiles/buildingPlaceSand.png"))
+        std::cerr << "buildingPlaceSand.png를 로드할 수 없습니다.\n";
+    buildingPlaceSandSprite.setTexture(buildingPlaceSandTexture);
+
+    if (!buildingPlaceSnowTexture.loadFromFile("resources/images/tiles/buildingPlaceSnow.png"))
+        std::cerr << "buildingPlaceSnow.png를 로드할 수 없습니다.\n";
+    buildingPlaceSnowSprite.setTexture(buildingPlaceSnowTexture);
 
     // 타워 텍스처 로드
     if (!archer1TowerTexture.loadFromFile("resources/images/towers/archer_level_1.png"))
@@ -77,9 +163,19 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     barrack3TowerSprite.setTexture(barrack3TowerTexture);
 
     // 투사체 텍스처 로드
-    if (!projectileTexture.loadFromFile("resources/images/towers/arrow.png"))
+    if (!projectileTexture1.loadFromFile("resources/images/towers/sword.png"))
+    {
+        std::cerr << "sword.png를 로드할 수 없습니다.\n";
+    }
+
+    if (!projectileTexture2.loadFromFile("resources/images/towers/arrow.png"))
     {
         std::cerr << "arrow.png를 로드할 수 없습니다.\n";
+    }
+
+    if (!projectileTexture3.loadFromFile("resources/images/towers/wizard_bullet.png"))
+    {
+        std::cerr << "wizard_bullet.png를 로드할 수 없습니다.\n";
     }
 
     // **유닛 텍스처 로드**
@@ -183,12 +279,23 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
 {
     window.clear();
 
+    int mapType = 0;
+
     // 맵 그리기
     for (int y = 0; y < static_cast<int>(map.size()); ++y)
     {
         for (int x = 0; x < static_cast<int>(map[y].size()); ++x)
         {
             std::string tileType = map[y][x];
+            if (x == 0 && y == 0)
+            {
+                if (tileType == "1")
+                    mapType = 1;
+                else if (tileType == "2")
+                    mapType = 2;
+                else if (tileType == "3")
+                    mapType = 3;
+            }
 
             // 이소메트릭 좌표 변환
             float screenX = (x - y) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
@@ -198,18 +305,88 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             screenY += offsetY;
 
             // 타일 스프라이트 선택
+
             sf::Sprite* tileSprite = nullptr;
-            if (tileType == "P" || tileType == "S" || tileType == "D")
+
+            if (mapType == 1)
             {
-                tileSprite = &roadSprite;
+                if (tileType == "P1" || tileType == "S" || tileType == "D")
+                    tileSprite = &grassRoadSprite1;
+
+                else if (tileType == "P2")
+                    tileSprite = &grassRoadSprite2;
+
+                else if (tileType == "P3")
+                    tileSprite = &grassRoadSprite3;
+
+                else if (tileType == "P4")
+                    tileSprite = &grassRoadSprite4;
+
+                else if (tileType == "P5")
+                    tileSprite = &grassRoadSprite5;
+
+                else if (tileType == "P6")
+                    tileSprite = &grassRoadSprite6;
+
+                else if (tileType == "O")
+                    tileSprite = &buildingPlaceGrassSprite;
+
+                else
+                    tileSprite = &grassSprite;
             }
-            else if (tileType == "O")
+
+            else if (mapType == 2)
             {
-                tileSprite = &buildingPlaceGrassSprite;
+                if (tileType == "P1" || tileType == "S" || tileType == "D")
+                    tileSprite = &desertRoadSprite1;
+
+                else if (tileType == "P2")
+                    tileSprite = &desertRoadSprite2;
+
+                else if (tileType == "P3")
+                    tileSprite = &desertRoadSprite3;
+
+                else if (tileType == "P4")
+                    tileSprite = &desertRoadSprite4;
+
+                else if (tileType == "P5")
+                    tileSprite = &desertRoadSprite5;
+
+                else if (tileType == "P6")
+                    tileSprite = &desertRoadSprite6;
+
+                else if (tileType == "O")
+                    tileSprite = &buildingPlaceSandSprite;
+
+                else
+                    tileSprite = &sandSprite;
             }
-            else
+
+            else if (mapType == 3)
             {
-                tileSprite = &grassSprite;
+                if (tileType == "P1" || tileType == "S" || tileType == "D")
+                    tileSprite = &winterRoadSprite1;
+
+                else if (tileType == "P2")
+                    tileSprite = &winterRoadSprite2;
+
+                else if (tileType == "P3")
+                    tileSprite = &winterRoadSprite3;
+
+                else if (tileType == "P4")
+                    tileSprite = &winterRoadSprite4;
+
+                else if (tileType == "P5")
+                    tileSprite = &winterRoadSprite5;
+
+                else if (tileType == "P6")
+                    tileSprite = &winterRoadSprite6;
+
+                else if (tileType == "O")
+                    tileSprite = &buildingPlaceSnowSprite;
+
+                else
+                    tileSprite = &snowSprite;
             }
 
             // 스프라이트 위치 설정
@@ -281,8 +458,12 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
                 towerOffsetX = 25.0;
                 towerOffsetY = 20.0;
                 break;
-            case 101:
+            case 100:
                 towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
+                towerOffsetX = 25.0;
+                towerOffsetY = 20.0;
+            case 101:
+                towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
                 towerOffsetX = 25.0;
                 towerOffsetY = 20.0;
                 break;
@@ -296,8 +477,12 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
                 towerOffsetX = 30.0;
                 towerOffsetY = 20.0;
                 break;
-            case 201:
+            case 200:
                 towerSprite = &archer2TowerSprite;
+                towerOffsetX = 30.0;
+                towerOffsetY = 20.0;
+            case 201:
+                towerSprite = &archer3TowerSprite;
                 towerOffsetX = 30.0;
                 towerOffsetY = 20.0;
                 break;
@@ -312,8 +497,13 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
                 towerOffsetX = 15.0;
                 towerOffsetY = 25.0;
                 break;
-            case 301:
+            case 300:
                 towerSprite = &wizard2TowerSprite;
+                towerSprite->setScale(1.3, 1.3);
+                towerOffsetX = 15.0;
+                towerOffsetY = 25.0;
+            case 301:
+                towerSprite = &wizard3TowerSprite;
                 towerSprite->setScale(1.3, 1.3);
                 towerOffsetX = 15.0;
                 towerOffsetY = 25.0;
@@ -414,10 +604,21 @@ void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int c
 }
 
 
-const sf::Texture& UI::getProjectileTexture() const
+const sf::Texture& UI::getProjectileTexture1() const
 {
-    return projectileTexture;
+    return projectileTexture1;
 }
+
+const sf::Texture& UI::getProjectileTexture2() const
+{
+    return projectileTexture2;
+}
+
+const sf::Texture& UI::getProjectileTexture3() const
+{
+    return projectileTexture3;
+}
+
 
 void UI::drawProjectiles(const std::vector<Projectile>& projectiles)
 {

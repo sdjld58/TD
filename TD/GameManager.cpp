@@ -22,9 +22,6 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 
 void GameManager::run(const std::string& stageFile)
 {
-   
-   
-   
     loadUnitTypes("UnitTypes.csv");
     loadTowerData("TowerData.csv");
     loadWaves(stageFile);
@@ -34,7 +31,6 @@ void GameManager::run(const std::string& stageFile)
     ui.setTowers(towers);
     ui.setUnitTypes(unitTypes);
     
-
     int currentTick = 0;
 
     for (const auto& wave : waves)
@@ -347,7 +343,6 @@ void GameManager::parsePath() {
         if (foundStart) break;
     }
 
-
     q.push({ startY, startX });
     visited[startY][startX] = true;
 
@@ -375,7 +370,8 @@ void GameManager::parsePath() {
             int nx = x + dx[i];
 
             if (ny >= 0 && ny < (int)rows && nx >= 0 && nx < (int)cols) {
-                if (!visited[ny][nx] && (map[ny][nx] == "P" || map[ny][nx] == "D")) {
+                // 경로 타일 확인 조건 수정
+                if (!visited[ny][nx] && (map[ny][nx] == "D" || (map[ny][nx].size() >= 1 && map[ny][nx][0] == 'P'))) {
                     visited[ny][nx] = true;
                     q.push({ ny, nx });
                     parent[ny][nx] = { y, x };
@@ -401,6 +397,7 @@ void GameManager::parsePath() {
         std::cout << "경로를 찾을 수 없습니다." << std::endl;
     }
 }
+
 
 
 void GameManager::loadUnitTypes(const std::string& filename)
@@ -1073,11 +1070,27 @@ void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetU
     startY += projectileOffsetY;
     targetY += projectileOffsetY;
 
-    // 투사체 생성
-    float speed = 400.0f; // 투사체 속도 (크게 설정하여 빠르게 이동)
-    Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture());
+    int towerID = tower.getId();
+    if (towerID == 1 || towerID == 100 || towerID == 101 || towerID == 102)
+    {
+        float speed = 400.0f; 
+        Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture1());
+        projectiles.push_back(projectile);
+    }
 
-    projectiles.push_back(projectile);
+    else if (towerID == 2 || towerID == 200 || towerID == 201 || towerID == 202)
+    {
+        float speed = 400.0f;
+        Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture2());
+        projectiles.push_back(projectile);
+    }
+
+    else if (towerID == 3 || towerID == 300 || towerID == 301 || towerID == 302)
+    {
+        float speed = 400.0f;
+        Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture3());
+        projectiles.push_back(projectile);
+    }
 }
 
 void GameManager::updateProjectiles(sf::Time deltaTime)
@@ -1382,6 +1395,7 @@ bool GameManager::isTileSelectable(int x, int y)
     // 타워 설치 불가능한 타일
     return false;
 }
+
 void GameManager::selectTower(const std::vector<Tower>& towers, int towerId, int& selectedTowerIndex, UI& ui)
 {
     const auto it = std::find_if(towers.begin(), towers.end(),
@@ -1713,7 +1727,6 @@ void GameManager::showGameOverPopup()
     }
 }
 
-
 void GameManager::gameStart() {
     // TGUI GUI 생성
     tgui::Gui gui(ui.getWindow());
@@ -1835,7 +1848,6 @@ void GameManager::gameStart() {
         mapSelected(); // 게임 시작 후 mapSelected 호출
     }
 }
-
 
 void GameManager::gamePrologue(const std::vector<std::wstring>& prologueLines) {
     // 폰트 로드

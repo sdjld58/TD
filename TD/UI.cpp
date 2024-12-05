@@ -5,12 +5,12 @@
 void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 {
     map = gameMap;
-    // SFML ì°½ ìƒì„±
+    // SFML Ã¢ »ı¼º
     window.create(sf::VideoMode(windowWidth, windowHeight), "Tower Defense Game");
 
    
 
-    // í…ìŠ¤íŠ¸ ì„¤ì •
+    // ÅØ½ºÆ® ¼³Á¤
     lifeText.setFont(font);
     lifeText.setCharacterSize(24);
     lifeText.setFillColor(sf::Color::White);
@@ -22,165 +22,165 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     goldText.setPosition(10, 40);
 
    
-    // ì”ë”” íƒ€ì¼ í…ìŠ¤ì²˜ ë¡œë“œ
+    // ÀÜµğ Å¸ÀÏ ÅØ½ºÃ³ ·Îµå
     if (!grassRoadTexture1.loadFromFile("resources/images/tiles/road_spring(1).png"))
-        std::cerr << "road_spring(1).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_spring(1).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     grassRoadSprite1.setTexture(grassRoadTexture1);
 
     if (!grassRoadTexture2.loadFromFile("resources/images/tiles/road_spring(2).png"))
-        std::cerr << "road_spring(2).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_spring(2).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     grassRoadSprite2.setTexture(grassRoadTexture2);
 
     if (!grassRoadTexture3.loadFromFile("resources/images/tiles/road_spring(3).png"))
-        std::cerr << "road_spring(3).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_spring(3).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     grassRoadSprite3.setTexture(grassRoadTexture3);
 
     if (!grassRoadTexture4.loadFromFile("resources/images/tiles/road_spring(4).png"))
-        std::cerr << "road_spring(4).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_spring(4).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     grassRoadSprite4.setTexture(grassRoadTexture4);
 
     if (!grassRoadTexture5.loadFromFile("resources/images/tiles/road_spring(5).png"))
-        std::cerr << "road_spring(5).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_spring(5).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     grassRoadSprite5.setTexture(grassRoadTexture5);
 
     if (!grassRoadTexture6.loadFromFile("resources/images/tiles/road_spring(6).png"))
-        std::cerr << "road_spring(6).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_spring(6).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     grassRoadSprite6.setTexture(grassRoadTexture6);
 
-    // ì‚¬ë§‰ íƒ€ì¼ í…ìŠ¤ì²˜ ë¡œë“œ
+    // »ç¸· Å¸ÀÏ ÅØ½ºÃ³ ·Îµå
     if (!desertRoadTexture1.loadFromFile("resources/images/tiles/road_desert(1).png"))
-        std::cerr << "road_desert(1).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_desert(1).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     desertRoadSprite1.setTexture(desertRoadTexture1);
 
     if (!desertRoadTexture2.loadFromFile("resources/images/tiles/road_desert(2).png"))
-        std::cerr << "road_desert(2).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_desert(2).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     desertRoadSprite2.setTexture(desertRoadTexture2);
 
     if (!desertRoadTexture3.loadFromFile("resources/images/tiles/road_desert(3).png"))
-        std::cerr << "road_desert(3).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_desert(3).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     desertRoadSprite3.setTexture(desertRoadTexture3);
 
     if (!desertRoadTexture4.loadFromFile("resources/images/tiles/road_desert(4).png"))
-        std::cerr << "road_desert(4).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_desert(4).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     desertRoadSprite4.setTexture(desertRoadTexture4);
 
     if (!desertRoadTexture5.loadFromFile("resources/images/tiles/road_desert(5).png"))
-        std::cerr << "road_desert(5).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_desert(5).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     desertRoadSprite5.setTexture(desertRoadTexture5);
 
     if (!desertRoadTexture6.loadFromFile("resources/images/tiles/road_desert(6).png"))
-        std::cerr << "road_desert(6).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_desert(6).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     desertRoadSprite6.setTexture(desertRoadTexture6);
 
-    // ê²¨ìš¸ íƒ€ì¼ í…ìŠ¤ì²˜ ë¡œë“œ
+    // °Ü¿ï Å¸ÀÏ ÅØ½ºÃ³ ·Îµå
     if (!winterRoadTexture1.loadFromFile("resources/images/tiles/road_winter(1).png"))
-        std::cerr << "road_winter(1).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_winter(1).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     winterRoadSprite1.setTexture(winterRoadTexture1);
 
     if (!winterRoadTexture2.loadFromFile("resources/images/tiles/road_winter(2).png"))
-        std::cerr << "road_winter(2).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_winter(2).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     winterRoadSprite2.setTexture(winterRoadTexture2);
 
     if (!winterRoadTexture3.loadFromFile("resources/images/tiles/road_winter(3).png"))
-        std::cerr << "road_winter(3).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_winter(3).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     winterRoadSprite3.setTexture(winterRoadTexture3);
 
     if (!winterRoadTexture4.loadFromFile("resources/images/tiles/road_winter(4).png"))
-        std::cerr << "road_winter(4).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_winter(4).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     winterRoadSprite4.setTexture(winterRoadTexture4);
 
     if (!winterRoadTexture5.loadFromFile("resources/images/tiles/road_winter(5).png"))
-        std::cerr << "road_winter(5).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_winter(5).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     winterRoadSprite5.setTexture(winterRoadTexture5);
 
     if (!winterRoadTexture6.loadFromFile("resources/images/tiles/road_winter(6).png"))
-        std::cerr << "road_winter(6).pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "road_winter(6).png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     winterRoadSprite6.setTexture(winterRoadTexture6);
 
 
     if (!grassTexture.loadFromFile("resources/images/tiles/grass.png"))
-        std::cerr << "grass.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "grass.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     grassSprite.setTexture(grassTexture);
 
     if (!sandTexture.loadFromFile("resources/images/tiles/sand.png"))
-        std::cerr << "sand.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "sand.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     sandSprite.setTexture(sandTexture);
 
     if (!snowTexture.loadFromFile("resources/images/tiles/snow.png"))
-        std::cerr << "snow.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "snow.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     snowSprite.setTexture(snowTexture);
 
     if (!buildingPlaceGrassTexture.loadFromFile("resources/images/tiles/buildingPlaceGrass.png"))
-        std::cerr << "buildingPlaceGrass.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "buildingPlaceGrass.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     buildingPlaceGrassSprite.setTexture(buildingPlaceGrassTexture);
 
     if (!buildingPlaceSandTexture.loadFromFile("resources/images/tiles/buildingPlaceSand.png"))
-        std::cerr << "buildingPlaceSand.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "buildingPlaceSand.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     buildingPlaceSandSprite.setTexture(buildingPlaceSandTexture);
 
     if (!buildingPlaceSnowTexture.loadFromFile("resources/images/tiles/buildingPlaceSnow.png"))
-        std::cerr << "buildingPlaceSnow.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "buildingPlaceSnow.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     buildingPlaceSnowSprite.setTexture(buildingPlaceSnowTexture);
 
-    // íƒ€ì›Œ í…ìŠ¤ì²˜ ë¡œë“œ
+    // Å¸¿ö ÅØ½ºÃ³ ·Îµå
     if (!archer1TowerTexture.loadFromFile("resources/images/towers/archer_level_1.png"))
-        std::cerr << "archer_level_1.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "archer_level_1.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     archer1TowerSprite.setTexture(archer1TowerTexture);
 
     if (!archer2TowerTexture.loadFromFile("resources/images/towers/archer_level_2.png"))
-        std::cerr << "archer_level_2.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "archer_level_2.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     archer2TowerSprite.setTexture(archer2TowerTexture);
 
     if (!archer3TowerTexture.loadFromFile("resources/images/towers/archer_level_3.png"))
-        std::cerr << "archer_level_3.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "archer_level_3.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     archer3TowerSprite.setTexture(archer3TowerTexture);
 
     if (!wizard1TowerTexture.loadFromFile("resources/images/towers/wizard_level_1.png"))
-        std::cerr << "wizard_level_1.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "wizard_level_1.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     wizard1TowerSprite.setTexture(wizard1TowerTexture);
 
     if (!wizard2TowerTexture.loadFromFile("resources/images/towers/wizard_level_2.png"))
-        std::cerr << "wizard_level_2.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "wizard_level_2.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     wizard2TowerSprite.setTexture(wizard2TowerTexture);
 
     if (!wizard3TowerTexture.loadFromFile("resources/images/towers/wizard_level_3.png"))
-        std::cerr << "wizard_level_3.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "wizard_level_3.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     wizard3TowerSprite.setTexture(wizard3TowerTexture);
 
     if (!barrack1TowerTexture.loadFromFile("resources/images/towers/barrack_level_1.png"))
-        std::cerr << "barrack_level_1.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "barrack_level_1.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     barrack1TowerSprite.setTexture(barrack1TowerTexture);
 
     if (!barrack2TowerTexture.loadFromFile("resources/images/towers/barrack_level_2.png"))
-        std::cerr << "barrack_level_2.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "barrack_level_2.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     barrack2TowerSprite.setTexture(barrack2TowerTexture);
 
     if (!barrack3TowerTexture.loadFromFile("resources/images/towers/barrack_level_3.png"))
-        std::cerr << "barrack_level_3.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "barrack_level_3.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     barrack3TowerSprite.setTexture(barrack3TowerTexture);
 
-    // íˆ¬ì‚¬ì²´ í…ìŠ¤ì²˜ ë¡œë“œ
+    // Åõ»çÃ¼ ÅØ½ºÃ³ ·Îµå
     if (!projectileTexture1.loadFromFile("resources/images/towers/sword.png"))
     {
-        std::cerr << "sword.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "sword.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     }
 
     if (!projectileTexture2.loadFromFile("resources/images/towers/arrow.png"))
     {
-        std::cerr << "arrow.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "arrow.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     }
 
     if (!projectileTexture3.loadFromFile("resources/images/towers/wizard_bullet.png"))
     {
-        std::cerr << "wizard_bullet.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "wizard_bullet.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     }
 
-    // **ìœ ë‹› í…ìŠ¤ì²˜ ë¡œë“œ**
+    // **À¯´Ö ÅØ½ºÃ³ ·Îµå**
     if (!knightUnitTexture.loadFromFile("resources/images/units/knight_level_1.png"))
-        std::cerr << "knight_level_1.pngë¥¼ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n";
+        std::cerr << "knight_level_1.png¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù.\n";
     knightUnitSprite.setTexture(knightUnitTexture);
 
-    // ìœ ë‹› ìŠ¤í”„ë¼ì´íŠ¸ ì„¤ì • (í•„ìš”ì— ë”°ë¼ ì›ì ê³¼ í¬ê¸° ì¡°ì ˆ)
+    // À¯´Ö ½ºÇÁ¶óÀÌÆ® ¼³Á¤ (ÇÊ¿ä¿¡ µû¶ó ¿øÁ¡°ú Å©±â Á¶Àı)
     knightUnitSprite.setOrigin(knightUnitTexture.getSize().x / 2.0f, knightUnitTexture.getSize().y * 1.3);
     float unitScale = tileHeight / knightUnitTexture.getSize().y;
     knightUnitSprite.setScale(unitScale/1.5, unitScale/1.5);
@@ -192,68 +192,68 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 
 void UI::drawButtons()
 {
-    // ë²„íŠ¼ ìƒì„± ë° ì„¤ì •
+    // ¹öÆ° »ı¼º ¹× ¼³Á¤
     gui.setWindow(window);
-    // ì¡°ì‘ ë° ì„¤ëª… ë²„íŠ¼ ìƒì„±
+    // Á¶ÀÛ ¹× ¼³¸í ¹öÆ° »ı¼º
     auto infoButton = tgui::Button::create();
-    infoButton->setSize(70, 70); // ì •ì‚¬ê°í˜• í¬ê¸°
-    infoButton->setPosition(windowWidth-80, windowHeight - 80); // ì˜¤ë¥¸ìª½í•˜ë‹¨ì— ì¡°ì‘í‚¤
-    infoButton->getRenderer()->setBackgroundColor(sf::Color::White); // ë°°ê²½ìƒ‰ í°ìƒ‰
-    infoButton->getRenderer()->setBorders({ 0 }); // í…Œë‘ë¦¬ ì„¤ì •
+    infoButton->setSize(70, 70); // Á¤»ç°¢Çü Å©±â
+    infoButton->setPosition(windowWidth-80, windowHeight - 80); // ¿À¸¥ÂÊÇÏ´Ü¿¡ Á¶ÀÛÅ°
+    infoButton->getRenderer()->setBackgroundColor(sf::Color::White); // ¹è°æ»ö Èò»ö
+    infoButton->getRenderer()->setBorders({ 0 }); // Å×µÎ¸® ¼³Á¤
 
-    // ì¡°ì‘ ë° ì„¤ëª… ë²„íŠ¼ ì´ë¯¸ì§€ ì„¤ì •
+    // Á¶ÀÛ ¹× ¼³¸í ¹öÆ° ÀÌ¹ÌÁö ¼³Á¤
     infoButton->getRenderer()->setTexture("resources/images/icons/info_icon.png");
 
-    // ì¡°ì‘ ë° ì„¤ëª… ë²„íŠ¼ ë§ˆìš°ìŠ¤ ì˜¤ë²„ íš¨ê³¼
+    // Á¶ÀÛ ¹× ¼³¸í ¹öÆ° ¸¶¿ì½º ¿À¹ö È¿°ú
     infoButton->onMouseEnter([infoButton]() {
-        infoButton->getRenderer()->setOpacity(0.7f); // ë§ˆìš°ìŠ¤ê°€ ì˜¬ë¼ì™”ì„ ë•Œ 70% ë¶ˆíˆ¬ëª…
+        infoButton->getRenderer()->setOpacity(0.7f); // ¸¶¿ì½º°¡ ¿Ã¶ó¿ÔÀ» ¶§ 70% ºÒÅõ¸í
         });
     infoButton->onMouseLeave([infoButton]() {
-        infoButton->getRenderer()->setOpacity(1.0f); // ë§ˆìš°ìŠ¤ê°€ ë– ë‚¬ì„ ë•Œ 100% ë¶ˆíˆ¬ëª…
+        infoButton->getRenderer()->setOpacity(1.0f); // ¸¶¿ì½º°¡ ¶°³µÀ» ¶§ 100% ºÒÅõ¸í
         });
 
-    // ì¡°ì‘ ë° ì„¤ëª… ë²„íŠ¼ í´ë¦­ ì½œë°±
+    // Á¶ÀÛ ¹× ¼³¸í ¹öÆ° Å¬¸¯ Äİ¹é
     infoButton->onClick([this]() {
-        // ì¡°ì‘ ë° ì„¤ëª… í´ë¦­ ì‹œ ë™ì‘
+        // Á¶ÀÛ ¹× ¼³¸í Å¬¸¯ ½Ã µ¿ÀÛ
         gameInfoStage();
         std::cout << "Info button clicked!" << std::endl;
-        // ì—¬ê¸°ì„œ í•„ìš”í•œ í–‰ë™ ì¶”ê°€
+        // ¿©±â¼­ ÇÊ¿äÇÑ Çàµ¿ Ãß°¡
         });
 
-    // GUIì— ì¡°ì‘ ë° ì„¤ëª… ë²„íŠ¼ ì¶”ê°€
+    // GUI¿¡ Á¶ÀÛ ¹× ¼³¸í ¹öÆ° Ãß°¡
     gui.add(infoButton, "infoButton");
 
     if (curWaveIsDefense)
     {
-        // ë²„íŠ¼ ìƒì„± ë° ì„¤ì •
+        // ¹öÆ° »ı¼º ¹× ¼³Á¤
         gui.setWindow(window);
 
-        // íƒ€ì›Œ ë²„íŠ¼ ìƒì„±
+        // Å¸¿ö ¹öÆ° »ı¼º
         auto towerButton = tgui::Button::create();
-        towerButton->setSize(110, 110); // ì •ì‚¬ê°í˜• í¬ê¸°
+        towerButton->setSize(110, 110); // Á¤»ç°¢Çü Å©±â
         towerButton->setPosition(400, windowHeight - 100);
-        towerButton->getRenderer()->setBackgroundColor(sf::Color::White); // ë°°ê²½ìƒ‰ í°ìƒ‰
-        towerButton->getRenderer()->setBorders({ 0 }); // í…Œë‘ë¦¬ ì„¤ì •
+        towerButton->getRenderer()->setBackgroundColor(sf::Color::White); // ¹è°æ»ö Èò»ö
+        towerButton->getRenderer()->setBorders({ 0 }); // Å×µÎ¸® ¼³Á¤
 
-        // íƒ€ì›Œ ë²„íŠ¼ ì´ë¯¸ì§€ ì„¤ì •
+        // Å¸¿ö ¹öÆ° ÀÌ¹ÌÁö ¼³Á¤
         towerButton->getRenderer()->setTexture("resources/images/icons/yellowcheck.png");
 
-        // íƒ€ì›Œ ë²„íŠ¼ ë§ˆìš°ìŠ¤ ì˜¤ë²„ íš¨ê³¼
+        // Å¸¿ö ¹öÆ° ¸¶¿ì½º ¿À¹ö È¿°ú
         towerButton->onMouseEnter([towerButton]() {
-            towerButton->getRenderer()->setOpacity(0.7f); // ë§ˆìš°ìŠ¤ê°€ ì˜¬ë¼ì™”ì„ ë•Œ 70% ë¶ˆíˆ¬ëª…
+            towerButton->getRenderer()->setOpacity(0.7f); // ¸¶¿ì½º°¡ ¿Ã¶ó¿ÔÀ» ¶§ 70% ºÒÅõ¸í
             });
         towerButton->onMouseLeave([towerButton]() {
-            towerButton->getRenderer()->setOpacity(1.0f); // ë§ˆìš°ìŠ¤ê°€ ë– ë‚¬ì„ ë•Œ 100% ë¶ˆíˆ¬ëª…
+            towerButton->getRenderer()->setOpacity(1.0f); // ¸¶¿ì½º°¡ ¶°³µÀ» ¶§ 100% ºÒÅõ¸í
             });
 
-        // íƒ€ì›Œ ë²„íŠ¼ í´ë¦­ ì½œë°±
+        // Å¸¿ö ¹öÆ° Å¬¸¯ Äİ¹é
         towerButton->onClick([this]() {
             if (onTowerButtonClicked) {
                 onTowerButtonClicked();
             }
             });
 
-        // GUIì— íƒ€ì›Œ ë²„íŠ¼ ì¶”ê°€
+        // GUI¿¡ Å¸¿ö ¹öÆ° Ãß°¡
         gui.add(towerButton, "towerButton");
 
        
@@ -273,16 +273,16 @@ void UI::clearButtons()
     gui.removeAllWidgets();
 }
 void UI::initializeBackground(const std::string& backgroundFilePath) {
-    // í…ìŠ¤ì²˜ í•œ ë²ˆë§Œ ë¡œë“œ
+    // ÅØ½ºÃ³ ÇÑ ¹ø¸¸ ·Îµå
     if (!backgroundTexture.loadFromFile(backgroundFilePath)) {
         std::cerr << "Failed to load background image: " << backgroundFilePath << std::endl;
         return;
     }
 
-    // í…ìŠ¤ì²˜ ì„¤ì •
-    backgroundTexture.setSmooth(true); // í…ìŠ¤ì²˜ ë¶€ë“œëŸ½ê²Œ
+    // ÅØ½ºÃ³ ¼³Á¤
+    backgroundTexture.setSmooth(true); // ÅØ½ºÃ³ ºÎµå·´°Ô
 
-    // ìŠ¤í”„ë¼ì´íŠ¸ ì´ˆê¸°í™”
+    // ½ºÇÁ¶óÀÌÆ® ÃÊ±âÈ­
     backgroundSprite.setTexture(backgroundTexture);
     backgroundSprite.setScale(
         static_cast<float>(windowWidth) / backgroundTexture.getSize().x,
@@ -291,7 +291,7 @@ void UI::initializeBackground(const std::string& backgroundFilePath) {
 }
 
 void UI::drawBackground() {
-    // ë‹¨ìˆœíˆ ì´ë¯¸ ë¡œë“œëœ ë°°ê²½ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ê·¸ë¦¬ê¸°ë§Œ í•¨
+    // ´Ü¼øÈ÷ ÀÌ¹Ì ·ÎµåµÈ ¹è°æ ½ºÇÁ¶óÀÌÆ®¸¦ ±×¸®±â¸¸ ÇÔ
     window.draw(backgroundSprite);
 }
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
@@ -299,7 +299,8 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
 {
     window.clear();
     drawBackground();
-    // ë§µ ê·¸ë¦¬ê¸°
+    int mapType = 0;
+    // ¸Ê ±×¸®±â
     for (int y = 0; y < static_cast<int>(map.size()); ++y)
     {
         for (int x = 0; x < static_cast<int>(map[y].size()); ++x)
@@ -315,14 +316,14 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
                     mapType = 3;
             }
 
-            // ì´ì†Œë©”íŠ¸ë¦­ ì¢Œí‘œ ë³€í™˜
+            // ÀÌ¼Ò¸ŞÆ®¸¯ ÁÂÇ¥ º¯È¯
             float screenX = (x - y) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
             float screenY = (x + y) * (tileHeight / 2.0f);
 
             screenX += offsetX;
             screenY += offsetY;
 
-            // íƒ€ì¼ ìŠ¤í”„ë¼ì´íŠ¸ ì„ íƒ
+            // Å¸ÀÏ ½ºÇÁ¶óÀÌÆ® ¼±ÅÃ
 
             sf::Sprite* tileSprite = nullptr;
 
@@ -407,12 +408,12 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
                     tileSprite = &snowSprite;
             }
 
-            // ìŠ¤í”„ë¼ì´íŠ¸ ìœ„ì¹˜ ì„¤ì •
+            // ½ºÇÁ¶óÀÌÆ® À§Ä¡ ¼³Á¤
             tileSprite->setPosition(screenX, screenY);
 
             window.draw(*tileSprite);
 
-            // ì„ íƒëœ íƒ€ì¼ì´ë©´ ë°˜íˆ¬ëª…í•œ ì˜¤ë²„ë ˆì´ë¥¼ ê·¸ë ¤ì„œ ê°•ì¡° í‘œì‹œ
+            // ¼±ÅÃµÈ Å¸ÀÏÀÌ¸é ¹İÅõ¸íÇÑ ¿À¹ö·¹ÀÌ¸¦ ±×·Á¼­ °­Á¶ Ç¥½Ã
             if (x == selectedX && y == selectedY)
             {
                 sf::ConvexShape overlay;
@@ -422,44 +423,44 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
                 overlay.setPoint(2, sf::Vector2f(tileWidth / 2.0f, tileHeight));
                 overlay.setPoint(3, sf::Vector2f(0, tileHeight / 2.0f));
                 overlay.setPosition(screenX, screenY);
-                overlay.setFillColor(sf::Color(255, 255, 0, 100)); // ë…¸ë€ìƒ‰, íˆ¬ëª…ë„ 100
+                overlay.setFillColor(sf::Color(255, 255, 0, 100)); // ³ë¶õ»ö, Åõ¸íµµ 100
                 window.draw(overlay);
             }
         }
     }
  
-    // íˆ¬ì‚¬ì²´ ê·¸ë¦¬ê¸°
+    // Åõ»çÃ¼ ±×¸®±â
     drawProjectiles(projectiles);
 
-    // **ìœ ë‹› ê·¸ë¦¬ê¸° (ìŠ¤í”„ë¼ì´íŠ¸ ì‚¬ìš©)**
+    // **À¯´Ö ±×¸®±â (½ºÇÁ¶óÀÌÆ® »ç¿ë)**
     for (auto& unit : units) {
         float posX = unit.getPosX();
         float posY = unit.getPosY();
 
-        // ì´ì†Œë©”íŠ¸ë¦­ ì¢Œí‘œ ë³€í™˜
+        // ÀÌ¼Ò¸ŞÆ®¸¯ ÁÂÇ¥ º¯È¯
         float screenX = (posX - posY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
         float screenY = (posX + posY) * (tileHeight / 2.0f);
 
         screenX += offsetX;
         screenY += offsetY;
 
-        // ìœ ë‹› ìŠ¤í”„ë¼ì´íŠ¸ ìœ„ì¹˜ ì„¤ì •
+        // À¯´Ö ½ºÇÁ¶óÀÌÆ® À§Ä¡ ¼³Á¤
         knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
-        // ì²´ë ¥ ë°” ê·¸ë¦¬ê¸°
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp); // ì²´ë ¥ ìµœëŒ€ê°’ 10ìœ¼ë¡œ ì„¤ì •
+        // Ã¼·Â ¹Ù ±×¸®±â
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp); // Ã¼·Â ÃÖ´ë°ª 10À¸·Î ¼³Á¤
 
-        // ìœ ë‹› ìŠ¤í”„ë¼ì´íŠ¸ ê·¸ë¦¬ê¸°
+        // À¯´Ö ½ºÇÁ¶óÀÌÆ® ±×¸®±â
         window.draw(knightUnitSprite);
     }
 
-    // íƒ€ì›Œ ê·¸ë¦¬ê¸°
+    // Å¸¿ö ±×¸®±â
     for (const auto& tower : placedTowers)
     {
         int tileX = tower.getX();
         int tileY = tower.getY();
 
-        // ì´ì†Œë©”íŠ¸ë¦­ ì¢Œí‘œ ë³€í™˜
+        // ÀÌ¼Ò¸ŞÆ®¸¯ ÁÂÇ¥ º¯È¯
         float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
         float screenY = (tileX + tileY) * (tileHeight / 2.0f);
 
@@ -589,34 +590,34 @@ void UI::setIsDefence(bool isDefence)
     curWaveIsDefense = isDefence;
 }
 
-// ì²´ë ¥ë°”ë¥¼ ìƒì„±í•˜ëŠ” í•¨ìˆ˜
+// Ã¼·Â¹Ù¸¦ »ı¼ºÇÏ´Â ÇÔ¼ö
 void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp) {
-    float healthBarWidth = 40.0f;         // ì²´ë ¥ ë°” ë„ˆë¹„
-    float healthBarHeight = 5.0f;        // ì²´ë ¥ ë°” ë†’ì´
-    float healthRatio = static_cast<float>(currentHp) / maxHp; // ì²´ë ¥ ë¹„ìœ¨
+    float healthBarWidth = 40.0f;         // Ã¼·Â ¹Ù ³Êºñ
+    float healthBarHeight = 5.0f;        // Ã¼·Â ¹Ù ³ôÀÌ
+    float healthRatio = static_cast<float>(currentHp) / maxHp; // Ã¼·Â ºñÀ²
 
-    // ì²´ë ¥ ë°” ë°°ê²½
+    // Ã¼·Â ¹Ù ¹è°æ
     sf::RectangleShape healthBarBackground(sf::Vector2f(healthBarWidth, healthBarHeight));
-    healthBarBackground.setFillColor(sf::Color(50, 50, 50)); // íšŒìƒ‰ ë°°ê²½
+    healthBarBackground.setFillColor(sf::Color(50, 50, 50)); // È¸»ö ¹è°æ
     healthBarBackground.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
 
-    // ì²´ë ¥ ë°” (í˜„ì¬ ì²´ë ¥)
+    // Ã¼·Â ¹Ù (ÇöÀç Ã¼·Â)
     sf::RectangleShape healthBar(sf::Vector2f(healthBarWidth * healthRatio, healthBarHeight));
 
-    // ì²´ë ¥ ë¹„ìœ¨ì— ë”°ë¼ ìƒ‰ìƒ ë³€ê²½
+    // Ã¼·Â ºñÀ²¿¡ µû¶ó »ö»ó º¯°æ
     if (healthRatio > 0.66f) {
-        healthBar.setFillColor(sf::Color(0, 200, 0)); // ì´ˆë¡ìƒ‰
+        healthBar.setFillColor(sf::Color(0, 200, 0)); // ÃÊ·Ï»ö
     }
     else if (healthRatio > 0.33f) {
-        healthBar.setFillColor(sf::Color(255, 255, 0)); // ë…¸ë€ìƒ‰
+        healthBar.setFillColor(sf::Color(255, 255, 0)); // ³ë¶õ»ö
     }
     else {
-        healthBar.setFillColor(sf::Color(200, 0, 0)); // ë¹¨ê°„ìƒ‰
+        healthBar.setFillColor(sf::Color(200, 0, 0)); // »¡°£»ö
     }
 
     healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
 
-    // ì²´ë ¥ ë°” ê·¸ë¦¬ê¸°
+    // Ã¼·Â ¹Ù ±×¸®±â
     window.draw(healthBarBackground);
     window.draw(healthBar);
 }
@@ -644,30 +645,30 @@ void UI::drawProjectiles(const std::vector<Projectile>& projectiles)
     {
         sf::Sprite sprite = projectile.getSprite();
 
-        // í˜„ì¬ ìŠ¤í”„ë¼ì´íŠ¸ì˜ ìœ„ì¹˜ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+        // ÇöÀç ½ºÇÁ¶óÀÌÆ®ÀÇ À§Ä¡¸¦ °¡Á®¿É´Ï´Ù.
         sf::Vector2f position = sprite.getPosition();
 
-        // offsetXì™€ offsetYë¥¼ ë”í•´ì¤ë‹ˆë‹¤.
+        // offsetX¿Í offsetY¸¦ ´õÇØÁİ´Ï´Ù.
         position.x += offsetX;
         position.y += offsetY;
 
-        // ìœ„ì¹˜ë¥¼ ì—…ë°ì´íŠ¸í•©ë‹ˆë‹¤.
+        // À§Ä¡¸¦ ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
         sprite.setPosition(position);
 
-        // ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ê·¸ë¦½ë‹ˆë‹¤.
+        // ½ºÇÁ¶óÀÌÆ®¸¦ ±×¸³´Ï´Ù.
         window.draw(sprite);
     }
 }
 
 void UI::setInfoText(std::initializer_list<std::string> infoSentences) {
-    // ê¸°ì¡´ infoTexts ë²¡í„° ì´ˆê¸°í™”
+    // ±âÁ¸ infoTexts º¤ÅÍ ÃÊ±âÈ­
     infoTexts.clear();
 
-    // ë¡œì¼€ì¼ ì„¤ì • (í•„ìš”í•œ ê²½ìš°)
+    // ·ÎÄÉÀÏ ¼³Á¤ (ÇÊ¿äÇÑ °æ¿ì)
     // std::locale::global(std::locale(""));
 
     for (const auto& sentence : infoSentences) {
-        // ë§Œì•½ ì…ë ¥ ë¬¸ìì—´ì´ UTF-8ì´ ì•„ë‹ˆë¼ë©´ CP_ACP ì‚¬ìš©
+        // ¸¸¾à ÀÔ·Â ¹®ÀÚ¿­ÀÌ UTF-8ÀÌ ¾Æ´Ï¶ó¸é CP_ACP »ç¿ë
         int size_needed = MultiByteToWideChar(
             CP_ACP,
             0,
@@ -701,176 +702,176 @@ std::wstring UI::getInfoText(int index) const {
 }
 
 void UI::gameInfoStage() {
-    // í°íŠ¸ íŒŒì¼ ê²½ë¡œ ì„¤ì •
+    // ÆùÆ® ÆÄÀÏ °æ·Î ¼³Á¤
     std::string fontPath = "resources/fonts/BMDOHYEON_ttf.ttf";
 
-    // í°íŠ¸ ë¡œë“œ í™•ì¸
+    // ÆùÆ® ·Îµå È®ÀÎ
     if (!sf::Font().loadFromFile(fontPath)) {
-        std::cerr << "í°íŠ¸ íŒŒì¼ì„ ë¡œë“œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤: " << fontPath << std::endl;
+        std::cerr << "ÆùÆ® ÆÄÀÏÀ» ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù: " << fontPath << std::endl;
         return;
     }
 
-    // ì°½ í¬ê¸° ê³„ì‚°
+    // Ã¢ Å©±â °è»ê
     sf::Vector2u windowSize = window.getSize();
     float boxWidth = windowSize.x * 2 / 3.0f;
     float boxHeight = windowSize.y * 2 / 3.0f;
 
-    // ë°˜íˆ¬ëª… íŒ¨ë„ ìƒì„±
+    // ¹İÅõ¸í ÆĞ³Î »ı¼º
     auto panel = tgui::Panel::create({ boxWidth, boxHeight });
     panel->setPosition((windowSize.x - boxWidth) / 2.0f, (windowSize.y - boxHeight) / 2.0f);
-    panel->getRenderer()->setBackgroundColor({ 0, 0, 0, 150 }); // ê²€ì€ìƒ‰ ë°°ê²½, 150 íˆ¬ëª…ë„
-    panel->getRenderer()->setBorders({ 10 });                  // í…Œë‘ë¦¬ ì¶”ê°€
-    panel->getRenderer()->setBorderColor({ 255, 255, 255 });   // í…Œë‘ë¦¬ í°ìƒ‰
-    panel->getRenderer()->setRoundedBorderRadius(20);          // ëª¨ì„œë¦¬ë¥¼ ë‘¥ê¸€ê²Œ
+    panel->getRenderer()->setBackgroundColor({ 0, 0, 0, 150 }); // °ËÀº»ö ¹è°æ, 150 Åõ¸íµµ
+    panel->getRenderer()->setBorders({ 10 });                  // Å×µÎ¸® Ãß°¡
+    panel->getRenderer()->setBorderColor({ 255, 255, 255 });   // Å×µÎ¸® Èò»ö
+    panel->getRenderer()->setRoundedBorderRadius(20);          // ¸ğ¼­¸®¸¦ µÕ±Û°Ô
 
-    // ìˆ˜ë¹„ ì›¨ì´ë¸Œ ì„¤ëª… í…ìŠ¤íŠ¸ ì¶”ê°€ (ì™¼ìª½, 1/4 ì§€ì )
+    // ¼öºñ ¿şÀÌºê ¼³¸í ÅØ½ºÆ® Ãß°¡ (¿ŞÂÊ, 1/4 ÁöÁ¡)
     std::wstring defenseWaveText =
-        L"[ìˆ˜ë¹„ ì›¨ì´ë¸Œ]\n\n";
+        L"[¼öºñ ¿şÀÌºê]\n\n";
     auto defenseText = tgui::Label::create();
-    defenseText->setText(defenseWaveText); // í…ìŠ¤íŠ¸ ì„¤ì •
-    defenseText->setPosition(boxWidth / 4 - 100, 50); // íŒ¨ë„ì˜ 1/4 ì§€ì ì— ë°°ì¹˜
+    defenseText->setText(defenseWaveText); // ÅØ½ºÆ® ¼³Á¤
+    defenseText->setPosition(boxWidth / 4 - 100, 50); // ÆĞ³ÎÀÇ 1/4 ÁöÁ¡¿¡ ¹èÄ¡
     defenseText->setTextSize(25);
-    defenseText->getRenderer()->setTextColor({ 135, 206, 250 }); // ë°ì€ íŒŒë€ìƒ‰ (LightSkyBlue)
+    defenseText->getRenderer()->setTextColor({ 135, 206, 250 }); // ¹àÀº ÆÄ¶õ»ö (LightSkyBlue)
     defenseText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(defenseText);
 
-    // ê³µê²© ì›¨ì´ë¸Œ ì„¤ëª… í…ìŠ¤íŠ¸ ì¶”ê°€ (ì˜¤ë¥¸ìª½, 3/4 ì§€ì )
+    // °ø°İ ¿şÀÌºê ¼³¸í ÅØ½ºÆ® Ãß°¡ (¿À¸¥ÂÊ, 3/4 ÁöÁ¡)
     std::wstring attackWaveText =
-        L"[ê³µê²© ì›¨ì´ë¸Œ]\n\n";
+        L"[°ø°İ ¿şÀÌºê]\n\n";
     auto attackText = tgui::Label::create();
-    attackText->setText(attackWaveText);  // í…ìŠ¤íŠ¸ ì„¤ì •
-    attackText->setPosition(boxWidth * 3 / 4 - 100, 50); // íŒ¨ë„ì˜ 3/4 ì§€ì ì— ë°°ì¹˜
+    attackText->setText(attackWaveText);  // ÅØ½ºÆ® ¼³Á¤
+    attackText->setPosition(boxWidth * 3 / 4 - 100, 50); // ÆĞ³ÎÀÇ 3/4 ÁöÁ¡¿¡ ¹èÄ¡
     attackText->setTextSize(25);
-    attackText->getRenderer()->setTextColor({ 255, 105, 180 }); // í•‘í¬ìƒ‰ í°íŠ¸
+    attackText->getRenderer()->setTextColor({ 255, 105, 180 }); // ÇÎÅ©»ö ÆùÆ®
     attackText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(attackText);
 
 
-    // ê·¸ë¦¼ ì¶”ê°€ (ì¤‘ì•™)
+    // ±×¸² Ãß°¡ (Áß¾Ó)
 
 
-    auto wasdkey = tgui::Picture::create("resources/images/icons/wasdkey.png"); // ì´ë¯¸ì§€ íŒŒì¼ ê²½ë¡œ
-    wasdkey->setSize({ 240, 160 });  // ê·¸ë¦¼ í¬ê¸°
-    wasdkey->setPosition((boxWidth - 200) / 2 - 40, 20); // íŒ¨ë„ ì¤‘ì•™ì— ë°°ì¹˜
+    auto wasdkey = tgui::Picture::create("resources/images/icons/wasdkey.png"); // ÀÌ¹ÌÁö ÆÄÀÏ °æ·Î
+    wasdkey->setSize({ 240, 160 });  // ±×¸² Å©±â
+    wasdkey->setPosition((boxWidth - 200) / 2 - 40, 20); // ÆĞ³Î Áß¾Ó¿¡ ¹èÄ¡
     panel->add(wasdkey);
 
-    auto spacekey = tgui::Picture::create("resources/images/icons/spacekey.png"); // ì´ë¯¸ì§€ íŒŒì¼ ê²½ë¡œ
-    spacekey->setSize({ 150, 150 });  // ê·¸ë¦¼ í¬ê¸°
-    spacekey->setPosition((boxWidth - 200) / 2 + 90, 150); // íŒ¨ë„ ì¤‘ì•™ì— ë°°ì¹˜
+    auto spacekey = tgui::Picture::create("resources/images/icons/spacekey.png"); // ÀÌ¹ÌÁö ÆÄÀÏ °æ·Î
+    spacekey->setSize({ 150, 150 });  // ±×¸² Å©±â
+    spacekey->setPosition((boxWidth - 200) / 2 + 90, 150); // ÆĞ³Î Áß¾Ó¿¡ ¹èÄ¡
     panel->add(spacekey);
 
-    auto fkey = tgui::Picture::create("resources/images/icons/fkey.png"); // ì´ë¯¸ì§€ íŒŒì¼ ê²½ë¡œ
-    fkey->setSize({ 120, 120 });  // ê·¸ë¦¼ í¬ê¸°
-    fkey->setPosition((boxWidth - 200) / 2, 270); // íŒ¨ë„ ì¤‘ì•™ì— ë°°ì¹˜
+    auto fkey = tgui::Picture::create("resources/images/icons/fkey.png"); // ÀÌ¹ÌÁö ÆÄÀÏ °æ·Î
+    fkey->setSize({ 120, 120 });  // ±×¸² Å©±â
+    fkey->setPosition((boxWidth - 200) / 2, 270); // ÆĞ³Î Áß¾Ó¿¡ ¹èÄ¡
     panel->add(fkey);
 
-    auto onekey = tgui::Picture::create("resources/images/icons/1key.png"); // ì´ë¯¸ì§€ íŒŒì¼ ê²½ë¡œ
-    onekey->setSize({ 120, 120 });  // ê·¸ë¦¼ í¬ê¸°
-    onekey->setPosition((boxWidth - 200) / 2 - 200, 370); // íŒ¨ë„ ì¤‘ì•™ì— ë°°ì¹˜
+    auto onekey = tgui::Picture::create("resources/images/icons/1key.png"); // ÀÌ¹ÌÁö ÆÄÀÏ °æ·Î
+    onekey->setSize({ 120, 120 });  // ±×¸² Å©±â
+    onekey->setPosition((boxWidth - 200) / 2 - 200, 370); // ÆĞ³Î Áß¾Ó¿¡ ¹èÄ¡
     panel->add(onekey);
 
-    auto twokey = tgui::Picture::create("resources/images/icons/2key.png"); // ì´ë¯¸ì§€ íŒŒì¼ ê²½ë¡œ
-    twokey->setSize({ 120, 120 });  // ê·¸ë¦¼ í¬ê¸°
-    twokey->setPosition((boxWidth - 200) / 2 - 120, 370); // íŒ¨ë„ ì¤‘ì•™ì— ë°°ì¹˜
+    auto twokey = tgui::Picture::create("resources/images/icons/2key.png"); // ÀÌ¹ÌÁö ÆÄÀÏ °æ·Î
+    twokey->setSize({ 120, 120 });  // ±×¸² Å©±â
+    twokey->setPosition((boxWidth - 200) / 2 - 120, 370); // ÆĞ³Î Áß¾Ó¿¡ ¹èÄ¡
     panel->add(twokey);
 
-    auto threekey = tgui::Picture::create("resources/images/icons/three.png"); // ì´ë¯¸ì§€ íŒŒì¼ ê²½ë¡œ
-    threekey->setSize({ 600, 120 });  // ê·¸ë¦¼ í¬ê¸°
-    threekey->setPosition((boxWidth - 200) / 2 - 300, 470); // íŒ¨ë„ ì¤‘ì•™ì— ë°°ì¹˜
+    auto threekey = tgui::Picture::create("resources/images/icons/three.png"); // ÀÌ¹ÌÁö ÆÄÀÏ °æ·Î
+    threekey->setSize({ 600, 120 });  // ±×¸² Å©±â
+    threekey->setPosition((boxWidth - 200) / 2 - 300, 470); // ÆĞ³Î Áß¾Ó¿¡ ¹èÄ¡
     panel->add(threekey);
 
-    auto esckey = tgui::Picture::create("resources/images/icons/esckey.png"); // ì´ë¯¸ì§€ íŒŒì¼ ê²½ë¡œ
-    esckey->setSize({ 120, 120 });  // ê·¸ë¦¼ í¬ê¸°
-    esckey->setPosition((boxWidth - 200) / 2 + 20, 570); // íŒ¨ë„ ì¤‘ì•™ì— ë°°ì¹˜
+    auto esckey = tgui::Picture::create("resources/images/icons/esckey.png"); // ÀÌ¹ÌÁö ÆÄÀÏ °æ·Î
+    esckey->setSize({ 120, 120 });  // ±×¸² Å©±â
+    esckey->setPosition((boxWidth - 200) / 2 + 20, 570); // ÆĞ³Î Áß¾Ó¿¡ ¹èÄ¡
     panel->add(esckey);
 
-    // WASD ì˜†ì— "ë§µ ì´ë™í‚¤" ì¶”ê°€
+    // WASD ¿·¿¡ "¸Ê ÀÌµ¿Å°" Ãß°¡
     auto wasdText = tgui::Label::create();
-    wasdText->setText(L"ë§µ ì´ë™í‚¤");
+    wasdText->setText(L"¸Ê ÀÌµ¿Å°");
     wasdText->setTextSize(25);
-    wasdText->getRenderer()->setTextColor({ 255, 255, 255 }); // í°ìƒ‰ í…ìŠ¤íŠ¸
-    wasdText->setPosition((boxWidth - 200) / 2 + 200, 100); // WASD ì•„ë˜ì— ë°°ì¹˜
+    wasdText->getRenderer()->setTextColor({ 255, 255, 255 }); // Èò»ö ÅØ½ºÆ®
+    wasdText->setPosition((boxWidth - 200) / 2 + 200, 100); // WASD ¾Æ·¡¿¡ ¹èÄ¡
     wasdText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(wasdText);
 
-    // Space í‚¤ ì˜†ì— "íƒ€ì›Œ ì„¤ì¹˜ í‚¤" ì¶”ê°€
+    // Space Å° ¿·¿¡ "Å¸¿ö ¼³Ä¡ Å°" Ãß°¡
     auto spaceText = tgui::Label::create();
-    spaceText->setText(L"íƒ€ì›Œ ì„¤ì¹˜ í‚¤");
+    spaceText->setText(L"Å¸¿ö ¼³Ä¡ Å°");
     spaceText->setTextSize(25);
-    spaceText->getRenderer()->setTextColor({ 135, 206, 250 }); // í˜•ê´‘ íŒŒë€ìƒ‰ í…ìŠ¤íŠ¸
-    spaceText->setPosition((boxWidth - 200) / 2 - 70, 200); // SpaceKey ì™¼ìª½
+    spaceText->getRenderer()->setTextColor({ 135, 206, 250 }); // Çü±¤ ÆÄ¶õ»ö ÅØ½ºÆ®
+    spaceText->setPosition((boxWidth - 200) / 2 - 70, 200); // SpaceKey ¿ŞÂÊ
     spaceText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(spaceText);
 
-    // F í‚¤ ì˜†ì— "ìˆ˜ë¹„ ì›¨ì´ë¸Œ ì‹œì‘ í‚¤" ì¶”ê°€
+    // F Å° ¿·¿¡ "¼öºñ ¿şÀÌºê ½ÃÀÛ Å°" Ãß°¡
     auto fText = tgui::Label::create();
-    fText->setText(L"ìˆ˜ë¹„ ì›¨ì´ë¸Œ ì‹œì‘ í‚¤");
+    fText->setText(L"¼öºñ ¿şÀÌºê ½ÃÀÛ Å°");
     fText->setTextSize(25);
-    fText->getRenderer()->setTextColor({ 135, 206, 250 }); // í˜•ê´‘ íŒŒë€ìƒ‰ í…ìŠ¤íŠ¸
-    fText->setPosition((boxWidth - 200) / 2 - 240, 300); // FKey ì™¼ìª½
+    fText->getRenderer()->setTextColor({ 135, 206, 250 }); // Çü±¤ ÆÄ¶õ»ö ÅØ½ºÆ®
+    fText->setPosition((boxWidth - 200) / 2 - 240, 300); // FKey ¿ŞÂÊ
     fText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(fText);
 
     auto fText2 = tgui::Label::create();
-    fText2->setText(L"ê³µê²© ì›¨ì´ë¸Œ ì‹œì‘ í‚¤");
+    fText2->setText(L"°ø°İ ¿şÀÌºê ½ÃÀÛ Å°");
     fText2->setTextSize(25);
-    fText2->getRenderer()->setTextColor({ 255, 105, 180 }); // í˜•ê´‘ ë¹¨ê°„ìƒ‰ í…ìŠ¤íŠ¸
-    fText2->setPosition((boxWidth - 200) / 2 + 210, 300); // FKey ì™¼ìª½
+    fText2->getRenderer()->setTextColor({ 255, 105, 180 }); // Çü±¤ »¡°£»ö ÅØ½ºÆ®
+    fText2->setPosition((boxWidth - 200) / 2 + 210, 300); // FKey ¿ŞÂÊ
     fText2->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(fText2);
 
-    // 1ë²ˆ í‚¤ ì˜†ì— "íƒ€ì›Œ ì„ íƒ í‚¤" ì¶”ê°€
+    // 1¹ø Å° ¿·¿¡ "Å¸¿ö ¼±ÅÃ Å°" Ãß°¡
     auto oneText = tgui::Label::create();
-    oneText->setText(L"     <1,2,3ë²ˆ> íƒ€ì›Œ ì„ íƒ í‚¤\n\n  [íƒ€ì›Œ ì„¤ì¹˜ ì‹œ]\n <1,2ë²ˆ> ì—…ê·¸ë ˆì´ë“œ í‚¤ \n <3ë²ˆ> íƒ€ì›Œ íŒë§¤í‚¤");
+    oneText->setText(L"     <1,2,3¹ø> Å¸¿ö ¼±ÅÃ Å°\n\n  [Å¸¿ö ¼³Ä¡ ½Ã]\n <1,2¹ø> ¾÷±×·¹ÀÌµå Å° \n <3¹ø> Å¸¿ö ÆÇ¸ÅÅ°");
     oneText->setTextSize(25);
-    oneText->getRenderer()->setTextColor({ 135, 206, 250 }); // í˜•ê´‘ íŒŒë€ìƒ‰ í…ìŠ¤íŠ¸
-    oneText->setPosition((boxWidth - 200) / 2 - 540, 400); // 1ë²ˆ í‚¤ ì™¼ìª½
+    oneText->getRenderer()->setTextColor({ 135, 206, 250 }); // Çü±¤ ÆÄ¶õ»ö ÅØ½ºÆ®
+    oneText->setPosition((boxWidth - 200) / 2 - 540, 400); // 1¹ø Å° ¿ŞÂÊ
     oneText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(oneText);
 
-    // ê³µê²© ì›¨ì´ë¸Œ ìœ ë‹› ì„ íƒ í‚¤ (Three Key ì˜¤ë¥¸ìª½)
+    // °ø°İ ¿şÀÌºê À¯´Ö ¼±ÅÃ Å° (Three Key ¿À¸¥ÂÊ)
     auto threeText = tgui::Label::create();
-    threeText->setText(L"                <1~9ë²ˆ>          \nê³µê²© ì›¨ì´ë¸Œ ì‹œ ìœ ë‹› ì„ íƒ ë° ê³µê²© í‚¤");
+    threeText->setText(L"                <1~9¹ø>          \n°ø°İ ¿şÀÌºê ½Ã À¯´Ö ¼±ÅÃ ¹× °ø°İ Å°");
     threeText->setTextSize(25);
-    threeText->getRenderer()->setTextColor({ 255, 105, 180 }); // í˜•ê´‘ ë¹¨ê°„ìƒ‰ í…ìŠ¤íŠ¸
-    threeText->setPosition((boxWidth - 200) / 2 + 290, 470); // ThreeKey ì˜¤ë¥¸ìª½
+    threeText->getRenderer()->setTextColor({ 255, 105, 180 }); // Çü±¤ »¡°£»ö ÅØ½ºÆ®
+    threeText->setPosition((boxWidth - 200) / 2 + 290, 470); // ThreeKey ¿À¸¥ÂÊ
     threeText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(threeText);
 
-    // ESC í‚¤ ì˜†ì— "ì‹¤í–‰ ì·¨ì†Œ í‚¤" ì¶”ê°€
+    // ESC Å° ¿·¿¡ "½ÇÇà Ãë¼Ò Å°" Ãß°¡
     auto escText = tgui::Label::create();
-    escText->setText(L"ì‹¤í–‰ ì·¨ì†Œ í‚¤");
+    escText->setText(L"½ÇÇà Ãë¼Ò Å°");
     escText->setTextSize(25);
-    escText->getRenderer()->setTextColor({ 255, 255, 255 }); // í°ìƒ‰ í…ìŠ¤íŠ¸
-    escText->setPosition((boxWidth - 200) / 2 + 150, 600); // ESC ì˜¤ë¥¸ìª½
+    escText->getRenderer()->setTextColor({ 255, 255, 255 }); // Èò»ö ÅØ½ºÆ®
+    escText->setPosition((boxWidth - 200) / 2 + 150, 600); // ESC ¿À¸¥ÂÊ
     escText->getRenderer()->setFont(tgui::Font(fontPath));
     panel->add(escText);
 
-    auto closeButton = tgui::Button::create("ì¢…ë£Œ");
-    closeButton->setSize(70, 70); // ë²„íŠ¼ í¬ê¸°
-    closeButton->setPosition((boxWidth - 100), 17); // íŒ¨ë„ ì˜¤ë¥¸ìª½ ìƒë‹¨ ë°°ì¹˜
+    auto closeButton = tgui::Button::create("Á¾·á");
+    closeButton->setSize(70, 70); // ¹öÆ° Å©±â
+    closeButton->setPosition((boxWidth - 100), 17); // ÆĞ³Î ¿À¸¥ÂÊ »ó´Ü ¹èÄ¡
     closeButton->getRenderer()->setBorders(0);
-    // close ë²„íŠ¼ ì´ë¯¸ì§€ ì„¤ì •
+    // close ¹öÆ° ÀÌ¹ÌÁö ¼³Á¤
     closeButton->getRenderer()->setTexture("resources/images/icons/close.png");
 
-    //close ë²„íŠ¼ ë§ˆìš°ìŠ¤ ì˜¤ë²„ íš¨ê³¼
+    //close ¹öÆ° ¸¶¿ì½º ¿À¹ö È¿°ú
     closeButton->onMouseEnter([closeButton]() {
-        closeButton->getRenderer()->setOpacity(0.7f); // ë§ˆìš°ìŠ¤ê°€ ì˜¬ë¼ì™”ì„ ë•Œ 70% ë¶ˆíˆ¬ëª…
+        closeButton->getRenderer()->setOpacity(0.7f); // ¸¶¿ì½º°¡ ¿Ã¶ó¿ÔÀ» ¶§ 70% ºÒÅõ¸í
         });
     closeButton->onMouseLeave([closeButton]() {
-        closeButton->getRenderer()->setOpacity(1.0f); // ë§ˆìš°ìŠ¤ê°€ ë– ë‚¬ì„ ë•Œ 100% ë¶ˆíˆ¬ëª…
+        closeButton->getRenderer()->setOpacity(1.0f); // ¸¶¿ì½º°¡ ¶°³µÀ» ¶§ 100% ºÒÅõ¸í
         });
 
-    // ë²„íŠ¼ í´ë¦­ ì‹œ íŒ¨ë„ ì œê±°
+    // ¹öÆ° Å¬¸¯ ½Ã ÆĞ³Î Á¦°Å
     closeButton->onClick([this, panel]() {
-        gui.remove(panel); // íŒ¨ë„ ì‚­ì œ
+        gui.remove(panel); // ÆĞ³Î »èÁ¦
         });
-    // TGUI ESC í‚¤ ì´ë²¤íŠ¸ ì²˜ë¦¬
+    // TGUI ESC Å° ÀÌº¥Æ® Ã³¸®
    
 
     panel->add(closeButton);
 
-    // GUIì— íŒ¨ë„ ì¶”ê°€
+    // GUI¿¡ ÆĞ³Î Ãß°¡
         gui.add(panel, "gameInfoPanel");
 
     

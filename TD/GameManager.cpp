@@ -892,9 +892,7 @@ void GameManager::startPreparationPhase()
                     selectedX = clickedTileX;
                     selectedY = clickedTileY;
                     std::cout << "타일 선택됨: (" << selectedX << ", " << selectedY << ")\n";
-                   /* ui.setInfoText({"침투에 대비하세요!\n",
-                        "[F] : 수비웨이브를 시작 키",
-                        "[1] : 검사 타워 선택 \n[2] : 궁수 타워 선택 \n[3] : 마법사 타워 선택\n[space] : 설치된 타워 정보" });*/
+                   
                 }
 
             }
@@ -938,6 +936,8 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
         if (tower.getIsNoDamage() == 1) continue; // 버프 타워는 공격하지 않음
 
         if (currentTick % tower.getTimePerAttack() != 0) continue; // 공격 틱이 아니면 넘어감
+
+        
 
         int range = tower.getAttackRange();
         int damage = tower.getDamage();

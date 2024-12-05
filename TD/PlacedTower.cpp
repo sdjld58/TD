@@ -203,7 +203,18 @@ bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map,
 // 버프 관련 메서드
 void PlacedTower::applyBuff(int damageBoost, int attackSpeedReduction) {
     currentDamage += damageBoost;
-    currentTimePerAttack -= attackSpeedReduction;
+
+
+
+    if (currentTimePerAttack - attackSpeedReduction >= 1)
+    {
+        currentTimePerAttack -= attackSpeedReduction;
+    }
+    else if (currentTimePerAttack - attackSpeedReduction < 1)
+    {
+        currentTimePerAttack = 1;
+    }
+   
     receivedBuff = true;
 }
 

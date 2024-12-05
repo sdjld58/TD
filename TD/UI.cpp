@@ -5,13 +5,10 @@
 void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 {
     map = gameMap;
+    // SFML 창 생성
     window.create(sf::VideoMode(windowWidth, windowHeight), "Tower Defense Game");
 
-    // 폰트 로드
-    if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf"))
-    {
-        std::cout << "폰트를 로드할 수 없습니다.\n";
-    }
+   
 
     // 텍스트 설정
     lifeText.setFont(font);
@@ -91,8 +88,10 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     knightUnitSprite.setOrigin(knightUnitTexture.getSize().x / 2.0f, knightUnitTexture.getSize().y * 1.3);
     float unitScale = tileHeight / knightUnitTexture.getSize().y;
     knightUnitSprite.setScale(unitScale/1.5, unitScale/1.5);
-
+    
+   
     drawButtons();
+   
 }
 
 void UI::drawButtons()
@@ -177,12 +176,33 @@ void UI::clearButtons()
 {
     gui.removeAllWidgets();
 }
+void UI::initializeBackground(const std::string& backgroundFilePath) {
+    // 텍스처 한 번만 로드
+    if (!backgroundTexture.loadFromFile(backgroundFilePath)) {
+        std::cerr << "Failed to load background image: " << backgroundFilePath << std::endl;
+        return;
+    }
 
+    // 텍스처 설정
+    backgroundTexture.setSmooth(true); // 텍스처 부드럽게
+
+    // 스프라이트 초기화
+    backgroundSprite.setTexture(backgroundTexture);
+    backgroundSprite.setScale(
+        static_cast<float>(windowWidth) / backgroundTexture.getSize().x,
+        static_cast<float>(windowHeight) / backgroundTexture.getSize().y
+    );
+}
+
+void UI::drawBackground() {
+    // 단순히 이미 로드된 배경 스프라이트를 그리기만 함
+    window.draw(backgroundSprite);
+}
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
     int playerLife, int gold,  int selectedX, int selectedY, const std::vector<Projectile>& projectiles)
 {
     window.clear();
-
+    drawBackground();
     // 맵 그리기
     for (int y = 0; y < static_cast<int>(map.size()); ++y)
     {

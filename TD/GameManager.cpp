@@ -35,6 +35,7 @@ void GameManager::run(const std::string& stageFile)
 
     for (const auto& wave : waves)
     {
+       
         int waveID = wave.getWaveID();
         currentwaveType = wave.getIsDefence();
         ui.setIsDefence(currentwaveType);
@@ -1592,6 +1593,7 @@ void GameManager::mapSelected()
             stageFile = "Stage1.csv";
             mapChosen = true;
             selectMapText = Map1Text;
+            ui.initializeBackground("resources/images/maps/springmap.png");
         });
 
     button2->onClick([&]()

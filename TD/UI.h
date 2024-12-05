@@ -25,6 +25,8 @@ private:
     std::vector<std::pair<int, int>> path;
     std::vector<Tower> towers;
     std::vector<UnitType> unitTypes;
+    sf::Texture backgroundTexture; //배경 화면
+    sf::Sprite backgroundSprite;
 
     // 리소스 로딩을 위한 멤버 변수
     sf::Font font;
@@ -146,7 +148,10 @@ public:
     void drawButtons();
     void clearButtons();
     void  gameInfoStage(); //조작키 설명화면
-    
+    void initializeBackground(const std::string& backgroundFilePath);
+    void drawBackground();
+
+
     sf::RenderWindow& getWindow();
     void setMap(const std::vector<std::vector<std::string>>& gameMap);
     void setPath(const std::vector<std::pair<int, int>>& gamePath);

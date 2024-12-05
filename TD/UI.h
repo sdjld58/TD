@@ -161,6 +161,7 @@ public:
 
     //텍스트 박스 문구 세팅
     void setInfoText(std::initializer_list<std::string> infoSentences);
+    
     std::wstring getInfoText(int index) const;
 
     UI() : infoTexts() {}

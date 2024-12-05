@@ -694,6 +694,9 @@ void UI::setInfoText(std::initializer_list<std::string> infoSentences) {
     }
 }
 
+
+
+
 std::wstring UI::getInfoText(int index) const {
     if (index < 0 || index >= static_cast<int>(infoTexts.size())) {
         throw std::out_of_range("Index out of range");

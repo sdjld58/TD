@@ -247,6 +247,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
     {
         std::cout << "\n=== 유닛 생산 대기열 ===\n";
         std::queue<int> tempQueue = unitProductionQueue; // 대기열 복사본 생성
+        std::string queueText = "[유닛 대기열]\n";
         while (!tempQueue.empty())
         {
             int unitId = tempQueue.front();
@@ -255,17 +256,24 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
             // 유닛 ID로 유닛 이름 찾기
             auto it = std::find_if(unitTypes.begin(), unitTypes.end(),
                 [unitId](const UnitType& ut) { return ut.getId() == unitId; });
+            std::string name;
             if (it != unitTypes.end())
             {
                 std::cout << "유닛: " << it->getUnitName() << "\n";
+                std::string name=Unit::getUIName(it->getId());
+                queueText += name ;
             }
             else
             {
                 std::cout << "유닛 ID: " << unitId << "\n";
             }
         }
+        ui.setInfoText({ "유닛을 침투시키세요", queueText,"" });
+
     }
+    else ui.setInfoText({ "유닛을 침투시키세요", "대기중인 유닛이 없습니다!",""});
 }
+
 
 
 
@@ -1173,14 +1181,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
             }
             updateAndPrintMap(activeUnits);
             // 대기열 정보를 UI에 표시
-            std::string queueText = "유닛 대기열\n";
-            for (const auto& name : queueInfo)
-            {
-                queueText = queueText+ name + "\n";
-            }
-
-            ui.setInfoText({ "유닛을 침투시키세요", queueText,"" });
-
+          
             
         }
         // 공격 웨이브 종료 조건 확인

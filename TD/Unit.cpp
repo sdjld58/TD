@@ -107,3 +107,9 @@ bool Unit::hasArrived() const
 {
     return isArrived;
 }
+std::string Unit::getUIName(int id) {
+    if (id == 1) return "   고블린\n";
+    else if (id == 2) return "   오우거\n";
+    else if (id == 3) return "   요괴\n";
+    else return "  오류";
+}

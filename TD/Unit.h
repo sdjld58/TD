@@ -24,7 +24,7 @@ private:
 
 public:
     Unit(int id, const std::string& name, int hp, int timePerMove, int armor, int resist, int killReward, const std::vector<std::pair<int, int>>& path, int LifeDamage);
-
+   static std::string getUIName(int id);
     // 행동 함수
     bool update();                        // 목적지에 도달 여부 반환 함수
     void updatePosition(float deltaTime); // 위치 업데이트 함수

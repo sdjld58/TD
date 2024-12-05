@@ -252,7 +252,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
         // 체력 바 그리기
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), 20); // 체력 최대값 10으로 설정
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp); // 체력 최대값 10으로 설정
 
         // 유닛 스프라이트 그리기
         window.draw(knightUnitSprite);
@@ -381,7 +381,6 @@ void UI::setIsDefence(bool isDefence)
     curWaveIsDefense = isDefence;
 }
 
-
 // 체력바를 생성하는 함수
 void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp) {
     float healthBarWidth = 40.0f;         // 체력 바 너비
@@ -395,13 +394,25 @@ void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int c
 
     // 체력 바 (현재 체력)
     sf::RectangleShape healthBar(sf::Vector2f(healthBarWidth * healthRatio, healthBarHeight));
-    healthBar.setFillColor(sf::Color(200, 0, 0)); // 빨간색
+
+    // 체력 비율에 따라 색상 변경
+    if (healthRatio > 0.66f) {
+        healthBar.setFillColor(sf::Color(0, 200, 0)); // 초록색
+    }
+    else if (healthRatio > 0.33f) {
+        healthBar.setFillColor(sf::Color(255, 255, 0)); // 노란색
+    }
+    else {
+        healthBar.setFillColor(sf::Color(200, 0, 0)); // 빨간색
+    }
+
     healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
 
     // 체력 바 그리기
     window.draw(healthBarBackground);
     window.draw(healthBar);
 }
+
 
 const sf::Texture& UI::getProjectileTexture() const
 {

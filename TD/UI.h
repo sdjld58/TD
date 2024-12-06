@@ -142,7 +142,7 @@ public:
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
         int playerLife, int gold, int selectedX = -1, int selectedY = -1,
         const std::vector<Projectile>& projectiles = {});
-
+    bool gotoMapSelected;
     void updateattackGold(int attackgold);
     
     void drawButtons();
@@ -150,7 +150,7 @@ public:
     void  gameInfoStage(); //조작키 설명화면
     void initializeBackground(const std::string& backgroundFilePath);
     void drawBackground();
-
+ 
 
     sf::RenderWindow& getWindow();
     void setMap(const std::vector<std::vector<std::string>>& gameMap);

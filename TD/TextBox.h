@@ -9,6 +9,7 @@
 class UI;
 
 class TextBox {
+   
 protected:
 
     int life;
@@ -16,11 +17,12 @@ protected:
     int attackGold;
 
     sf::Vector2f position;
-    sf::Vector2f sidePosition = sf::Vector2f(10.f, 10.f);
+    sf::Vector2f sidePosition = sf::Vector2f(0.f, 0.f);
 
     sf::Vector2f size = sf::Vector2f(500.f, 350.f); // 고정된 박스 크기
     sf::Vector2f sideSize; // 고정된 사이드 박스 크기
 
+ 
     float cornerRadius = 40.f;                      // 고정된 둥근 모서리 반경
 
     sf::Color color;

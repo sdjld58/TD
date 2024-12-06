@@ -1603,6 +1603,7 @@ void GameManager::mapSelected()
             stageFile = "Stage2.csv";
             mapChosen = true;
             selectMapText = Map2Text;
+            ui.initializeBackground("resources/images/maps/dessertmap.png");
         });
 
     button3->onClick([&]()
@@ -1611,6 +1612,7 @@ void GameManager::mapSelected()
             stageFile = "Stage3.csv";
             mapChosen = true;
             selectMapText = Map3Text;
+            ui.initializeBackground("resources/images/maps/wintermap.png");
         });
     exitButton->onClick([&]()
         {

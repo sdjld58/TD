@@ -136,6 +136,7 @@ public:
     void showGameClearPopup();
     void gameStart();
     void gamePrologue(const std::vector<std::wstring>& prologueLines);
+    void showLoadingScreen(const std::string& message);
     
   
 };

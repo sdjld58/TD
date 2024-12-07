@@ -1464,6 +1464,7 @@ void GameManager::mapSelected()
     selectedTowerIndex = -1;
     selectedOption = -1;
     isTowerPlacementMode = true;
+    int image = 0;
 
     // 게임 데이터 초기화
     map.clear();
@@ -1595,7 +1596,8 @@ void GameManager::mapSelected()
             stageFile = "Stage1.csv";
             mapChosen = true;
             selectMapText = Map1Text;
-            ui.initializeBackground("resources/images/maps/springmap.png");
+            image = 1;
+           
         });
 
     button2->onClick([&]()
@@ -1605,7 +1607,8 @@ void GameManager::mapSelected()
             stageFile = "Stage2.csv";
             mapChosen = true;
             selectMapText = Map2Text;
-            ui.initializeBackground("resources/images/maps/dessertmap.png");
+            image = 2;
+            
         });
 
     button3->onClick([&]()
@@ -1614,7 +1617,8 @@ void GameManager::mapSelected()
             stageFile = "Stage3.csv";
             mapChosen = true;
             selectMapText = Map3Text;
-            ui.initializeBackground("resources/images/maps/wintermap.png");
+            image = 3;
+            
         });
     exitButton->onClick([&]()
         {
@@ -1644,6 +1648,24 @@ void GameManager::mapSelected()
 
     if (mapChosen)
     {
+        ui.gui.removeAllWidgets(); // 이전 GUI 요소 제거
+        ui.getWindow().clear();    // 화면 초기화
+        ui.getWindow().display();  // 초기화 화면 강제 갱신
+        showLoadingScreen("MAP LOADING...");
+
+        if (image == 1)
+        {
+            ui.initializeBackground("resources/images/maps/springmap.png");
+        }
+        else if (image == 2)
+        {
+            ui.initializeBackground("resources/images/maps/dessertmap.png");
+        }
+        else if (image == 3)
+        {
+            ui.initializeBackground("resources/images/maps/wintermap.png");
+        }
+
         std::cout << selectedMap << " 맵이 선택되었습니다.\n";
         gamePrologue(selectMapText);
         loadMap(selectedMap);
@@ -2031,5 +2053,34 @@ void GameManager::gamePrologue(const std::vector<std::wstring>& prologueLines) {
         gui.draw();                             // 버튼
         ui.getWindow().display();
     }
+}
+
+void GameManager::showLoadingScreen(const std::string& message) {
+    sf::RenderWindow& window = ui.getWindow();
+
+    // 배경 설정
+    window.clear(sf::Color::Black);
+
+    // 텍스트 설정
+    sf::Font font;
+    if (!font.loadFromFile("resources/fonts/BMDOHYEON_ttf.ttf")) {
+        std::cerr << "폰트를 로드할 수 없습니다.\n";
+        return;
+    }
+
+    sf::Text loadingText;
+    loadingText.setFont(font);
+    loadingText.setString(message);
+    loadingText.setCharacterSize(50);
+    loadingText.setFillColor(sf::Color::White);
+
+    // 텍스트 중앙 정렬
+    sf::FloatRect textBounds = loadingText.getLocalBounds();
+    loadingText.setOrigin(textBounds.width / 2, textBounds.height / 2);
+    loadingText.setPosition(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
+
+    // 텍스트 화면에 표시
+    window.draw(loadingText);
+    window.display(); // 화면 강제 업데이트
 }
 

@@ -654,7 +654,7 @@ void GameManager::startPreparationPhase()
                     ui.setInfoText({ " ","빈 건설 부지입니다.", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
                     ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
                 }
-                if ((map[selectedY][selectedX] != "O"))
+                if ((map[selectedY][selectedX] != "O" && isTowerPlacementMode == true))
                 {
                     ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "웨이브 시작 : F" });
                     ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
@@ -718,6 +718,7 @@ void GameManager::startPreparationPhase()
                 if (towerIt != placedTowers.end())
                 {
                     isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
+                    ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
                 }
                 else
                 {
@@ -729,6 +730,8 @@ void GameManager::startPreparationPhase()
                 if (towerIt != placedTowers.end())
                 {
                     ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
+                   
+                    selectedTowerIndex = -1;
                     // 업그레이드/판매 선택
                     if (event.key.code == sf::Keyboard::Num1)
                     {
@@ -864,6 +867,7 @@ void GameManager::startPreparationPhase()
                     if (towerIt != placedTowers.end())
                     {
                         isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
+                        ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
 
                     }
                     else
@@ -872,7 +876,7 @@ void GameManager::startPreparationPhase()
                         isTowerPlacementMode = true; // 타워가 없으면 설치 모드로 전환
                     }
 
-                    if ((map[selectedY][selectedX] != "O"))
+                    if ((map[selectedY][selectedX] != "O" && isTowerPlacementMode == true))
                     {
                         ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "웨이브 시작 : F" });
                         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
@@ -884,8 +888,21 @@ void GameManager::startPreparationPhase()
                     {
                         attemptPlaceTower();
                         selectedTowerIndex = -1;
+                       
                     }
+                   
                     
+                }
+
+                auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+                    [this](const PlacedTower& tower)
+                    {
+                        return tower.getX() == selectedX && tower.getY() == selectedY;
+                    });
+                if (towerIt != placedTowers.end())
+                {
+                    isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
+                    ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
 
                 }
 

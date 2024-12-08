@@ -768,11 +768,11 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         currentSprite->setScale(scaleX, scaleY);
         currentSprite->setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
 
-        // 체력바 그리기
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp);
-
         // 스프라이트 그리기
         window.draw(*currentSprite);
+
+        // 체력바 그리기
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp);
 
         // 이번 틱 screenX 저장
         unitOldScreenX[uPtr] = screenX;

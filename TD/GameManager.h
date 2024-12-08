@@ -34,7 +34,7 @@ private:
     bool showUnitInfo;
     void handleTowerButtonClicked();
     int lastSpawnTick;
-    
+    int currentTick;
 
     void attemptPlaceTower();
     void selectTower(const std::vector<Tower>& towers, int towerId, int& selectedTowerIndex, UI& ui);

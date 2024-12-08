@@ -31,7 +31,7 @@ void GameManager::run(const std::string& stageFile)
     ui.setTowers(towers);
     ui.setUnitTypes(unitTypes);
     
-    int currentTick = 0;
+    currentTick = 0;
 
     for (const auto& wave : waves)
     {
@@ -278,7 +278,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 {
     // UI를 통해 게임 상태를 업데이트하고 화면을 그립니다.
-    ui.update(activeUnits, placedTowers, playerLife, gold, selectedX,selectedY ,projectiles);
+    ui.update(activeUnits, placedTowers, playerLife, gold, selectedX, selectedY, projectiles, currentTick);
 }
 
 void GameManager::loadMap(const std::string& filename)

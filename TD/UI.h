@@ -28,6 +28,9 @@ private:
     sf::Texture backgroundTexture; //배경 화면
     sf::Sprite backgroundSprite;
 
+    std::unordered_map<const Unit*, float> unitOldScreenX;
+    float unitScale;
+
     // 리소스 로딩을 위한 멤버 변수
     sf::Font font;
     sf::Text lifeText;
@@ -123,8 +126,8 @@ private:
     sf::Texture projectileTexture3;
 
     // 유닛 텍스처 및 스프라이트
-    sf::Texture knightUnitTexture;
-    sf::Sprite knightUnitSprite;
+    sf::Texture wolfTexture[3];
+    sf::Sprite wolfSprite;
 
     float offsetX = -100.0f;
     float offsetY = 200.0f;
@@ -141,7 +144,7 @@ public:
     void initialize(const std::vector<std::vector<std::string>>& gameMap);
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
         int playerLife, int gold, int selectedX = -1, int selectedY = -1,
-        const std::vector<Projectile>& projectiles = {});
+        const std::vector<Projectile>& projectiles = {}, int currentTick = 0);
     bool gotoMapSelected;
     void updateattackGold(int attackgold);
     

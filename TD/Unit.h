@@ -30,6 +30,7 @@ public:
     void updatePosition(float deltaTime); // 위치 업데이트 함수
 
     // 위치 정보
+    int getId() const { return id; }
     float getPosX() const;
     float getPosY() const;
     int getTileX() const;
@@ -43,6 +44,7 @@ public:
     int getHp() const;
     void reduceHp(int damage);
     int maxHp;
+
     // 이름 가져오기
     std::string getName() const;
 

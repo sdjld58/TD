@@ -177,14 +177,20 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     }
 
     // **유닛 텍스처 로드**
-    if (!knightUnitTexture.loadFromFile("resources/images/units/knight_level_1.png"))
-        std::cerr << "knight_level_1.png를 로드할 수 없습니다.\n";
-    knightUnitSprite.setTexture(knightUnitTexture);
+    if (!wolfTexture[0].loadFromFile("resources/images/units/Wolf1.png"))
+        std::cerr << "Wolf1.png를 로드할 수 없습니다.\n";
 
-    // 유닛 스프라이트 설정 (필요에 따라 원점과 크기 조절)
-    knightUnitSprite.setOrigin(knightUnitTexture.getSize().x / 2.0f, knightUnitTexture.getSize().y * 1.3);
-    float unitScale = tileHeight / knightUnitTexture.getSize().y;
-    knightUnitSprite.setScale(unitScale/1.5, unitScale/1.5);
+    if (!wolfTexture[1].loadFromFile("resources/images/units/Wolf2.png"))
+        std::cerr << "Wolf2.png를 로드할 수 없습니다.\n";
+
+    if (!wolfTexture[2].loadFromFile("resources/images/units/Wolf3.png"))
+        std::cerr << "Wolf3.png를 로드할 수 없습니다.\n";
+
+    // 초기 스프라이트 설정 (처음에는 Wolf1 기준으로)
+    wolfSprite.setTexture(wolfTexture[0]);
+    wolfSprite.setOrigin(wolfTexture[0].getSize().x / 2.0f, wolfTexture[0].getSize().y * 1.3f);
+    unitScale = tileHeight / static_cast<float>(wolfTexture[0].getSize().y);
+    wolfSprite.setScale(unitScale / 1.0f, unitScale / 1.0f);
     
  
 }
@@ -294,7 +300,7 @@ void UI::drawBackground() {
     window.draw(backgroundSprite);
 }
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
-    int playerLife, int gold,  int selectedX, int selectedY, const std::vector<Projectile>& projectiles)
+    int playerLife, int gold,  int selectedX, int selectedY, const std::vector<Projectile>& projectiles, int currentTick)
 {
     window.clear();
     drawBackground();
@@ -436,21 +442,60 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         float posX = unit.getPosX();
         float posY = unit.getPosY();
 
-        // 이소메트릭 좌표 변환
         float screenX = (posX - posY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
         float screenY = (posX + posY) * (tileHeight / 2.0f);
 
         screenX += offsetX;
         screenY += offsetY;
 
-        // 유닛 스프라이트 위치 설정
-        knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
+        const Unit* uPtr = &unit; // 이 유닛의 주소를 식별자로 사용
+        float oldX;
 
-        // 체력 바 그리기
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp); // 체력 최대값 10으로 설정
+        auto it = unitOldScreenX.find(uPtr);
+        if (it == unitOldScreenX.end()) {
+            // 첫 등장인 경우
+            // 첫 틱에는 방향 판별 없이 현재 screenX를 oldScreenX로 설정
+            unitOldScreenX[uPtr] = screenX;
+            oldX = screenX;
+        }
+        else {
+            oldX = it->second;
+        }
 
-        // 유닛 스프라이트 그리기
-        window.draw(knightUnitSprite);
+        // 스크린 좌표 변화를 통한 방향 판단 (epsilon으로 미세변화 무시)
+        float deltaX = screenX - oldX;
+        float epsilon = 0.1f;
+        float scaleX = unitScale;
+        float scaleY = unitScale;
+
+        if (std::abs(deltaX) > epsilon) {
+            if (deltaX > 0) {
+                // 오른쪽 이동
+                scaleX = -unitScale;
+            }
+            else {
+                // 왼쪽 이동
+                scaleX = unitScale;
+            }
+        }
+        else {
+            // 변화량이 미미하다면 이전 방향 유지
+            // 이전 틱 scaleX 값을 저장하거나,
+            // 첫 등장 시 기본값(왼쪽 바라보기) 유지하는 로직 필요
+            // 여기서는 기본이 왼쪽이라면 scaleX 음수를 유지하거나 하는 로직 추가 가능
+        }
+
+        // 애니메이션 프레임
+        int animationFrame = currentTick % 2;
+        wolfSprite.setTexture(wolfTexture[animationFrame]);
+        wolfSprite.setScale(scaleX, scaleY);
+        wolfSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
+
+        window.draw(wolfSprite);
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp);
+
+        // 이번 틱 screenX 저장
+        unitOldScreenX[uPtr] = screenX;
     }
 
     // 타워 그리기

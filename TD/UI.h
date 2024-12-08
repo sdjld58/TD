@@ -126,8 +126,30 @@ private:
     sf::Texture projectileTexture3;
 
     // 유닛 텍스처 및 스프라이트
-    sf::Texture wolfTexture[3];
-    sf::Sprite wolfSprite;
+    sf::Texture WolfTexture[3];
+    sf::Sprite WolfSprite;
+    sf::Texture BatTexture[3];
+    sf::Sprite BatSprite;
+    sf::Texture BearTexture[3];
+    sf::Sprite BearSprite;
+    sf::Texture BlueScorpionTexture[3];
+    sf::Sprite BlueScorpionSprite;
+    sf::Texture JuggernautTexture[3];
+    sf::Sprite JuggernautSprite;
+    sf::Texture MohawkBatTexture[3];
+    sf::Sprite MohawkBatSprite;
+    sf::Texture PossessedBearTexture[3];
+    sf::Sprite PossessedBearSprite;
+    sf::Texture PossessedWolfTexture[3];
+    sf::Sprite PossessedWolfSprite;
+    sf::Texture TrollTexture[3];
+    sf::Sprite TrollSprite;
+    sf::Texture WinterBearTexture[3];
+    sf::Sprite WinterBearSprite;
+    sf::Texture WinterWolfTexture[3];
+    sf::Sprite WinterWolfSprite;
+    sf::Texture WinterOgreTexture[3];
+    sf::Sprite WinterOgreSprite;
 
     float offsetX = -100.0f;
     float offsetY = 200.0f;

@@ -176,23 +176,139 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
         std::cerr << "wizard_bullet.png를 로드할 수 없습니다.\n";
     }
 
-    // **유닛 텍스처 로드**
-    if (!wolfTexture[0].loadFromFile("resources/images/units/Wolf1.png"))
+    // Wolf
+    if (!WolfTexture[0].loadFromFile("resources/images/units/Wolf1.png"))
         std::cerr << "Wolf1.png를 로드할 수 없습니다.\n";
-
-    if (!wolfTexture[1].loadFromFile("resources/images/units/Wolf2.png"))
+    if (!WolfTexture[1].loadFromFile("resources/images/units/Wolf2.png"))
         std::cerr << "Wolf2.png를 로드할 수 없습니다.\n";
-
-    if (!wolfTexture[2].loadFromFile("resources/images/units/Wolf3.png"))
+    if (!WolfTexture[2].loadFromFile("resources/images/units/Wolf3.png"))
         std::cerr << "Wolf3.png를 로드할 수 없습니다.\n";
 
-    // 초기 스프라이트 설정 (처음에는 Wolf1 기준으로)
-    wolfSprite.setTexture(wolfTexture[0]);
-    wolfSprite.setOrigin(wolfTexture[0].getSize().x / 2.0f, wolfTexture[0].getSize().y * 1.3f);
-    unitScale = tileHeight / static_cast<float>(wolfTexture[0].getSize().y);
-    wolfSprite.setScale(unitScale / 1.0f, unitScale / 1.0f);
-    
- 
+    WolfSprite.setTexture(WolfTexture[0]);
+    WolfSprite.setOrigin(WolfTexture[0].getSize().x / 2.0f, WolfTexture[0].getSize().y * 1.3f - 120);
+
+    // Bat
+    if (!BatTexture[0].loadFromFile("resources/images/units/Bat1.png"))
+        std::cerr << "Bat1.png를 로드할 수 없습니다.\n";
+    if (!BatTexture[1].loadFromFile("resources/images/units/Bat2.png"))
+        std::cerr << "Bat2.png를 로드할 수 없습니다.\n";
+    if (!BatTexture[2].loadFromFile("resources/images/units/Bat3.png"))
+        std::cerr << "Bat3.png를 로드할 수 없습니다.\n";
+
+    BatSprite.setTexture(BatTexture[0]);
+    BatSprite.setOrigin(BatTexture[0].getSize().x / 2.0f, BatTexture[0].getSize().y * 1.3f - 240);
+
+    // Bear
+    if (!BearTexture[0].loadFromFile("resources/images/units/Bear1.png"))
+        std::cerr << "Bear1.png를 로드할 수 없습니다.\n";
+    if (!BearTexture[1].loadFromFile("resources/images/units/Bear2.png"))
+        std::cerr << "Bear2.png를 로드할 수 없습니다.\n";
+    if (!BearTexture[2].loadFromFile("resources/images/units/Bear3.png"))
+        std::cerr << "Bear3.png를 로드할 수 없습니다.\n";
+
+    BearSprite.setTexture(BearTexture[0]);
+    BearSprite.setOrigin(BearTexture[0].getSize().x / 2.0f, BearTexture[0].getSize().y * 1.3f - 120);
+
+    // BlueScorpion
+    if (!BlueScorpionTexture[0].loadFromFile("resources/images/units/BlueScorpion1.png"))
+        std::cerr << "BlueScorpion1.png를 로드할 수 없습니다.\n";
+    if (!BlueScorpionTexture[1].loadFromFile("resources/images/units/BlueScorpion2.png"))
+        std::cerr << "BlueScorpion2.png를 로드할 수 없습니다.\n";
+    if (!BlueScorpionTexture[2].loadFromFile("resources/images/units/BlueScorpion3.png"))
+        std::cerr << "BlueScorpion3.png를 로드할 수 없습니다.\n";
+
+    BlueScorpionSprite.setTexture(BlueScorpionTexture[0]);
+    BlueScorpionSprite.setOrigin(BlueScorpionTexture[0].getSize().x / 2.0f, BlueScorpionTexture[0].getSize().y * 1.3f - 120);
+
+    // Juggernaut
+    if (!JuggernautTexture[0].loadFromFile("resources/images/units/Juggernaut1.png"))
+        std::cerr << "Juggernaut1.png를 로드할 수 없습니다.\n";
+    if (!JuggernautTexture[1].loadFromFile("resources/images/units/Juggernaut2.png"))
+        std::cerr << "Juggernaut2.png를 로드할 수 없습니다.\n";
+    if (!JuggernautTexture[2].loadFromFile("resources/images/units/Juggernaut3.png"))
+        std::cerr << "Juggernaut3.png를 로드할 수 없습니다.\n";
+
+    JuggernautSprite.setTexture(JuggernautTexture[0]);
+    JuggernautSprite.setOrigin(JuggernautTexture[0].getSize().x / 2.0f, JuggernautTexture[0].getSize().y * 1.3f - 160);
+
+    // MohawkBat
+    if (!MohawkBatTexture[0].loadFromFile("resources/images/units/MohawkBat1.png"))
+        std::cerr << "MohawkBat1.png를 로드할 수 없습니다.\n";
+    if (!MohawkBatTexture[1].loadFromFile("resources/images/units/MohawkBat2.png"))
+        std::cerr << "MohawkBat2.png를 로드할 수 없습니다.\n";
+    if (!MohawkBatTexture[2].loadFromFile("resources/images/units/MohawkBat3.png"))
+        std::cerr << "MohawkBat3.png를 로드할 수 없습니다.\n";
+
+    MohawkBatSprite.setTexture(MohawkBatTexture[0]);
+    MohawkBatSprite.setOrigin(MohawkBatTexture[0].getSize().x / 2.0f, MohawkBatTexture[0].getSize().y * 1.3f - 240);
+
+    // PossessedBear
+    if (!PossessedBearTexture[0].loadFromFile("resources/images/units/PossessedBear1.png"))
+        std::cerr << "PossesedBear1.png를 로드할 수 없습니다.\n";
+    if (!PossessedBearTexture[1].loadFromFile("resources/images/units/PossessedBear2.png"))
+        std::cerr << "PossesedBear2.png를 로드할 수 없습니다.\n";
+    if (!PossessedBearTexture[2].loadFromFile("resources/images/units/PossessedBear3.png"))
+        std::cerr << "PossesedBear3.png를 로드할 수 없습니다.\n";
+
+    PossessedBearSprite.setTexture(PossessedBearTexture[0]);
+    PossessedBearSprite.setOrigin(PossessedBearTexture[0].getSize().x / 2.0f, PossessedBearTexture[0].getSize().y * 1.3f - 120);
+
+    // PossessedWolf
+    if (!PossessedWolfTexture[0].loadFromFile("resources/images/units/PossessedWolf1.png"))
+        std::cerr << "PossesedWolf1.png를 로드할 수 없습니다.\n";
+    if (!PossessedWolfTexture[1].loadFromFile("resources/images/units/PossessedWolf2.png"))
+        std::cerr << "PossesedWolf2.png를 로드할 수 없습니다.\n";
+    if (!PossessedWolfTexture[2].loadFromFile("resources/images/units/PossessedWolf3.png"))
+        std::cerr << "PossesedWolf3.png를 로드할 수 없습니다.\n";
+
+    PossessedWolfSprite.setTexture(PossessedWolfTexture[0]);
+    PossessedWolfSprite.setOrigin(PossessedWolfTexture[0].getSize().x / 2.0f, PossessedWolfTexture[0].getSize().y * 1.3f - 120);
+
+    // Troll
+    if (!TrollTexture[0].loadFromFile("resources/images/units/Troll1.png"))
+        std::cerr << "Troll1.png를 로드할 수 없습니다.\n";
+    if (!TrollTexture[1].loadFromFile("resources/images/units/Troll2.png"))
+        std::cerr << "Troll2.png를 로드할 수 없습니다.\n";
+    if (!TrollTexture[2].loadFromFile("resources/images/units/Troll3.png"))
+        std::cerr << "Troll3.png를 로드할 수 없습니다.\n";
+
+    TrollSprite.setTexture(TrollTexture[0]);
+    TrollSprite.setOrigin(TrollTexture[0].getSize().x / 2.0f, TrollTexture[0].getSize().y * 1.3f - 160);
+
+    // WinterBear
+    if (!WinterBearTexture[0].loadFromFile("resources/images/units/WinterBear1.png"))
+        std::cerr << "WinterBear1.png를 로드할 수 없습니다.\n";
+    if (!WinterBearTexture[1].loadFromFile("resources/images/units/WinterBear2.png"))
+        std::cerr << "WinterBear2.png를 로드할 수 없습니다.\n";
+    if (!WinterBearTexture[2].loadFromFile("resources/images/units/WinterBear3.png"))
+        std::cerr << "WinterBear3.png를 로드할 수 없습니다.\n";
+
+    WinterBearSprite.setTexture(WinterBearTexture[0]);
+    WinterBearSprite.setOrigin(WinterBearTexture[0].getSize().x / 2.0f, WinterBearTexture[0].getSize().y * 1.3f - 120);
+
+    // WinterOgre
+    if (!WinterOgreTexture[0].loadFromFile("resources/images/units/WinterOgre1.png"))
+        std::cerr << "WinterOgre1.png를 로드할 수 없습니다.\n";
+    if (!WinterOgreTexture[1].loadFromFile("resources/images/units/WinterOgre2.png"))
+        std::cerr << "WinterOgre2.png를 로드할 수 없습니다.\n";
+    if (!WinterOgreTexture[2].loadFromFile("resources/images/units/WinterOgre3.png"))
+        std::cerr << "WinterOgre3.png를 로드할 수 없습니다.\n";
+
+    WinterOgreSprite.setTexture(WinterOgreTexture[0]);
+    WinterOgreSprite.setOrigin(WinterOgreTexture[0].getSize().x / 2.0f, WinterOgreTexture[0].getSize().y * 1.3f - 160);
+
+    // WinterWolf
+    if (!WinterWolfTexture[0].loadFromFile("resources/images/units/WinterWolf1.png"))
+        std::cerr << "WinterWolf1.png를 로드할 수 없습니다.\n";
+    if (!WinterWolfTexture[1].loadFromFile("resources/images/units/WinterWolf2.png"))
+        std::cerr << "WinterWolf2.png를 로드할 수 없습니다.\n";
+    if (!WinterWolfTexture[2].loadFromFile("resources/images/units/WinterWolf3.png"))
+        std::cerr << "WinterWolf3.png를 로드할 수 없습니다.\n";
+
+    WinterWolfSprite.setTexture(WinterWolfTexture[0]);
+    WinterWolfSprite.setOrigin(WinterWolfTexture[0].getSize().x / 2.0f, WinterWolfTexture[0].getSize().y * 1.3f - 120);
+
+    unitScale = tileHeight / static_cast<float>(WolfTexture[0].getSize().y) * 1.5;
 }
 
 void UI::drawButtons()
@@ -434,6 +550,98 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         }
     }
  
+    // 타워 그리기
+    for (const auto& tower : placedTowers)
+    {
+        int tileX = tower.getX();
+        int tileY = tower.getY();
+
+        // 이소메트릭 좌표 변환
+        float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
+        float screenY = (tileX + tileY) * (tileHeight / 2.0f);
+
+        sf::Sprite* towerSprite = nullptr;
+        int towerID = tower.getId();
+
+        float towerOffsetX = 0;
+        float towerOffsetY = 0;
+
+        switch (towerID)
+        {
+        case 1:
+            towerSprite = &barrack1TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+            break;
+        case 100:
+            towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+        case 101:
+            towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+            break;
+        case 102:
+            towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+            break;
+        case 2:
+            towerSprite = &archer1TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+            break;
+        case 200:
+            towerSprite = &archer2TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+        case 201:
+            towerSprite = &archer3TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+            break;
+        case 202:
+            towerSprite = &archer3TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+            break;
+        case 3:
+            towerSprite = &wizard1TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+            break;
+        case 300:
+            towerSprite = &wizard2TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+        case 301:
+            towerSprite = &wizard3TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+            break;
+        case 302:
+            towerSprite = &wizard3TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+            break;
+        default:
+            towerSprite = &archer1TowerSprite;
+            break;
+        }
+
+        screenX += offsetX + towerOffsetX;
+        screenY += offsetY + towerOffsetY;
+
+        towerSprite->setPosition(screenX, screenY - tileHeight / 2.0f);
+        window.draw(*towerSprite);
+
+    }
+
     // 투사체 그리기
     drawProjectiles(projectiles);
 
@@ -486,108 +694,88 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         }
 
         // 애니메이션 프레임
-        int animationFrame = currentTick % 2;
-        wolfSprite.setTexture(wolfTexture[animationFrame]);
-        wolfSprite.setScale(scaleX, scaleY);
-        wolfSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
+        int id = unit.getId();
+        int animationFrame = (currentTick) % 2; // 3프레임 애니메이션 사용 (1,2,3번 프레임)
 
-        window.draw(wolfSprite);
+        // 각 유닛에 따른 Sprite, Texture 포인터
+        sf::Sprite* currentSprite = nullptr;
+        sf::Texture* currentTextures = nullptr;
+
+        // id에 따른 Sprite, Texture 배열 선택
+        switch (id) {
+        case 1: // Wolf
+            currentSprite = &WolfSprite;
+            currentTextures = WolfTexture;
+            break;
+        case 2: // Bat
+            currentSprite = &BatSprite;
+            currentTextures = BatTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 3: // Bear
+            currentSprite = &BearSprite;
+            currentTextures = BearTexture;
+            break;
+        case 4: // PossessedWolf
+            currentSprite = &PossessedWolfSprite;
+            currentTextures = PossessedWolfTexture;
+            break;
+        case 5: // MohawkBat
+            currentSprite = &MohawkBatSprite;
+            currentTextures = MohawkBatTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 6: // PossessedBear
+            currentSprite = &PossessedBearSprite;
+            currentTextures = PossessedBearTexture;
+            break;
+        case 7: // BlueScorpion
+            currentSprite = &BlueScorpionSprite;
+            currentTextures = BlueScorpionTexture;
+            break;
+        case 8: // WinterWolf
+            currentSprite = &WinterWolfSprite;
+            currentTextures = WinterWolfTexture;
+            break;
+        case 9: // WinterBear
+            currentSprite = &WinterBearSprite;
+            currentTextures = WinterBearTexture;
+            break;
+        case 10: // Juggernaut
+            currentSprite = &JuggernautSprite;
+            currentTextures = JuggernautTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 11: // Troll
+            currentSprite = &TrollSprite;
+            currentTextures = TrollTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 12: // WinterOgre
+            currentSprite = &WinterOgreSprite;
+            currentTextures = WinterOgreTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        default:
+            // 정의되지 않은 id일 경우
+            currentSprite = &WolfSprite;      // 기본값으로 Wolf로
+            currentTextures = WolfTexture;
+            break;
+        }
+
+        // 현재 유닛의 스프라이트와 텍스처 설정
+        currentSprite->setTexture(currentTextures[animationFrame]);
+        currentSprite->setScale(scaleX, scaleY);
+        currentSprite->setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
+
+        // 체력바 그리기
         unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp);
+
+        // 스프라이트 그리기
+        window.draw(*currentSprite);
 
         // 이번 틱 screenX 저장
         unitOldScreenX[uPtr] = screenX;
-    }
-
-    // 타워 그리기
-    for (const auto& tower : placedTowers)
-    {
-        int tileX = tower.getX();
-        int tileY = tower.getY();
-
-        // 이소메트릭 좌표 변환
-        float screenX = (tileX - tileY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
-        float screenY = (tileX + tileY) * (tileHeight / 2.0f);
-
-        sf::Sprite* towerSprite = nullptr;
-        int towerID = tower.getId();
-
-        float towerOffsetX = 0;
-        float towerOffsetY = 0;
-
-        switch (towerID)
-        {
-            case 1:
-                towerSprite = &barrack1TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-                break;
-            case 100:
-                towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-            case 101:
-                towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-                break;
-            case 102:
-                towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-                break;
-            case 2:
-                towerSprite = &archer1TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-                break;
-            case 200:
-                towerSprite = &archer2TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-            case 201:
-                towerSprite = &archer3TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-                break;
-            case 202:
-                towerSprite = &archer3TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-                break;
-            case 3:
-                towerSprite = &wizard1TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-                break;
-            case 300:
-                towerSprite = &wizard2TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-            case 301:
-                towerSprite = &wizard3TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-                break;
-            case 302:
-                towerSprite = &wizard3TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-                break;
-            default:
-                towerSprite = &archer1TowerSprite;
-                break;
-        }
-
-        screenX += offsetX + towerOffsetX;
-        screenY += offsetY + towerOffsetY;
-            
-        towerSprite->setPosition(screenX, screenY - tileHeight / 2.0f);
-        window.draw(*towerSprite);
-
     }
     TextBox textBox(*this, curWaveIsDefense, { getInfoText(0),getInfoText(1), getInfoText(2)});
         

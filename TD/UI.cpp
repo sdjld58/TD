@@ -775,7 +775,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         window.draw(*currentSprite);
 
         // 체력바 그리기
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp);
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit);
 
         // 이번 틱 screenX 저장
         unitOldScreenX[uPtr] = screenX;
@@ -825,15 +825,26 @@ void UI::setIsDefence(bool isDefence)
 }
 
 // 체력바를 생성하는 함수
-void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp) {
+void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, const Unit& unit) {
+    // 기본 체력 바 크기
     float healthBarWidth = 40.0f;         // 체력 바 너비
     float healthBarHeight = 5.0f;        // 체력 바 높이
+    float yOffset = 10.0f;               // 기본 y축 오프셋
+
+    int currentHp = unit.getHp();
+    int maxHp = unit.maxHp;
     float healthRatio = static_cast<float>(currentHp) / maxHp; // 체력 비율
+
+    // ID가 100 초과인 경우 체력바 크기와 위치 조정
+    if (unit.getId() >=10) {
+        healthBarWidth =65.0f;  // 체력 바 너비 증가
+        yOffset = 75.0f;         // 체력 바 위치를 더 높게 설정
+    }
 
     // 체력 바 배경
     sf::RectangleShape healthBarBackground(sf::Vector2f(healthBarWidth, healthBarHeight));
     healthBarBackground.setFillColor(sf::Color(50, 50, 50)); // 회색 배경
-    healthBarBackground.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+    healthBarBackground.setPosition(screenX - healthBarWidth / 2.0f, screenY - yOffset);
 
     // 체력 바 (현재 체력)
     sf::RectangleShape healthBar(sf::Vector2f(healthBarWidth * healthRatio, healthBarHeight));
@@ -849,7 +860,7 @@ void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int c
         healthBar.setFillColor(sf::Color(200, 0, 0)); // 빨간색
     }
 
-    healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+    healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - yOffset);
 
     // 체력 바 그리기
     window.draw(healthBarBackground);

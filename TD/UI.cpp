@@ -577,6 +577,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
             towerOffsetX = 25.0;
             towerOffsetY = 20.0;
+            break;
         case 101:
             towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
             towerOffsetX = 25.0;
@@ -596,6 +597,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             towerSprite = &archer2TowerSprite;
             towerOffsetX = 30.0;
             towerOffsetY = 20.0;
+            break;
         case 201:
             towerSprite = &archer3TowerSprite;
             towerOffsetX = 30.0;
@@ -617,6 +619,7 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
             towerSprite->setScale(1.3, 1.3);
             towerOffsetX = 15.0;
             towerOffsetY = 25.0;
+            break;
         case 301:
             towerSprite = &wizard3TowerSprite;
             towerSprite->setScale(1.3, 1.3);

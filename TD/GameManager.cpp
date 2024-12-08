@@ -1097,14 +1097,14 @@ void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetU
 
     else if (towerID == 2 || towerID == 200 || towerID == 201 || towerID == 202)
     {
-        float speed = 400.0f;
+        float speed = 800.0f;
         Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture2());
         projectiles.push_back(projectile);
     }
 
     else if (towerID == 3 || towerID == 300 || towerID == 301 || towerID == 302)
     {
-        float speed = 400.0f;
+        float speed = 600.0f;
         Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture3());
         projectiles.push_back(projectile);
     }

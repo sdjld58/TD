@@ -1273,6 +1273,18 @@ bool GameManager::handleAttackInput()
                 unitId = 2;
             else if (event.key.code == sf::Keyboard::Num3)
                 unitId = 3;
+            else if (event.key.code == sf::Keyboard::Num4)
+                unitId = 4;
+            else if (event.key.code == sf::Keyboard::Num5)
+                unitId = 5;
+            else if (event.key.code == sf::Keyboard::Num6)
+                unitId = 6;
+            else if (event.key.code == sf::Keyboard::Num7)
+                unitId = 7;
+            else if (event.key.code == sf::Keyboard::Num8)
+                unitId = 8;
+            else if (event.key.code == sf::Keyboard::Num9)
+                unitId = 9;
 
             if (unitId != 0)
             {

@@ -274,7 +274,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
         ui.setInfoText({ "유닛을 침투시키세요", queueText,"" });
 
     }
-    else ui.setInfoText({ "유닛을 침투시키세요", "대기중인 유닛이 없습니다!",""});
+   
 }
 
 

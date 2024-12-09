@@ -250,7 +250,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
     {
         std::cout << "\n=== 유닛 생산 대기열 ===\n";
         std::queue<int> tempQueue = unitProductionQueue; // 대기열 복사본 생성
-        std::string queueText = "[유닛 대기열]\n";
+        std::string queueText = "";
         while (!tempQueue.empty())
         {
             int unitId = tempQueue.front();
@@ -271,10 +271,11 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
                 std::cout << "유닛 ID: " << unitId << "\n";
             }
         }
-        ui.setInfoText({ "유닛을 침투시키세요", queueText,"" });
-
+       
+        ui.setInfoText({ "유닛을 침투시키세요","[유닛 대기열]\n",queueText});
+        
     }
-   
+    else ui.setInfoText({ "유닛을 침투시키세요","대기중인 유닛이 없습니다!\n"," " });
 }
 
 

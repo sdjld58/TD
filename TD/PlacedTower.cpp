@@ -49,8 +49,8 @@ std::string PlacedTower::uiOptionSelect( const std::vector<Tower>& towerList, in
         return t.getId() == nextTowerID2;
         });
 
-    int upgradeCost = (nextTowerID % 100 == 0) ? 40 : 50;
-    int upgradeCost2 = (nextTowerID2 % 100 == 0) ? 40 : 50;
+    int upgradeCost = (nextTowerID % 100 == 0) ? 40 : 100;
+    int upgradeCost2 = (nextTowerID2 % 100 == 0) ? 40 : 100;
     int refundAmount = 30; // 초기값 설정
 
     // 옵션 선택시 띄우는 창
@@ -181,7 +181,7 @@ bool PlacedTower::upgrade(int& gold, std::vector<std::vector<std::string>>& map,
     }
     else
     {
-        upgradeCost = 50;
+        upgradeCost = 100;
     }
 
    

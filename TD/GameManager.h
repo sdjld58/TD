@@ -31,6 +31,7 @@ private:
     int gold;
     bool isPreparation;
     int attackGold;
+    bool isAttackSuccess = 0;
     bool showUnitInfo;
     void handleTowerButtonClicked();
     int lastSpawnTick;

@@ -46,7 +46,10 @@ void GameManager::run(const std::string& stageFile)
       
         if (wave.getIsDefence())
         {
-            gold += wave.getGold();
+            if (isAttackSuccess == 1)
+                gold += wave.getGold() * 2;
+            else
+                gold += wave.getGold();
             ui.setInfoText({ "타워를 설치하세요!!", "빈 건설 부지입니다..", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
             startPreparationPhase(); // 수비 웨이브 준비
             ui.setInfoText({ "적들이 몰려오고 있습니다!!", "이 공격을 막지 못하면 끝입니다!", "..." });
@@ -1258,9 +1261,11 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
     std::cout << "공격 웨이브 종료!\n";
     if (previousPlayerLife > playerLife)
     {
-        gold = static_cast<int>(gold * 1.2);
-        std::cout << "공격 성공! 수비 재화가 증가했습니다. 현재 골드: " << gold << "\n";
+        isAttackSuccess = 1;
+        std::cout << "공격 성공!\n";
     }
+    else
+        isAttackSuccess = 0;
 }
 
 
@@ -1283,12 +1288,27 @@ bool GameManager::handleAttackInput()
             }
 
             int unitId = 0;
-            if (event.key.code == sf::Keyboard::Num1)
-                unitId = 1;
-            else if (event.key.code == sf::Keyboard::Num2)
-                unitId = 2;
-            else if (event.key.code == sf::Keyboard::Num3)
-                unitId = 3;
+            switch (event.key.code)
+            {
+                case sf::Keyboard::Num1:
+                    unitId = 1;
+                    break;
+                case sf::Keyboard::Num2:
+                    unitId = 2;
+                    break;
+                case sf::Keyboard::Num3:
+                    unitId = 3;
+                    break;
+                case sf::Keyboard::Num4:
+                    unitId = 4;
+                    break;
+                case sf::Keyboard::Num5:
+                    unitId = 5;
+                    break;
+                case sf::Keyboard::Num6:
+                    unitId = 6;
+                    break;
+            }
 
             if (unitId != 0)
             {
@@ -1491,7 +1511,7 @@ void GameManager::mapSelected()
     projectiles.clear();
     unitProductionQueue = std::queue<int>();
 
-    gold = 100; // 초기 골드 값 설정
+    gold = 0; // 초기 골드 값 설정
     playerLife = 10; // 초기 라이프 설정
     attackGold = 0;
 

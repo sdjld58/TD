@@ -158,8 +158,8 @@ void GameManager::run(const std::string& stageFile)
 void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& unitQueue, int currentTick)
 {
     // **스폰 간격 변수**
-    lastSpawnTick = 0;       // 마지막으로 유닛이 생성된 틱
-    const int spawnInterval = 2;      // 유닛 생성 간격 (틱 단위)
+    //lastSpawnTick = 0;       // 마지막으로 유닛이 생성된 틱 (이 코드가 있으면 유닛 생성 간격이 작동하지 않음)
+    const int spawnInterval = 3;      // 유닛 생성 간격 (틱 단위)
 
     // **틱 간격에 따라 유닛 생성**
     if (currentTick - lastSpawnTick >= spawnInterval && !unitQueue.empty())
@@ -1315,6 +1315,15 @@ bool GameManager::handleAttackInput()
                     break;
                 case sf::Keyboard::Num6:
                     unitId = 6;
+                    break;
+                case sf::Keyboard::Num7:
+                    unitId = 7;
+                    break;
+                case sf::Keyboard::Num8:
+                    unitId = 8;
+                    break;
+                case sf::Keyboard::Num9:
+                    unitId = 9;
                     break;
             }
 

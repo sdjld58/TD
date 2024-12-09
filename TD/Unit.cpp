@@ -108,8 +108,14 @@ bool Unit::hasArrived() const
     return isArrived;
 }
 std::string Unit::getUIName(int id) {
-    if (id == 1) return "   °íºí¸°\n";
-    else if (id == 2) return "   ¿À¿ì°Å\n";
-    else if (id == 3) return "   ¿ä±«\n";
+    if (id == 1) return "  [1] ´Á´ë\n";
+    else if (id == 2) return "  [2] ¹ÚÁã\n";
+    else if (id == 3) return "  [3] °õ\n";
+    else if (id == 4) return "  [4] ÀúÁÖ¹ŞÀº ´Á´ë\n";
+    else if (id == 5) return "  [5] °¥±â ¹ÚÁã\n";
+    else if (id == 6) return "  [6] ÀúÁÖ¹ŞÀº °õ\n";
+    else if (id == 7) return "  [7] Çª¸¥»ö Àü°¥\n";
+    else if (id == 8) return "  [8] ¼³¿ø ´Á´ë\n";
+    else if (id == 9) return "  [9] ¼³¿ø °õ\n";
     else return "  ¿À·ù";
 }

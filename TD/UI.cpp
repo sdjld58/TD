@@ -5,6 +5,7 @@
 void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
 {
     map = gameMap;
+    gotoMapSelected = false;
     // SFML 창 생성
     window.create(sf::VideoMode(windowWidth, windowHeight), "Tower Defense Game");
 
@@ -175,19 +176,139 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
         std::cerr << "wizard_bullet.png를 로드할 수 없습니다.\n";
     }
 
-    // **유닛 텍스처 로드**
-    if (!knightUnitTexture.loadFromFile("resources/images/units/knight_level_1.png"))
-        std::cerr << "knight_level_1.png를 로드할 수 없습니다.\n";
-    knightUnitSprite.setTexture(knightUnitTexture);
+    // Wolf
+    if (!WolfTexture[0].loadFromFile("resources/images/units/Wolf1.png"))
+        std::cerr << "Wolf1.png를 로드할 수 없습니다.\n";
+    if (!WolfTexture[1].loadFromFile("resources/images/units/Wolf2.png"))
+        std::cerr << "Wolf2.png를 로드할 수 없습니다.\n";
+    if (!WolfTexture[2].loadFromFile("resources/images/units/Wolf3.png"))
+        std::cerr << "Wolf3.png를 로드할 수 없습니다.\n";
 
-    // 유닛 스프라이트 설정 (필요에 따라 원점과 크기 조절)
-    knightUnitSprite.setOrigin(knightUnitTexture.getSize().x / 2.0f, knightUnitTexture.getSize().y * 1.3);
-    float unitScale = tileHeight / knightUnitTexture.getSize().y;
-    knightUnitSprite.setScale(unitScale/1.5, unitScale/1.5);
-    
-   
-    drawButtons();
-   
+    WolfSprite.setTexture(WolfTexture[0]);
+    WolfSprite.setOrigin(WolfTexture[0].getSize().x / 2.0f, WolfTexture[0].getSize().y * 1.3f - 120);
+
+    // Bat
+    if (!BatTexture[0].loadFromFile("resources/images/units/Bat1.png"))
+        std::cerr << "Bat1.png를 로드할 수 없습니다.\n";
+    if (!BatTexture[1].loadFromFile("resources/images/units/Bat2.png"))
+        std::cerr << "Bat2.png를 로드할 수 없습니다.\n";
+    if (!BatTexture[2].loadFromFile("resources/images/units/Bat3.png"))
+        std::cerr << "Bat3.png를 로드할 수 없습니다.\n";
+
+    BatSprite.setTexture(BatTexture[0]);
+    BatSprite.setOrigin(BatTexture[0].getSize().x / 2.0f, BatTexture[0].getSize().y * 1.3f - 240);
+
+    // Bear
+    if (!BearTexture[0].loadFromFile("resources/images/units/Bear1.png"))
+        std::cerr << "Bear1.png를 로드할 수 없습니다.\n";
+    if (!BearTexture[1].loadFromFile("resources/images/units/Bear2.png"))
+        std::cerr << "Bear2.png를 로드할 수 없습니다.\n";
+    if (!BearTexture[2].loadFromFile("resources/images/units/Bear3.png"))
+        std::cerr << "Bear3.png를 로드할 수 없습니다.\n";
+
+    BearSprite.setTexture(BearTexture[0]);
+    BearSprite.setOrigin(BearTexture[0].getSize().x / 2.0f, BearTexture[0].getSize().y * 1.3f - 120);
+
+    // BlueScorpion
+    if (!BlueScorpionTexture[0].loadFromFile("resources/images/units/BlueScorpion1.png"))
+        std::cerr << "BlueScorpion1.png를 로드할 수 없습니다.\n";
+    if (!BlueScorpionTexture[1].loadFromFile("resources/images/units/BlueScorpion2.png"))
+        std::cerr << "BlueScorpion2.png를 로드할 수 없습니다.\n";
+    if (!BlueScorpionTexture[2].loadFromFile("resources/images/units/BlueScorpion3.png"))
+        std::cerr << "BlueScorpion3.png를 로드할 수 없습니다.\n";
+
+    BlueScorpionSprite.setTexture(BlueScorpionTexture[0]);
+    BlueScorpionSprite.setOrigin(BlueScorpionTexture[0].getSize().x / 2.0f, BlueScorpionTexture[0].getSize().y * 1.3f - 120);
+
+    // Juggernaut
+    if (!JuggernautTexture[0].loadFromFile("resources/images/units/Juggernaut1.png"))
+        std::cerr << "Juggernaut1.png를 로드할 수 없습니다.\n";
+    if (!JuggernautTexture[1].loadFromFile("resources/images/units/Juggernaut2.png"))
+        std::cerr << "Juggernaut2.png를 로드할 수 없습니다.\n";
+    if (!JuggernautTexture[2].loadFromFile("resources/images/units/Juggernaut3.png"))
+        std::cerr << "Juggernaut3.png를 로드할 수 없습니다.\n";
+
+    JuggernautSprite.setTexture(JuggernautTexture[0]);
+    JuggernautSprite.setOrigin(JuggernautTexture[0].getSize().x / 2.0f, JuggernautTexture[0].getSize().y * 1.3f - 160);
+
+    // MohawkBat
+    if (!MohawkBatTexture[0].loadFromFile("resources/images/units/MohawkBat1.png"))
+        std::cerr << "MohawkBat1.png를 로드할 수 없습니다.\n";
+    if (!MohawkBatTexture[1].loadFromFile("resources/images/units/MohawkBat2.png"))
+        std::cerr << "MohawkBat2.png를 로드할 수 없습니다.\n";
+    if (!MohawkBatTexture[2].loadFromFile("resources/images/units/MohawkBat3.png"))
+        std::cerr << "MohawkBat3.png를 로드할 수 없습니다.\n";
+
+    MohawkBatSprite.setTexture(MohawkBatTexture[0]);
+    MohawkBatSprite.setOrigin(MohawkBatTexture[0].getSize().x / 2.0f, MohawkBatTexture[0].getSize().y * 1.3f - 240);
+
+    // PossessedBear
+    if (!PossessedBearTexture[0].loadFromFile("resources/images/units/PossessedBear1.png"))
+        std::cerr << "PossesedBear1.png를 로드할 수 없습니다.\n";
+    if (!PossessedBearTexture[1].loadFromFile("resources/images/units/PossessedBear2.png"))
+        std::cerr << "PossesedBear2.png를 로드할 수 없습니다.\n";
+    if (!PossessedBearTexture[2].loadFromFile("resources/images/units/PossessedBear3.png"))
+        std::cerr << "PossesedBear3.png를 로드할 수 없습니다.\n";
+
+    PossessedBearSprite.setTexture(PossessedBearTexture[0]);
+    PossessedBearSprite.setOrigin(PossessedBearTexture[0].getSize().x / 2.0f, PossessedBearTexture[0].getSize().y * 1.3f - 120);
+
+    // PossessedWolf
+    if (!PossessedWolfTexture[0].loadFromFile("resources/images/units/PossessedWolf1.png"))
+        std::cerr << "PossesedWolf1.png를 로드할 수 없습니다.\n";
+    if (!PossessedWolfTexture[1].loadFromFile("resources/images/units/PossessedWolf2.png"))
+        std::cerr << "PossesedWolf2.png를 로드할 수 없습니다.\n";
+    if (!PossessedWolfTexture[2].loadFromFile("resources/images/units/PossessedWolf3.png"))
+        std::cerr << "PossesedWolf3.png를 로드할 수 없습니다.\n";
+
+    PossessedWolfSprite.setTexture(PossessedWolfTexture[0]);
+    PossessedWolfSprite.setOrigin(PossessedWolfTexture[0].getSize().x / 2.0f, PossessedWolfTexture[0].getSize().y * 1.3f - 120);
+
+    // Troll
+    if (!TrollTexture[0].loadFromFile("resources/images/units/Troll1.png"))
+        std::cerr << "Troll1.png를 로드할 수 없습니다.\n";
+    if (!TrollTexture[1].loadFromFile("resources/images/units/Troll2.png"))
+        std::cerr << "Troll2.png를 로드할 수 없습니다.\n";
+    if (!TrollTexture[2].loadFromFile("resources/images/units/Troll3.png"))
+        std::cerr << "Troll3.png를 로드할 수 없습니다.\n";
+
+    TrollSprite.setTexture(TrollTexture[0]);
+    TrollSprite.setOrigin(TrollTexture[0].getSize().x / 2.0f, TrollTexture[0].getSize().y * 1.3f - 160);
+
+    // WinterBear
+    if (!WinterBearTexture[0].loadFromFile("resources/images/units/WinterBear1.png"))
+        std::cerr << "WinterBear1.png를 로드할 수 없습니다.\n";
+    if (!WinterBearTexture[1].loadFromFile("resources/images/units/WinterBear2.png"))
+        std::cerr << "WinterBear2.png를 로드할 수 없습니다.\n";
+    if (!WinterBearTexture[2].loadFromFile("resources/images/units/WinterBear3.png"))
+        std::cerr << "WinterBear3.png를 로드할 수 없습니다.\n";
+
+    WinterBearSprite.setTexture(WinterBearTexture[0]);
+    WinterBearSprite.setOrigin(WinterBearTexture[0].getSize().x / 2.0f, WinterBearTexture[0].getSize().y * 1.3f - 120);
+
+    // WinterOgre
+    if (!WinterOgreTexture[0].loadFromFile("resources/images/units/WinterOgre1.png"))
+        std::cerr << "WinterOgre1.png를 로드할 수 없습니다.\n";
+    if (!WinterOgreTexture[1].loadFromFile("resources/images/units/WinterOgre2.png"))
+        std::cerr << "WinterOgre2.png를 로드할 수 없습니다.\n";
+    if (!WinterOgreTexture[2].loadFromFile("resources/images/units/WinterOgre3.png"))
+        std::cerr << "WinterOgre3.png를 로드할 수 없습니다.\n";
+
+    WinterOgreSprite.setTexture(WinterOgreTexture[0]);
+    WinterOgreSprite.setOrigin(WinterOgreTexture[0].getSize().x / 2.0f, WinterOgreTexture[0].getSize().y * 1.3f - 160);
+
+    // WinterWolf
+    if (!WinterWolfTexture[0].loadFromFile("resources/images/units/WinterWolf1.png"))
+        std::cerr << "WinterWolf1.png를 로드할 수 없습니다.\n";
+    if (!WinterWolfTexture[1].loadFromFile("resources/images/units/WinterWolf2.png"))
+        std::cerr << "WinterWolf2.png를 로드할 수 없습니다.\n";
+    if (!WinterWolfTexture[2].loadFromFile("resources/images/units/WinterWolf3.png"))
+        std::cerr << "WinterWolf3.png를 로드할 수 없습니다.\n";
+
+    WinterWolfSprite.setTexture(WinterWolfTexture[0]);
+    WinterWolfSprite.setOrigin(WinterWolfTexture[0].getSize().x / 2.0f, WinterWolfTexture[0].getSize().y * 1.3f - 120);
+
+    unitScale = tileHeight / static_cast<float>(WolfTexture[0].getSize().y) * 1.5;
 }
 
 void UI::drawButtons()
@@ -295,7 +416,7 @@ void UI::drawBackground() {
     window.draw(backgroundSprite);
 }
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
-    int playerLife, int gold,  int selectedX, int selectedY, const std::vector<Projectile>& projectiles)
+    int playerLife, int gold,  int selectedX, int selectedY, const std::vector<Projectile>& projectiles, int currentTick)
 {
     window.clear();
     drawBackground();
@@ -429,31 +550,6 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         }
     }
  
-    // 투사체 그리기
-    drawProjectiles(projectiles);
-
-    // **유닛 그리기 (스프라이트 사용)**
-    for (auto& unit : units) {
-        float posX = unit.getPosX();
-        float posY = unit.getPosY();
-
-        // 이소메트릭 좌표 변환
-        float screenX = (posX - posY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
-        float screenY = (posX + posY) * (tileHeight / 2.0f);
-
-        screenX += offsetX;
-        screenY += offsetY;
-
-        // 유닛 스프라이트 위치 설정
-        knightUnitSprite.setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
-
-        // 체력 바 그리기
-        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit.getHp(), unit.maxHp); // 체력 최대값 10으로 설정
-
-        // 유닛 스프라이트 그리기
-        window.draw(knightUnitSprite);
-    }
-
     // 타워 그리기
     for (const auto& tower : placedTowers)
     {
@@ -472,84 +568,222 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
 
         switch (towerID)
         {
-            case 1:
-                towerSprite = &barrack1TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-                break;
-            case 100:
-                towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-            case 101:
-                towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-                break;
-            case 102:
-                towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
-                towerOffsetX = 25.0;
-                towerOffsetY = 20.0;
-                break;
-            case 2:
-                towerSprite = &archer1TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-                break;
-            case 200:
-                towerSprite = &archer2TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-            case 201:
-                towerSprite = &archer3TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-                break;
-            case 202:
-                towerSprite = &archer3TowerSprite;
-                towerOffsetX = 30.0;
-                towerOffsetY = 20.0;
-                break;
-            case 3:
-                towerSprite = &wizard1TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-                break;
-            case 300:
-                towerSprite = &wizard2TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-            case 301:
-                towerSprite = &wizard3TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-                break;
-            case 302:
-                towerSprite = &wizard3TowerSprite;
-                towerSprite->setScale(1.3, 1.3);
-                towerOffsetX = 15.0;
-                towerOffsetY = 25.0;
-                break;
-            default:
-                towerSprite = &archer1TowerSprite;
-                break;
+        case 1:
+            towerSprite = &barrack1TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+            break;
+        case 100:
+            towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+            break;
+        case 101:
+            towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+            break;
+        case 102:
+            towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerOffsetX = 25.0;
+            towerOffsetY = 20.0;
+            break;
+        case 2:
+            towerSprite = &archer1TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+            break;
+        case 200:
+            towerSprite = &archer2TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+            break;
+        case 201:
+            towerSprite = &archer3TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+            break;
+        case 202:
+            towerSprite = &archer3TowerSprite;
+            towerOffsetX = 30.0;
+            towerOffsetY = 20.0;
+            break;
+        case 3:
+            towerSprite = &wizard1TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+            break;
+        case 300:
+            towerSprite = &wizard2TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+            break;
+        case 301:
+            towerSprite = &wizard3TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+            break;
+        case 302:
+            towerSprite = &wizard3TowerSprite;
+            towerSprite->setScale(1.3, 1.3);
+            towerOffsetX = 15.0;
+            towerOffsetY = 25.0;
+            break;
+        default:
+            towerSprite = &archer1TowerSprite;
+            break;
         }
 
         screenX += offsetX + towerOffsetX;
         screenY += offsetY + towerOffsetY;
-            
+
         towerSprite->setPosition(screenX, screenY - tileHeight / 2.0f);
         window.draw(*towerSprite);
 
+    }
+
+    // 투사체 그리기
+    drawProjectiles(projectiles);
+
+    // **유닛 그리기 (스프라이트 사용)**
+    for (auto& unit : units) {
+        float posX = unit.getPosX();
+        float posY = unit.getPosY();
+
+        float screenX = (posX - posY) * (tileWidth / 2.0f) + window.getSize().x / 2.0f - tileWidth / 2.0f;
+        float screenY = (posX + posY) * (tileHeight / 2.0f);
+
+        screenX += offsetX;
+        screenY += offsetY;
+
+        const Unit* uPtr = &unit; // 이 유닛의 주소를 식별자로 사용
+        float oldX;
+
+        auto it = unitOldScreenX.find(uPtr);
+        if (it == unitOldScreenX.end()) {
+            // 첫 등장인 경우
+            // 첫 틱에는 방향 판별 없이 현재 screenX를 oldScreenX로 설정
+            unitOldScreenX[uPtr] = screenX;
+            oldX = screenX;
+        }
+        else {
+            oldX = it->second;
+        }
+
+        // 스크린 좌표 변화를 통한 방향 판단 (epsilon으로 미세변화 무시)
+        float deltaX = screenX - oldX;
+        float epsilon = 0.1f;
+        float scaleX = unitScale;
+        float scaleY = unitScale;
+
+        if (std::abs(deltaX) > epsilon) {
+            if (deltaX > 0) {
+                // 오른쪽 이동
+                scaleX = -unitScale;
+            }
+            else {
+                // 왼쪽 이동
+                scaleX = unitScale;
+            }
+        }
+        else {
+            // 변화량이 미미하다면 이전 방향 유지
+            // 이전 틱 scaleX 값을 저장하거나,
+            // 첫 등장 시 기본값(왼쪽 바라보기) 유지하는 로직 필요
+            // 여기서는 기본이 왼쪽이라면 scaleX 음수를 유지하거나 하는 로직 추가 가능
+        }
+
+        // 애니메이션 프레임
+        int id = unit.getId();
+        int animationFrame = (currentTick) % 2; // 3프레임 애니메이션 사용 (1,2,3번 프레임)
+
+        // 각 유닛에 따른 Sprite, Texture 포인터
+        sf::Sprite* currentSprite = nullptr;
+        sf::Texture* currentTextures = nullptr;
+
+        // id에 따른 Sprite, Texture 배열 선택
+        switch (id) {
+        case 1: // Wolf
+            currentSprite = &WolfSprite;
+            currentTextures = WolfTexture;
+            break;
+        case 2: // Bat
+            currentSprite = &BatSprite;
+            currentTextures = BatTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 3: // Bear
+            currentSprite = &BearSprite;
+            currentTextures = BearTexture;
+            break;
+        case 4: // PossessedWolf
+            currentSprite = &PossessedWolfSprite;
+            currentTextures = PossessedWolfTexture;
+            break;
+        case 5: // MohawkBat
+            currentSprite = &MohawkBatSprite;
+            currentTextures = MohawkBatTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 6: // PossessedBear
+            currentSprite = &PossessedBearSprite;
+            currentTextures = PossessedBearTexture;
+            break;
+        case 7: // BlueScorpion
+            currentSprite = &BlueScorpionSprite;
+            currentTextures = BlueScorpionTexture;
+            break;
+        case 8: // WinterWolf
+            currentSprite = &WinterWolfSprite;
+            currentTextures = WinterWolfTexture;
+            break;
+        case 9: // WinterBear
+            currentSprite = &WinterBearSprite;
+            currentTextures = WinterBearTexture;
+            break;
+        case 10: // Juggernaut
+            currentSprite = &JuggernautSprite;
+            currentTextures = JuggernautTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 11: // Troll
+            currentSprite = &TrollSprite;
+            currentTextures = TrollTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        case 12: // WinterOgre
+            currentSprite = &WinterOgreSprite;
+            currentTextures = WinterOgreTexture;
+            scaleX *= 2; scaleY *= 2;
+            break;
+        default:
+            // 정의되지 않은 id일 경우
+            currentSprite = &WolfSprite;      // 기본값으로 Wolf로
+            currentTextures = WolfTexture;
+            break;
+        }
+
+        // 현재 유닛의 스프라이트와 텍스처 설정
+        currentSprite->setTexture(currentTextures[animationFrame]);
+        currentSprite->setScale(scaleX, scaleY);
+        currentSprite->setPosition(screenX + tileWidth / 2.0f, screenY + tileHeight);
+
+        // 스프라이트 그리기
+        window.draw(*currentSprite);
+
+        // 체력바 그리기
+        unitHpBar(window, screenX + tileWidth / 2.0f, screenY, unit);
+
+        // 이번 틱 screenX 저장
+        unitOldScreenX[uPtr] = screenX;
     }
     TextBox textBox(*this, curWaveIsDefense, { getInfoText(0),getInfoText(1), getInfoText(2)});
         
     textBox.updateState(playerLife, gold, attackGold);
     textBox.draw(window);
-   
     gui.draw();
 
     window.display();
@@ -591,15 +825,26 @@ void UI::setIsDefence(bool isDefence)
 }
 
 // 체력바를 생성하는 함수
-void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int currentHp, int maxHp) {
+void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, const Unit& unit) {
+    // 기본 체력 바 크기
     float healthBarWidth = 40.0f;         // 체력 바 너비
     float healthBarHeight = 5.0f;        // 체력 바 높이
+    float yOffset = 10.0f;               // 기본 y축 오프셋
+
+    int currentHp = unit.getHp();
+    int maxHp = unit.maxHp;
     float healthRatio = static_cast<float>(currentHp) / maxHp; // 체력 비율
+
+    // ID가 100 초과인 경우 체력바 크기와 위치 조정
+    if (unit.getId() >=10) {
+        healthBarWidth =65.0f;  // 체력 바 너비 증가
+        yOffset = 75.0f;         // 체력 바 위치를 더 높게 설정
+    }
 
     // 체력 바 배경
     sf::RectangleShape healthBarBackground(sf::Vector2f(healthBarWidth, healthBarHeight));
     healthBarBackground.setFillColor(sf::Color(50, 50, 50)); // 회색 배경
-    healthBarBackground.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+    healthBarBackground.setPosition(screenX - healthBarWidth / 2.0f, screenY - yOffset);
 
     // 체력 바 (현재 체력)
     sf::RectangleShape healthBar(sf::Vector2f(healthBarWidth * healthRatio, healthBarHeight));
@@ -615,7 +860,7 @@ void UI::unitHpBar(sf::RenderWindow& window, float screenX, float screenY, int c
         healthBar.setFillColor(sf::Color(200, 0, 0)); // 빨간색
     }
 
-    healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - 10);
+    healthBar.setPosition(screenX - healthBarWidth / 2.0f, screenY - yOffset);
 
     // 체력 바 그리기
     window.draw(healthBarBackground);
@@ -696,7 +941,6 @@ void UI::setInfoText(std::initializer_list<std::string> infoSentences) {
 
 
 
-
 std::wstring UI::getInfoText(int index) const {
     if (index < 0 || index >= static_cast<int>(infoTexts.size())) {
         throw std::out_of_range("Index out of range");
@@ -705,159 +949,31 @@ std::wstring UI::getInfoText(int index) const {
 }
 
 void UI::gameInfoStage() {
-    // 폰트 파일 경로 설정
-    std::string fontPath = "resources/fonts/BMDOHYEON_ttf.ttf";
-
-    // 폰트 로드 확인
-    if (!sf::Font().loadFromFile(fontPath)) {
-        std::cerr << "폰트 파일을 로드할 수 없습니다: " << fontPath << std::endl;
-        return;
-    }
-
     // 창 크기 계산
     sf::Vector2u windowSize = window.getSize();
     float boxWidth = windowSize.x * 2 / 3.0f;
     float boxHeight = windowSize.y * 2 / 3.0f;
 
-    // 반투명 패널 생성
+    // 패널 생성
     auto panel = tgui::Panel::create({ boxWidth, boxHeight });
     panel->setPosition((windowSize.x - boxWidth) / 2.0f, (windowSize.y - boxHeight) / 2.0f);
-    panel->getRenderer()->setBackgroundColor({ 0, 0, 0, 150 }); // 검은색 배경, 150 투명도
-    panel->getRenderer()->setBorders({ 10 });                  // 테두리 추가
-    panel->getRenderer()->setBorderColor({ 255, 255, 255 });   // 테두리 흰색
-    panel->getRenderer()->setRoundedBorderRadius(20);          // 모서리를 둥글게
+    panel->getRenderer()->setBorders({ 10 });                 // 테두리 추가
+    panel->getRenderer()->setBorderColor({ 255, 255, 255 });  // 테두리 흰색
+    panel->getRenderer()->setRoundedBorderRadius(20);         // 모서리를 둥글게
 
-    // 수비 웨이브 설명 텍스트 추가 (왼쪽, 1/4 지점)
-    std::wstring defenseWaveText =
-        L"[수비 웨이브]\n\n";
-    auto defenseText = tgui::Label::create();
-    defenseText->setText(defenseWaveText); // 텍스트 설정
-    defenseText->setPosition(boxWidth / 4 - 100, 50); // 패널의 1/4 지점에 배치
-    defenseText->setTextSize(25);
-    defenseText->getRenderer()->setTextColor({ 135, 206, 250 }); // 밝은 파란색 (LightSkyBlue)
-    defenseText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(defenseText);
+    // 배경 이미지 설정
+    auto backgroundImage = tgui::Picture::create("resources/images/stageimgs/stageInfo.png");
+    backgroundImage->setSize("100%", "100%"); // 패널 크기에 맞게 배경 이미지 설정
+    panel->add(backgroundImage);
 
-    // 공격 웨이브 설명 텍스트 추가 (오른쪽, 3/4 지점)
-    std::wstring attackWaveText =
-        L"[공격 웨이브]\n\n";
-    auto attackText = tgui::Label::create();
-    attackText->setText(attackWaveText);  // 텍스트 설정
-    attackText->setPosition(boxWidth * 3 / 4 - 100, 50); // 패널의 3/4 지점에 배치
-    attackText->setTextSize(25);
-    attackText->getRenderer()->setTextColor({ 255, 105, 180 }); // 핑크색 폰트
-    attackText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(attackText);
-
-
-    // 그림 추가 (중앙)
-
-
-    auto wasdkey = tgui::Picture::create("resources/images/icons/wasdkey.png"); // 이미지 파일 경로
-    wasdkey->setSize({ 240, 160 });  // 그림 크기
-    wasdkey->setPosition((boxWidth - 200) / 2 - 40, 20); // 패널 중앙에 배치
-    panel->add(wasdkey);
-
-    auto spacekey = tgui::Picture::create("resources/images/icons/spacekey.png"); // 이미지 파일 경로
-    spacekey->setSize({ 150, 150 });  // 그림 크기
-    spacekey->setPosition((boxWidth - 200) / 2 + 90, 150); // 패널 중앙에 배치
-    panel->add(spacekey);
-
-    auto fkey = tgui::Picture::create("resources/images/icons/fkey.png"); // 이미지 파일 경로
-    fkey->setSize({ 120, 120 });  // 그림 크기
-    fkey->setPosition((boxWidth - 200) / 2, 270); // 패널 중앙에 배치
-    panel->add(fkey);
-
-    auto onekey = tgui::Picture::create("resources/images/icons/1key.png"); // 이미지 파일 경로
-    onekey->setSize({ 120, 120 });  // 그림 크기
-    onekey->setPosition((boxWidth - 200) / 2 - 200, 370); // 패널 중앙에 배치
-    panel->add(onekey);
-
-    auto twokey = tgui::Picture::create("resources/images/icons/2key.png"); // 이미지 파일 경로
-    twokey->setSize({ 120, 120 });  // 그림 크기
-    twokey->setPosition((boxWidth - 200) / 2 - 120, 370); // 패널 중앙에 배치
-    panel->add(twokey);
-
-    auto threekey = tgui::Picture::create("resources/images/icons/three.png"); // 이미지 파일 경로
-    threekey->setSize({ 600, 120 });  // 그림 크기
-    threekey->setPosition((boxWidth - 200) / 2 - 300, 470); // 패널 중앙에 배치
-    panel->add(threekey);
-
-    auto esckey = tgui::Picture::create("resources/images/icons/esckey.png"); // 이미지 파일 경로
-    esckey->setSize({ 120, 120 });  // 그림 크기
-    esckey->setPosition((boxWidth - 200) / 2 + 20, 570); // 패널 중앙에 배치
-    panel->add(esckey);
-
-    // WASD 옆에 "맵 이동키" 추가
-    auto wasdText = tgui::Label::create();
-    wasdText->setText(L"맵 이동키");
-    wasdText->setTextSize(25);
-    wasdText->getRenderer()->setTextColor({ 255, 255, 255 }); // 흰색 텍스트
-    wasdText->setPosition((boxWidth - 200) / 2 + 200, 100); // WASD 아래에 배치
-    wasdText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(wasdText);
-
-    // Space 키 옆에 "타워 설치 키" 추가
-    auto spaceText = tgui::Label::create();
-    spaceText->setText(L"타워 설치 키");
-    spaceText->setTextSize(25);
-    spaceText->getRenderer()->setTextColor({ 135, 206, 250 }); // 형광 파란색 텍스트
-    spaceText->setPosition((boxWidth - 200) / 2 - 70, 200); // SpaceKey 왼쪽
-    spaceText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(spaceText);
-
-    // F 키 옆에 "수비 웨이브 시작 키" 추가
-    auto fText = tgui::Label::create();
-    fText->setText(L"수비 웨이브 시작 키");
-    fText->setTextSize(25);
-    fText->getRenderer()->setTextColor({ 135, 206, 250 }); // 형광 파란색 텍스트
-    fText->setPosition((boxWidth - 200) / 2 - 240, 300); // FKey 왼쪽
-    fText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(fText);
-
-    auto fText2 = tgui::Label::create();
-    fText2->setText(L"공격 웨이브 시작 키");
-    fText2->setTextSize(25);
-    fText2->getRenderer()->setTextColor({ 255, 105, 180 }); // 형광 빨간색 텍스트
-    fText2->setPosition((boxWidth - 200) / 2 + 210, 300); // FKey 왼쪽
-    fText2->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(fText2);
-
-    // 1번 키 옆에 "타워 선택 키" 추가
-    auto oneText = tgui::Label::create();
-    oneText->setText(L"     <1,2,3번> 타워 선택 키\n\n  [타워 설치 시]\n <1,2번> 업그레이드 키 \n <3번> 타워 판매키");
-    oneText->setTextSize(25);
-    oneText->getRenderer()->setTextColor({ 135, 206, 250 }); // 형광 파란색 텍스트
-    oneText->setPosition((boxWidth - 200) / 2 - 540, 400); // 1번 키 왼쪽
-    oneText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(oneText);
-
-    // 공격 웨이브 유닛 선택 키 (Three Key 오른쪽)
-    auto threeText = tgui::Label::create();
-    threeText->setText(L"                <1~9번>          \n공격 웨이브 시 유닛 선택 및 공격 키");
-    threeText->setTextSize(25);
-    threeText->getRenderer()->setTextColor({ 255, 105, 180 }); // 형광 빨간색 텍스트
-    threeText->setPosition((boxWidth - 200) / 2 + 290, 470); // ThreeKey 오른쪽
-    threeText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(threeText);
-
-    // ESC 키 옆에 "실행 취소 키" 추가
-    auto escText = tgui::Label::create();
-    escText->setText(L"실행 취소 키");
-    escText->setTextSize(25);
-    escText->getRenderer()->setTextColor({ 255, 255, 255 }); // 흰색 텍스트
-    escText->setPosition((boxWidth - 200) / 2 + 150, 600); // ESC 오른쪽
-    escText->getRenderer()->setFont(tgui::Font(fontPath));
-    panel->add(escText);
-
+    // 종료 버튼 추가
     auto closeButton = tgui::Button::create("종료");
     closeButton->setSize(70, 70); // 버튼 크기
     closeButton->setPosition((boxWidth - 100), 17); // 패널 오른쪽 상단 배치
-    closeButton->getRenderer()->setBorders(0);
-    // close 버튼 이미지 설정
-    closeButton->getRenderer()->setTexture("resources/images/icons/close.png");
+    closeButton->getRenderer()->setBorders(0); // 버튼 테두리 제거
+    closeButton->getRenderer()->setTexture("resources/images/icons/close.png"); // 종료 버튼 이미지
 
-    //close 버튼 마우스 오버 효과
+    // 마우스 오버 효과
     closeButton->onMouseEnter([closeButton]() {
         closeButton->getRenderer()->setOpacity(0.7f); // 마우스가 올라왔을 때 70% 불투명
         });
@@ -869,13 +985,10 @@ void UI::gameInfoStage() {
     closeButton->onClick([this, panel]() {
         gui.remove(panel); // 패널 삭제
         });
-    // TGUI ESC 키 이벤트 처리
-   
 
     panel->add(closeButton);
 
     // GUI에 패널 추가
-        gui.add(panel, "gameInfoPanel");
+    gui.add(panel, "gameInfoPanel");
 
-    
 }

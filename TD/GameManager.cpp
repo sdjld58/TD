@@ -31,7 +31,7 @@ void GameManager::run(const std::string& stageFile)
     ui.setTowers(towers);
     ui.setUnitTypes(unitTypes);
     
-    int currentTick = 0;
+    currentTick = 0;
 
     for (const auto& wave : waves)
     {
@@ -43,7 +43,14 @@ void GameManager::run(const std::string& stageFile)
         ui.drawButtons();
         projectiles.clear();
 
-      
+        ui.unitCounts.clear();
+  
+        for (int unitID : wave.getUnits())
+        {
+            ui.unitCounts[unitID]++;
+        }
+        
+       
         if (wave.getIsDefence())
         {
             gold += wave.getGold();
@@ -121,7 +128,6 @@ void GameManager::run(const std::string& stageFile)
                 if (playerLife <= 0)
                 {
                     showGameOverPopup();
-                    return;
                 }
 
                 if (activeUnits.empty() && unitQueue.empty())
@@ -143,7 +149,7 @@ void GameManager::run(const std::string& stageFile)
     }
    
 
-    mapSelected(); //맵선택으로 돌아옴
+    showGameClearPopup();
 }
 
 void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& unitQueue, int currentTick)
@@ -268,7 +274,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
         ui.setInfoText({ "유닛을 침투시키세요", queueText,"" });
 
     }
-    else ui.setInfoText({ "유닛을 침투시키세요", "대기중인 유닛이 없습니다!",""});
+   
 }
 
 
@@ -279,7 +285,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
 void GameManager::updateGameState(std::vector<Unit>& activeUnits)
 {
     // UI를 통해 게임 상태를 업데이트하고 화면을 그립니다.
-    ui.update(activeUnits, placedTowers, playerLife, gold, selectedX,selectedY ,projectiles);
+    ui.update(activeUnits, placedTowers, playerLife, gold, selectedX, selectedY, projectiles, currentTick);
 }
 
 void GameManager::loadMap(const std::string& filename)
@@ -655,7 +661,7 @@ void GameManager::startPreparationPhase()
                     ui.setInfoText({ " ","빈 건설 부지입니다.", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
                     ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
                 }
-                if ((map[selectedY][selectedX] != "O"))
+                if ((map[selectedY][selectedX] != "O" && isTowerPlacementMode == true))
                 {
                     ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "웨이브 시작 : F" });
                     ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
@@ -719,6 +725,7 @@ void GameManager::startPreparationPhase()
                 if (towerIt != placedTowers.end())
                 {
                     isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
+                    ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
                 }
                 else
                 {
@@ -730,6 +737,8 @@ void GameManager::startPreparationPhase()
                 if (towerIt != placedTowers.end())
                 {
                     ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
+                   
+                    selectedTowerIndex = -1;
                     // 업그레이드/판매 선택
                     if (event.key.code == sf::Keyboard::Num1)
                     {
@@ -865,6 +874,7 @@ void GameManager::startPreparationPhase()
                     if (towerIt != placedTowers.end())
                     {
                         isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
+                        ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
 
                     }
                     else
@@ -873,7 +883,7 @@ void GameManager::startPreparationPhase()
                         isTowerPlacementMode = true; // 타워가 없으면 설치 모드로 전환
                     }
 
-                    if ((map[selectedY][selectedX] != "O"))
+                    if ((map[selectedY][selectedX] != "O" && isTowerPlacementMode == true))
                     {
                         ui.setInfoText({ " ","건설 가능 지점이 아닙니다.", "웨이브 시작 : F" });
                         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY); // UI 갱신
@@ -885,8 +895,21 @@ void GameManager::startPreparationPhase()
                     {
                         attemptPlaceTower();
                         selectedTowerIndex = -1;
+                       
                     }
+                   
                     
+                }
+
+                auto towerIt = std::find_if(placedTowers.begin(), placedTowers.end(),
+                    [this](const PlacedTower& tower)
+                    {
+                        return tower.getX() == selectedX && tower.getY() == selectedY;
+                    });
+                if (towerIt != placedTowers.end())
+                {
+                    isTowerPlacementMode = false; // 타워가 있으면 업그레이드/판매 모드로 전환
+                    ui.setInfoText({ towerIt->getTool() + " 타워", towerIt->uiOptionSelect(towers,0)," " });
 
                 }
 
@@ -1081,14 +1104,14 @@ void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetU
 
     else if (towerID == 2 || towerID == 200 || towerID == 201 || towerID == 202)
     {
-        float speed = 400.0f;
+        float speed = 800.0f;
         Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture2());
         projectiles.push_back(projectile);
     }
 
     else if (towerID == 3 || towerID == 300 || towerID == 301 || towerID == 302)
     {
-        float speed = 400.0f;
+        float speed = 600.0f;
         Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture3());
         projectiles.push_back(projectile);
     }
@@ -1233,7 +1256,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
         if (playerLife <= 0)
         {
             showGameOverPopup();
-            return;
+           
         }
     }
 
@@ -1477,6 +1500,7 @@ void GameManager::mapSelected()
     selectedTowerIndex = -1;
     selectedOption = -1;
     isTowerPlacementMode = true;
+    int image = 0;
 
     // 게임 데이터 초기화
     map.clear();
@@ -1512,6 +1536,7 @@ void GameManager::mapSelected()
     button1->setPosition("5%", "17%");
     button1->setSize("28%", "70%");
     button1->getRenderer()->setTexture("resources/images/stageImgs/spring.png"); // 버튼 이미지
+    button1->getRenderer()->setBorders(7);
     button1->getRenderer()->setOpacity(0.5f); // 기본 투명도 설정
     button1->onMouseEnter([button1]() { button1->getRenderer()->setOpacity(1.0f); }); // 마우스 오버 시 투명도 제거
     button1->onMouseLeave([button1]() { button1->getRenderer()->setOpacity(0.5f); }); // 마우스가 떠나면 다시 반투명
@@ -1521,6 +1546,7 @@ void GameManager::mapSelected()
     button2->setPosition("36.5%", "17%");
     button2->setSize("28%", "70%");
     button2->getRenderer()->setTexture("resources/images/stageImgs/dessert.png");
+    button2->getRenderer()->setBorders(7);
     button2->getRenderer()->setOpacity(0.5f);
     button2->onMouseEnter([button2]() { button2->getRenderer()->setOpacity(1.0f); });
     button2->onMouseLeave([button2]() { button2->getRenderer()->setOpacity(0.5f); });
@@ -1530,6 +1556,7 @@ void GameManager::mapSelected()
     button3->setPosition("68%", "17%");
     button3->setSize("28%", "70%");
     button3->getRenderer()->setTexture("resources/images/stageImgs/winter.png");
+    button3->getRenderer()->setBorders(7);
     button3->getRenderer()->setOpacity(0.5f);
     button3->onMouseEnter([button3]() { button3->getRenderer()->setOpacity(1.0f); });
     button3->onMouseLeave([button3]() { button3->getRenderer()->setOpacity(0.5f); });
@@ -1605,7 +1632,8 @@ void GameManager::mapSelected()
             stageFile = "Stage1.csv";
             mapChosen = true;
             selectMapText = Map1Text;
-            ui.initializeBackground("resources/images/maps/springmap.png");
+            image = 1;
+           
         });
 
     button2->onClick([&]()
@@ -1615,6 +1643,8 @@ void GameManager::mapSelected()
             stageFile = "Stage2.csv";
             mapChosen = true;
             selectMapText = Map2Text;
+            image = 2;
+            
         });
 
     button3->onClick([&]()
@@ -1623,6 +1653,8 @@ void GameManager::mapSelected()
             stageFile = "Stage3.csv";
             mapChosen = true;
             selectMapText = Map3Text;
+            image = 3;
+            
         });
     exitButton->onClick([&]()
         {
@@ -1652,6 +1684,24 @@ void GameManager::mapSelected()
 
     if (mapChosen)
     {
+        ui.gui.removeAllWidgets(); // 이전 GUI 요소 제거
+        ui.getWindow().clear();    // 화면 초기화
+        ui.getWindow().display();  // 초기화 화면 강제 갱신
+        showLoadingScreen("MAP LOADING...");
+
+        if (image == 1)
+        {
+            ui.initializeBackground("resources/images/maps/springmap.png");
+        }
+        else if (image == 2)
+        {
+            ui.initializeBackground("resources/images/maps/dessertmap.png");
+        }
+        else if (image == 3)
+        {
+            ui.initializeBackground("resources/images/maps/wintermap.png");
+        }
+
         std::cout << selectedMap << " 맵이 선택되었습니다.\n";
         gamePrologue(selectMapText);
         loadMap(selectedMap);
@@ -1662,84 +1712,184 @@ void GameManager::mapSelected()
 
 void GameManager::showGameOverPopup()
 {
-    // 팝업 GUI 생성
-    tgui::Gui gui(ui.getWindow());
+    // 창 크기 계산
+    sf::Vector2u windowSize = ui.getWindow().getSize();
+    float boxWidth = windowSize.x * 2 / 3.0f;
+    float boxHeight = windowSize.y * 2 / 3.0f;
 
-    // 빨간색 반투명 배경 패널
-    sf::RectangleShape backgroundPanel(sf::Vector2f(ui.getWindow().getSize().x * 3 / 4, ui.getWindow().getSize().y * 2 / 3));
-    backgroundPanel.setFillColor(sf::Color(255, 0, 0, 150)); // 빨간색 반투명
-    backgroundPanel.setPosition(
-        (ui.getWindow().getSize().x - backgroundPanel.getSize().x) / 2.f, // 중앙 정렬
-        (ui.getWindow().getSize().y - backgroundPanel.getSize().y) / 2.f);
+    // 패널 생성
+    auto panel = tgui::Panel::create({ boxWidth, boxHeight });
+    panel->setPosition((windowSize.x - boxWidth) / 2.0f, (windowSize.y - boxHeight) / 2.0f);
+    panel->getRenderer()->setBackgroundColor({ 139, 0, 0, 200 }); // 빨간색 반투명 배경
+    panel->getRenderer()->setBorders({ 10 });                    // 테두리 추가
+    panel->getRenderer()->setBorderColor({ 0, 0, 0 });     // 테두리 블랙
+    panel->getRenderer()->setRoundedBorderRadius(20);            // 모서리를 둥글게
 
-    // GAME OVER 텍스트 설정
-    sf::Text gameOverText;
-    sf::Font font;
-    if (!font.loadFromFile("resources/fonts/BMDOHYEON_ttf.ttf")) {
-        std::cerr << "Failed to load font!" << std::endl;
-        return;
-    }
-    gameOverText.setFont(font);
-    gameOverText.setString("GAME OVER");
-    gameOverText.setCharacterSize(100); // 큰 크기
-    gameOverText.setFillColor(sf::Color::White); // 흰색 텍스트
-    gameOverText.setStyle(sf::Text::Bold);
+ 
+    // **Game Over 라벨 추가**
+    auto gameOverLabel = tgui::Label::create("Game Over");
+    gameOverLabel->setTextSize(250); // 텍스트 크기
+    gameOverLabel->getRenderer()->setTextColor({ 0, 0, 0 }); // 블랙 텍스트
+    gameOverLabel->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+    gameOverLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+    gameOverLabel->setPosition("10%", "15%"); // 패널의 중앙 상단에 배치
+    
+    tgui::Font font("resources/fonts/Bangers.ttf");
+    gameOverLabel->getRenderer()->setFont(font);
+    panel->add(gameOverLabel);
 
-    // 텍스트 중앙 정렬
-    sf::FloatRect textBounds = gameOverText.getLocalBounds();
-    gameOverText.setOrigin(textBounds.width / 2.f, textBounds.height / 2.f);
-    gameOverText.setPosition(
-        ui.getWindow().getSize().x / 2.f,
-        ui.getWindow().getSize().y / 2.f - 50); // 화면 중앙에 배치
+    // 종료 버튼 추가
+    auto closeButton = tgui::Button::create();
+    closeButton->setSize("15%", "22%"); // 버튼 크기
+    closeButton->setPosition("23%", "70%"); // 패널의 왼쪽 하단에 배치
+    closeButton->getRenderer()->setBorders(0); // 버튼 테두리 제거
+    closeButton->getRenderer()->setTexture("resources/images/icons/cancel.png"); // 종료 버튼 이미지
 
-    // 맵 선택 버튼
-    auto mapSelectButton = tgui::Button::create("Return to Map Selection");
-    mapSelectButton->setSize("40%", "10%");
-    mapSelectButton->setPosition("30%", "70%");
-    gui.add(mapSelectButton);
-
-    // 게임 종료 버튼
-    auto exitButton = tgui::Button::create("Exit Game");
-    exitButton->setSize("40%", "10%");
-    exitButton->setPosition("30%", "85%");
-    gui.add(exitButton);
-
-    bool actionSelected = false; // 사용자가 버튼을 눌렀는지 확인
-
-    mapSelectButton->onClick([&]()
-        {
-            actionSelected = true;
-            mapSelected(); // 맵 선택 화면으로 돌아가기
+    closeButton->onMouseEnter([closeButton]() {
+        closeButton->getRenderer()->setOpacity(0.5f); // 마우스 오버 효과
+        });
+    closeButton->onMouseLeave([closeButton]() {
+        closeButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때
         });
 
-    exitButton->onClick([&]()
-        {
-            actionSelected = true;
-            ui.getWindow().close(); // 게임 창 닫기
+    closeButton->onClick([this, panel]() {
+        ui.getWindow().close();
         });
 
-    while (ui.getWindow().isOpen() && !actionSelected)
-    {
+    panel->add(closeButton);
+
+    // 맵 선택 버튼 추가
+    auto mapSelectButton = tgui::Button::create();
+    mapSelectButton->setSize("15%", "22%"); // 버튼 크기
+    mapSelectButton->setPosition("62%", "70%"); // 패널의 오른쪽 하단에 배치
+    mapSelectButton->getRenderer()->setBorders(0); // 버튼 테두리 제거
+    mapSelectButton->getRenderer()->setTexture("resources/images/icons/back.png"); // 맵 선택 버튼 이미지
+
+    mapSelectButton->onMouseEnter([mapSelectButton]() {
+        mapSelectButton->getRenderer()->setOpacity(0.5f); // 마우스 오버 효과
+        });
+    mapSelectButton->onMouseLeave([mapSelectButton]() {
+        mapSelectButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때
+        });
+
+    mapSelectButton->onClick([this, panel]() {
+        mapSelected();
+        });
+
+    panel->add(mapSelectButton);
+
+    // GUI에 패널 추가
+    ui.gui.add(panel, "gameOverPanel");
+
+    // **UI 이벤트 루프**
+    while (ui.getWindow().isOpen()) {
         sf::Event event;
-        while (ui.getWindow().pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
+        while (ui.getWindow().pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 ui.getWindow().close();
                 return;
             }
 
-            gui.handleEvent(event);
+            ui.gui.handleEvent(event); // TGUI 이벤트 처리
         }
 
-        // 이전 게임 화면 유지
-        ui.getWindow().clear(sf::Color::Transparent); // 이전 화면을 지우지 않음
-        ui.getWindow().draw(backgroundPanel);         // 반투명 패널 그리기
-        ui.getWindow().draw(gameOverText);            // GAME OVER 텍스트
-        gui.draw();                                   // 버튼 그리기
+     
+        ui.gui.draw(); // TGUI 다시 그리기
         ui.getWindow().display();
     }
 }
+
+
+void GameManager::showGameClearPopup()
+{
+    // 창 크기 계산
+    sf::Vector2u windowSize = ui.getWindow().getSize();
+    float boxWidth = windowSize.x * 2 / 3.0f;
+    float boxHeight = windowSize.y * 2 / 3.0f;
+
+    // 패널 생성
+    auto panel = tgui::Panel::create({ boxWidth, boxHeight });
+    panel->setPosition((windowSize.x - boxWidth) / 2.0f, (windowSize.y - boxHeight) / 2.0f);
+    panel->getRenderer()->setBackgroundColor({ 135, 206, 235, 200 }); // 파란색 반투명 배경
+    panel->getRenderer()->setBorders({ 10 });                    // 테두리 추가
+    panel->getRenderer()->setBorderColor({ 255,255,153 });     // 테두리 화이트
+    panel->getRenderer()->setRoundedBorderRadius(20);            // 모서리를 둥글게
+
+
+    // **Game Over 라벨 추가**
+    auto gameOverLabel = tgui::Label::create("Game Clear");
+    gameOverLabel->setTextSize(250); // 텍스트 크기
+    gameOverLabel->getRenderer()->setTextColor({ 255,255,153}); // 노란 텍스트
+    gameOverLabel->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+    gameOverLabel->setVerticalAlignment(tgui::Label::VerticalAlignment::Center);
+    gameOverLabel->setPosition("7%", "15%"); // 패널의 중앙 상단에 배치
+    
+    tgui::Font font("resources/fonts/Bangers.ttf");
+    gameOverLabel->getRenderer()->setFont(font);
+    panel->add(gameOverLabel);
+
+    // 종료 버튼 추가
+    auto closeButton = tgui::Button::create();
+    closeButton->setSize("15%", "22%"); // 버튼 크기
+    closeButton->setPosition("23%", "70%"); // 패널의 왼쪽 하단에 배치
+    closeButton->getRenderer()->setBorders(0); // 버튼 테두리 제거
+    closeButton->getRenderer()->setTexture("resources/images/icons/cancel.png"); // 종료 버튼 이미지
+
+    closeButton->onMouseEnter([closeButton]() {
+        closeButton->getRenderer()->setOpacity(0.5f); // 마우스 오버 효과
+        });
+    closeButton->onMouseLeave([closeButton]() {
+        closeButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때
+        });
+
+    closeButton->onClick([this, panel]() {
+        ui.getWindow().close();
+        });
+
+    panel->add(closeButton);
+
+    // 맵 선택 버튼 추가
+    auto mapSelectButton = tgui::Button::create();
+    mapSelectButton->setSize("15%", "22%"); // 버튼 크기
+    mapSelectButton->setPosition("62%", "70%"); // 패널의 오른쪽 하단에 배치
+    mapSelectButton->getRenderer()->setBorders(0); // 버튼 테두리 제거
+    mapSelectButton->getRenderer()->setTexture("resources/images/icons/back.png"); // 맵 선택 버튼 이미지
+
+    mapSelectButton->onMouseEnter([mapSelectButton]() {
+        mapSelectButton->getRenderer()->setOpacity(0.5f); // 마우스 오버 효과
+        });
+    mapSelectButton->onMouseLeave([mapSelectButton]() {
+        mapSelectButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때
+        });
+
+    mapSelectButton->onClick([this, panel]() {
+        mapSelected();
+        });
+
+    panel->add(mapSelectButton);
+
+    // GUI에 패널 추가
+    ui.gui.add(panel, "gameClearPanel");
+
+    // **UI 이벤트 루프**
+    while (ui.getWindow().isOpen()) {
+        sf::Event event;
+        while (ui.getWindow().pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                ui.getWindow().close();
+                return;
+            }
+
+            ui.gui.handleEvent(event); // TGUI 이벤트 처리
+        }
+
+
+        ui.gui.draw(); // TGUI 다시 그리기
+        ui.getWindow().display();
+    }
+}
+
+
 
 void GameManager::gameStart() {
     // TGUI GUI 생성
@@ -1757,7 +1907,7 @@ void GameManager::gameStart() {
     // 폰트 로드
     sf::Font bangerFont;
     if (!bangerFont.loadFromFile("resources/fonts/Bangers.ttf")) {
-        std::cerr << "Failed to load BMDOHYEON_ttf.ttf" << std::endl;
+        std::cerr << "Failed to load Bangers.ttf" << std::endl;
         return;
     }
 
@@ -1939,5 +2089,34 @@ void GameManager::gamePrologue(const std::vector<std::wstring>& prologueLines) {
         gui.draw();                             // 버튼
         ui.getWindow().display();
     }
+}
+
+void GameManager::showLoadingScreen(const std::string& message) {
+    sf::RenderWindow& window = ui.getWindow();
+
+    // 배경 설정
+    window.clear(sf::Color::Black);
+
+    // 텍스트 설정
+    sf::Font font;
+    if (!font.loadFromFile("resources/fonts/BMDOHYEON_ttf.ttf")) {
+        std::cerr << "폰트를 로드할 수 없습니다.\n";
+        return;
+    }
+
+    sf::Text loadingText;
+    loadingText.setFont(font);
+    loadingText.setString(message);
+    loadingText.setCharacterSize(50);
+    loadingText.setFillColor(sf::Color::White);
+
+    // 텍스트 중앙 정렬
+    sf::FloatRect textBounds = loadingText.getLocalBounds();
+    loadingText.setOrigin(textBounds.width / 2, textBounds.height / 2);
+    loadingText.setPosition(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
+
+    // 텍스트 화면에 표시
+    window.draw(loadingText);
+    window.display(); // 화면 강제 업데이트
 }
 

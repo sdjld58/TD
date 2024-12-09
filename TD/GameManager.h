@@ -34,7 +34,7 @@ private:
     bool showUnitInfo;
     void handleTowerButtonClicked();
     int lastSpawnTick;
-    
+    int currentTick;
 
     void attemptPlaceTower();
     void selectTower(const std::vector<Tower>& towers, int towerId, int& selectedTowerIndex, UI& ui);
@@ -133,8 +133,10 @@ public:
     void updateGameState(std::vector<Unit>& activeUnits);
     void mapSelected();
     void showGameOverPopup();
+    void showGameClearPopup();
     void gameStart();
     void gamePrologue(const std::vector<std::wstring>& prologueLines);
+    void showLoadingScreen(const std::string& message);
     
   
 };

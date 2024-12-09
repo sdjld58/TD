@@ -196,7 +196,7 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
     }
     else {
         float currentX = textStartX + 230.f; // 기본 텍스트 오른쪽으로 시작
-        float currentY = textStartY + 130.f; // 텍스트 아래에서 시작
+        float currentY = textStartY + 110.f; // 텍스트 아래에서 시작
 
         for (int unitId = 1; unitId <= 9; ++unitId) {
             sf::Sprite unitSprite;
@@ -204,17 +204,20 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
             float yAdjustment = 0.f; // Y 위치 조정
             float xAdjustment = 25.f;
             std::wstring unitName;
+            std::string unitCost;
 
             switch (unitId) {
             case 1:
                 unitSprite = uip->WolfSprite;
                 unitSprite.setTexture(uip->WolfTexture[0]);
                 unitName = L"[1]: 늑대";
+                unitCost = "10 Gold";
                 break;
             case 2:
                 unitSprite = uip->BatSprite;
                 unitSprite.setTexture(uip->BatTexture[0]);
                 unitName = L"[2]:박쥐";
+                unitCost = "10 Gold";
                 scale = 0.8f;
                 yAdjustment = -10.f;
                 xAdjustment = 30.f;
@@ -223,18 +226,21 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
                 unitSprite = uip->BearSprite;
                 unitSprite.setTexture(uip->BearTexture[0]);
                 unitName = L"[3]:곰";
+                unitCost = "10 Gold";
                 xAdjustment = 40.f;
                 break;
             case 4:
                 unitSprite = uip->PossessedWolfSprite;
                 unitSprite.setTexture(uip->PossessedWolfTexture[0]); 
                 unitName = L"[4]:저주받은늑대";
+                unitCost = "      1 Gold";
                 xAdjustment = 90.f;
                 break;
             case 5:
                 unitSprite = uip->MohawkBatSprite;
                 unitSprite.setTexture(uip->MohawkBatTexture[0]);
                 unitName = L"[5]:갈귀박쥐";
+                unitCost = "    1 Gold";
                 scale = 0.7f;
                 yAdjustment = -10.f;
                 xAdjustment = 60.f;
@@ -243,6 +249,7 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
                 unitSprite = uip->PossessedBearSprite; 
                 unitSprite.setTexture(uip->PossessedBearTexture[0]); 
                 unitName = L"[6]:저주받은곰";
+                unitCost = "    1 Gold";
                 xAdjustment = 70.f;
                 break;
             case 7:
@@ -250,18 +257,21 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
                 unitSprite.setTexture(uip->BlueScorpionTexture[0]);
                 scale = 0.4f;
                 unitName = L"[7]:푸른색전갈";
+                unitCost = "     1 Gold";
                 xAdjustment = 60.f;
                 break;
             case 8: 
                 unitSprite = uip->WinterWolfSprite; 
                 unitSprite.setTexture(uip->WinterWolfTexture[0]);
                 unitName = L"[8]:설원늑대";
+                unitCost = "  1 Gold";
                 xAdjustment = 40.f;
                 break;
             case 9: 
                 unitSprite = uip->WinterBearSprite; 
                 unitSprite.setTexture(uip->WinterBearTexture[0]);
                 unitName = L"[9]:설원곰";
+                unitCost = "  1 Gold";
                 xAdjustment = 30.f;
                 break;
            
@@ -275,8 +285,13 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
             nameText.setFillColor(sf::Color::White);
             nameText.setPosition(currentX-xAdjustment, currentY - 30.f); // 이미지 아래에 이름 표시
 
+            sf::Text costText(unitCost, fontbm, 20);
+            costText.setFillColor(sf::Color::Yellow);
+            costText.setPosition(currentX - xAdjustment, currentY - 5.f); // 이미지 아래에 이름 표시
+
             window.draw(unitSprite);
             window.draw(nameText);
+            window.draw(costText);
 
             currentX += 135.f; // 다음 이미지 오른쪽으로 이동
         }

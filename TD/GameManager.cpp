@@ -43,7 +43,14 @@ void GameManager::run(const std::string& stageFile)
         ui.drawButtons();
         projectiles.clear();
 
-      
+        ui.unitCounts.clear();
+  
+        for (int unitID : wave.getUnits())
+        {
+            ui.unitCounts[unitID]++;
+        }
+        
+       
         if (wave.getIsDefence())
         {
             gold += wave.getGold();

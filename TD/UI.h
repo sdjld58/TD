@@ -10,7 +10,6 @@
 #include "Tower.h"
 #include "UnitType.h"
 #include "Projectile.h"
-#include "TextBox.h"
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include<string>
@@ -20,6 +19,7 @@
 class UI
 {
 private:
+
     sf::RenderWindow window;
     std::vector<std::vector<std::string>> map;
     std::vector<std::pair<int, int>> path;
@@ -162,7 +162,49 @@ private:
     //TextBox에 출력하기위한 출력 문구들
     std::vector<std::wstring> infoTexts; // 여러 infoText를 저장하는 벡터
 
+
+
+
+    class TextBox {
+
+    protected:
+        std::vector<sf::Text> sideTexts;       // 유닛 이름 텍스트를 저장할 벡터
+        std::vector<sf::Sprite> sideSprites;  // 유닛 스프라이트를 저장할 벡터
+
+        const UI* uip; // UI 객체 참조
+   
+        int life;
+        int gold;
+        int attackGold;
+
+        sf::Vector2f position;
+        sf::Vector2f sidePosition = sf::Vector2f(0.f, 0.f);
+
+        sf::Vector2f size = sf::Vector2f(500.f, 350.f); // 고정된 박스 크기
+        sf::Vector2f sideSize; // 고정된 사이드 박스 크기
+
+
+        float cornerRadius = 40.f;                      // 고정된 둥근 모서리 반경
+
+        sf::Color color;
+        sf::Color sideColor;
+        sf::Font font;
+        std::vector<sf::Text> texts;
+
+        const int windowWidth;
+        const int windowHeight;
+
+    public:
+        TextBox(const UI& ui, bool isDefense, const std::vector<std::wstring>& strings);
+        void draw(sf::RenderWindow& window);
+        void sideDraw(sf::RenderWindow& window);
+        void updateState(int playerlife, int gold, int attackgold);
+ 
+    };
+
 public:
+    std::unordered_map<int, int> unitCounts; // <유닛 ID, 개수>
+
     void initialize(const std::vector<std::vector<std::string>>& gameMap);
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
         int playerLife, int gold, int selectedX = -1, int selectedY = -1,
@@ -261,6 +303,9 @@ private:
     sf::Vector2f m_size;
     float m_radius;
     size_t m_pointCount;
+
+   
+
 };
 
 

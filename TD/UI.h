@@ -158,7 +158,7 @@ private:
     sf::Sprite WinterOgreSprite;
 
     float offsetX = -100.0f;
-    float offsetY = 200.0f;
+    float offsetY = 100.0f;
    
     int attackGold;
     

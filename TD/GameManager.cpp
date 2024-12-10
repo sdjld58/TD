@@ -161,7 +161,7 @@ void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& un
 {
     // **스폰 간격 변수**
     //lastSpawnTick = 0;       // 마지막으로 유닛이 생성된 틱 (이 코드가 있으면 유닛 생성 간격이 작동하지 않음)
-    const int spawnInterval = 3;      // 유닛 생성 간격 (틱 단위)
+    const int spawnInterval = 2;      // 유닛 생성 간격 (틱 단위)
 
     // **틱 간격에 따라 유닛 생성**
     if (currentTick - lastSpawnTick >= spawnInterval && !unitQueue.empty())
@@ -842,7 +842,7 @@ void GameManager::startPreparationPhase()
                 selectedOption = -1;
                 sf::Vector2i mousePosition = sf::Mouse::getPosition(ui.getWindow());
                 float mouseX = static_cast<float>(mousePosition.x);
-                float mouseY = static_cast<float>(mousePosition.y);
+                float mouseY = static_cast<float>(mousePosition.y) + 100;
 
                 float mapWidth = static_cast<float>(map[0].size());
                 float mapHeight = static_cast<float>(map.size());
@@ -1487,10 +1487,10 @@ void GameManager::attemptPlaceTower()
         {
             Tower selectedTower = towers[selectedTowerIndex];
 
-            if (gold - 30 >= 0)                                      //타워 건설비용 
+            if (gold - 20 >= 0)                                      //타워 건설비용 
             {
                 PlacedTower newTower(selectedTower, selectedX, selectedY);
-                gold -= 30;
+                gold -= 20;
 
                 map[selectedY][selectedX] = newTower.getTowerName();
                 placedTowers.push_back(newTower);
@@ -1537,7 +1537,7 @@ void GameManager::mapSelected()
     unitProductionQueue = std::queue<int>();
 
     gold = 0; // 초기 골드 값 설정
-    playerLife = 10; // 초기 라이프 설정
+    playerLife = 20; // 초기 라이프 설정
     attackGold = 0;
 
     // TGUI GUI 생성

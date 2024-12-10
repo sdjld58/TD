@@ -129,6 +129,7 @@ private:
     sf::Texture projectileTexture1;
     sf::Texture projectileTexture2;
     sf::Texture projectileTexture3;
+    sf::Texture projectileTexture4;
 
     // 유닛 텍스처 및 스프라이트
     sf::Texture WolfTexture[3];
@@ -243,6 +244,7 @@ public:
     const sf::Texture& getProjectileTexture1() const;
     const sf::Texture& getProjectileTexture2() const;
     const sf::Texture& getProjectileTexture3() const;
+    const sf::Texture& getProjectileTexture4() const;
 
     void drawProjectiles(const std::vector<Projectile>& projectiles);
 

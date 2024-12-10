@@ -188,6 +188,11 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
         std::cerr << "wizard_bullet.png를 로드할 수 없습니다.\n";
     }
 
+    if (!projectileTexture4.loadFromFile("resources/images/towers/wizard_bullet_2.png"))
+    {
+        std::cerr << "wizard_bullet.png를 로드할 수 없습니다.\n";
+    }
+
     // Wolf
     if (!WolfTexture[0].loadFromFile("resources/images/units/Wolf1.png"))
         std::cerr << "Wolf1.png를 로드할 수 없습니다.\n";
@@ -893,6 +898,11 @@ const sf::Texture& UI::getProjectileTexture3() const
     return projectileTexture3;
 }
 
+const sf::Texture& UI::getProjectileTexture4() const
+{
+    return projectileTexture4;
+}
+
 
 void UI::drawProjectiles(const std::vector<Projectile>& projectiles)
 {
@@ -905,7 +915,7 @@ void UI::drawProjectiles(const std::vector<Projectile>& projectiles)
 
         // offsetX와 offsetY를 더해줍니다.
         position.x += offsetX;
-        position.y += offsetY;
+        position.y += offsetY - 20;
 
         // 위치를 업데이트합니다.
         sprite.setPosition(position);

@@ -1115,10 +1115,16 @@ void GameManager::createProjectile(const PlacedTower& tower, const Unit& targetU
         projectiles.push_back(projectile);
     }
 
-    else if (towerID == 3 || towerID == 300 || towerID == 301 || towerID == 302)
+    else if (towerID == 3 || towerID == 300 || towerID == 301)
     {
         float speed = 600.0f;
         Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture3());
+        projectiles.push_back(projectile);
+    }
+    else if (towerID == 302)
+    {
+        float speed = 600.0f;
+        Projectile projectile(startX, startY, targetX, targetY, speed, ui.getProjectileTexture4());
         projectiles.push_back(projectile);
     }
 }

@@ -30,7 +30,7 @@ void GameManager::run(const std::string& stageFile)
     ui.setPath(path);
     ui.setTowers(towers);
     ui.setUnitTypes(unitTypes);
-    
+    ui.judgeStage = this->judgeStage;
     currentTick = 0;
     lastSpawnTick = 0; // ÃÊ±âÈ­
 
@@ -1653,6 +1653,7 @@ void GameManager::mapSelected()
             mapChosen = true;
             selectMapText = Map1Text;
             image = 1;
+            judgeStage = 1;
            
         });
 
@@ -1664,7 +1665,7 @@ void GameManager::mapSelected()
             mapChosen = true;
             selectMapText = Map2Text;
             image = 2;
-            
+            judgeStage = 2;
         });
 
     button3->onClick([&]()
@@ -1674,7 +1675,7 @@ void GameManager::mapSelected()
             mapChosen = true;
             selectMapText = Map3Text;
             image = 3;
-            
+            judgeStage = 3;
         });
     exitButton->onClick([&]()
         {

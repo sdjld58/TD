@@ -393,6 +393,7 @@ void UI::clearButtons()
 {
     gui.removeAllWidgets();
 }
+
 void UI::initializeBackground(const std::string& backgroundFilePath) {
     // 텍스처 한 번만 로드
     if (!backgroundTexture.loadFromFile(backgroundFilePath)) {
@@ -415,6 +416,7 @@ void UI::drawBackground() {
     // 단순히 이미 로드된 배경 스프라이트를 그리기만 함
     window.draw(backgroundSprite);
 }
+
 void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,
     int playerLife, int gold,  int selectedX, int selectedY, const std::vector<Projectile>& projectiles, int currentTick)
 {

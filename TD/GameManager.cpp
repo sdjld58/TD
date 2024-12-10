@@ -32,6 +32,8 @@ void GameManager::run(const std::string& stageFile)
     ui.setUnitTypes(unitTypes);
     
     currentTick = 0;
+    lastSpawnTick = 0; // √ ±‚»≠
+
 
     for (const auto& wave : waves)
     {

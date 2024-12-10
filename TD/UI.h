@@ -104,6 +104,8 @@ private:
     sf::Sprite archer2TowerSprite;
     sf::Texture archer3TowerTexture;
     sf::Sprite archer3TowerSprite;
+    sf::Texture archer4TowerTexture;
+    sf::Sprite archer4TowerSprite;
 
     sf::Texture wizard1TowerTexture;
     sf::Sprite wizard1TowerSprite;
@@ -111,6 +113,8 @@ private:
     sf::Sprite wizard2TowerSprite;
     sf::Texture wizard3TowerTexture;
     sf::Sprite wizard3TowerSprite;
+    sf::Texture wizard4TowerTexture;
+    sf::Sprite wizard4TowerSprite;
 
     sf::Texture barrack1TowerTexture;
     sf::Sprite barrack1TowerSprite;
@@ -118,6 +122,8 @@ private:
     sf::Sprite barrack2TowerSprite;
     sf::Texture barrack3TowerTexture;
     sf::Sprite barrack3TowerSprite;
+    sf::Texture barrack4TowerTexture;
+    sf::Sprite barrack4TowerSprite;
 
     // 투사체 텍스처
     sf::Texture projectileTexture1;

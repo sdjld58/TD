@@ -136,6 +136,10 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
         std::cerr << "archer_level_3.png를 로드할 수 없습니다.\n";
     archer3TowerSprite.setTexture(archer3TowerTexture);
 
+    if (!archer4TowerTexture.loadFromFile("resources/images/towers/archer_level_4.png"))
+        std::cerr << "archer_level_4.png를 로드할 수 없습니다.\n";
+    archer4TowerSprite.setTexture(archer4TowerTexture);
+
     if (!wizard1TowerTexture.loadFromFile("resources/images/towers/wizard_level_1.png"))
         std::cerr << "wizard_level_1.png를 로드할 수 없습니다.\n";
     wizard1TowerSprite.setTexture(wizard1TowerTexture);
@@ -148,6 +152,10 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
         std::cerr << "wizard_level_3.png를 로드할 수 없습니다.\n";
     wizard3TowerSprite.setTexture(wizard3TowerTexture);
 
+    if (!wizard4TowerTexture.loadFromFile("resources/images/towers/wizard_level_4.png"))
+        std::cerr << "wizard_level_4.png를 로드할 수 없습니다.\n";
+    wizard4TowerSprite.setTexture(wizard4TowerTexture);
+
     if (!barrack1TowerTexture.loadFromFile("resources/images/towers/barrack_level_1.png"))
         std::cerr << "barrack_level_1.png를 로드할 수 없습니다.\n";
     barrack1TowerSprite.setTexture(barrack1TowerTexture);
@@ -159,6 +167,10 @@ void UI::initialize(const std::vector<std::vector<std::string>>& gameMap)
     if (!barrack3TowerTexture.loadFromFile("resources/images/towers/barrack_level_3.png"))
         std::cerr << "barrack_level_3.png를 로드할 수 없습니다.\n";
     barrack3TowerSprite.setTexture(barrack3TowerTexture);
+
+    if (!barrack4TowerTexture.loadFromFile("resources/images/towers/barrack_level_4.png"))
+        std::cerr << "barrack_level_4.png를 로드할 수 없습니다.\n";
+    barrack4TowerSprite.setTexture(barrack4TowerTexture);
 
     // 투사체 텍스처 로드
     if (!projectileTexture1.loadFromFile("resources/images/towers/sword.png"))
@@ -571,67 +583,63 @@ void UI::update(const std::vector<Unit>& units, const std::vector<PlacedTower>& 
         switch (towerID)
         {
         case 1:
-            towerSprite = &barrack1TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerSprite = &barrack1TowerSprite; towerSprite->setScale(0.55, 0.55);
             towerOffsetX = 25.0;
             towerOffsetY = 20.0;
             break;
         case 100:
-            towerSprite = &barrack2TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerSprite = &barrack2TowerSprite; towerSprite->setScale(0.55, 0.55);
             towerOffsetX = 25.0;
             towerOffsetY = 20.0;
             break;
         case 101:
-            towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerSprite = &barrack3TowerSprite; towerSprite->setScale(0.55, 0.55);
             towerOffsetX = 25.0;
             towerOffsetY = 20.0;
             break;
         case 102:
-            towerSprite = &barrack3TowerSprite; towerSprite->setScale(1.1, 1.1);
+            towerSprite = &barrack4TowerSprite; towerSprite->setScale(0.55, 0.55);
             towerOffsetX = 25.0;
             towerOffsetY = 20.0;
             break;
         case 2:
-            towerSprite = &archer1TowerSprite;
+            towerSprite = &archer1TowerSprite; towerSprite->setScale(0.5, 0.5);
             towerOffsetX = 30.0;
             towerOffsetY = 20.0;
             break;
         case 200:
-            towerSprite = &archer2TowerSprite;
+            towerSprite = &archer2TowerSprite; towerSprite->setScale(0.5, 0.5);
             towerOffsetX = 30.0;
             towerOffsetY = 20.0;
             break;
         case 201:
-            towerSprite = &archer3TowerSprite;
+            towerSprite = &archer3TowerSprite; towerSprite->setScale(0.5, 0.5);
             towerOffsetX = 30.0;
             towerOffsetY = 20.0;
             break;
         case 202:
-            towerSprite = &archer3TowerSprite;
+            towerSprite = &archer4TowerSprite; towerSprite->setScale(0.5, 0.5);
             towerOffsetX = 30.0;
             towerOffsetY = 20.0;
             break;
         case 3:
-            towerSprite = &wizard1TowerSprite;
-            towerSprite->setScale(1.3, 1.3);
+            towerSprite = &wizard1TowerSprite; towerSprite->setScale(0.7, 0.7);
             towerOffsetX = 15.0;
             towerOffsetY = 25.0;
             break;
         case 300:
-            towerSprite = &wizard2TowerSprite;
-            towerSprite->setScale(1.3, 1.3);
+            towerSprite = &wizard2TowerSprite; towerSprite->setScale(0.7, 0.7);
             towerOffsetX = 15.0;
             towerOffsetY = 25.0;
             break;
         case 301:
-            towerSprite = &wizard3TowerSprite;
-            towerSprite->setScale(1.3, 1.3);
+            towerSprite = &wizard3TowerSprite; towerSprite->setScale(0.7, 0.7);
             towerOffsetX = 15.0;
             towerOffsetY = 25.0;
             break;
         case 302:
-            towerSprite = &wizard3TowerSprite;
-            towerSprite->setScale(1.3, 1.3);
-            towerOffsetX = 15.0;
+            towerSprite = &wizard4TowerSprite; towerSprite->setScale(0.7, 0.7);
+            towerOffsetX = 15.0; 
             towerOffsetY = 25.0;
             break;
         default:

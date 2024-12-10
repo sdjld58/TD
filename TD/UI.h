@@ -19,7 +19,6 @@
 class UI
 {
 private:
-
     sf::RenderWindow window;
     std::vector<std::vector<std::string>> map;
     std::vector<std::pair<int, int>> path;
@@ -204,6 +203,7 @@ private:
 
 public:
     std::unordered_map<int, int> unitCounts; // <À¯´Ö ID, °³¼ö>
+    int judgeStage=0;
 
     void initialize(const std::vector<std::vector<std::string>>& gameMap);
     void update(const std::vector<Unit>& units, const std::vector<PlacedTower>& placedTowers,

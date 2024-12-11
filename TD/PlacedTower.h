@@ -7,7 +7,7 @@
 class PlacedTower {
 public:
     // 생성자
-    PlacedTower(const Tower& tower, int posX, int posY);
+    PlacedTower(const Tower& tower, int posX, int posY,int currentTIme);
 
     // 위치 관련 메서드
     int getX() const;
@@ -41,6 +41,11 @@ public:
 
     // 버프 상태 관리
     bool hasReceivedBuff() const;
+
+    bool isAttack;
+    int currentTime;
+
+
 
 private:
     Tower baseTower;          // 기본 타워 정보

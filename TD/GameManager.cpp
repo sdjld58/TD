@@ -942,6 +942,40 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
     {
         tower.clearBuff();
     }
+    for (auto& tower : placedTowers) {
+        int range = tower.getAttackRange();
+        bool unitDetected = false;
+
+        // 타워의 범위 내 유닛 탐지
+        for (const auto& unit : activeUnits) {
+            int dx = tower.getX() - unit.getPosX();
+            int dy = tower.getY() - unit.getPosY();
+            int distanceSquared = dx * dx + dy * dy;
+
+            if (distanceSquared <= range * range) {
+                unitDetected = true;
+                break;
+            }
+        }
+
+        // 범위 내 유닛 상태에 따라 isAttack 및 currentTime 관리
+        if (unitDetected) {
+            if (!tower.isAttack) { // 처음 감지된 경우에만 업데이트
+                tower.isAttack = true;
+                tower.currentTime = currentTick; // 유닛 감지 시 tick 저장
+                std::cout << "타워 (" << tower.getX() << ", " << tower.getY() << ")에서 유닛을 감지했습니다. "
+                    << "감지 시간: " << tower.currentTime << "\n";
+            }
+        }
+        else {
+            if (tower.isAttack) { // 범위 내 유닛이 없어진 경우 초기화
+                tower.isAttack = false;
+                tower.currentTime = 0; // tick 초기화
+                std::cout << "타워 (" << tower.getX() << ", " << tower.getY() << ") 범위 내 유닛 없음, 초기화.\n";
+            }
+        }
+    }
+
 
     // **버프 타워 처리**
     for (const auto& buffTower : placedTowers)
@@ -970,8 +1004,12 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
     {
         if (tower.getIsNoDamage() == 1) continue; // 버프 타워는 공격하지 않음
 
-        if (currentTick % tower.getTimePerAttack() != 0) continue; // 공격 틱이 아니면 넘어감
-
+        if (tower.currentTime > 0) { // currentTime이 유효한 값일 때만 계산
+            if ((currentTick - tower.currentTime) % tower.getTimePerAttack() != 0) continue; // 공격 틱이 아니면 넘어감
+        }
+        else {
+            continue; // currentTime이 0이면 유닛을 감지하지 않았으므로 공격하지 않음
+        }
         
 
         int range = tower.getAttackRange();
@@ -989,10 +1027,13 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             int towerX = tower.getX();
             int towerY = tower.getY();
 
+
             float distanceSquared = (towerX - unitX) * (towerX - unitX) + (towerY - unitY) * (towerY - unitY);
 
             if (distanceSquared <= range * range)
             {
+                
+
                 Unit* currentUnit = &(*it);
 
                 // 투사체 생성
@@ -1028,6 +1069,24 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
             else
             {
                 ++it;
+            }
+        }
+        if (tower.isAttack)
+        {
+            // 유닛이 처음 감지되었을 때 tick 저장
+            if (tower.currentTime == 0)
+            {
+                tower.currentTime = currentTick;
+                
+            }
+        }
+        else
+        {
+            // 범위 내 유닛이 없으면 tick초기화
+            if (tower.currentTime != 0)
+            {
+                tower.currentTime = 0;
+                std::cout << "Tower at (" << tower.getX() << ", " << tower.getY() << ") has no units in range. Tick reset to 0.\n";
             }
         }
 
@@ -1503,7 +1562,7 @@ void GameManager::attemptPlaceTower()
 
             if (gold - 20 >= 0)                                      //타워 건설비용 
             {
-                PlacedTower newTower(selectedTower, selectedX, selectedY);
+                PlacedTower newTower(selectedTower, selectedX, selectedY,0);
                 gold -= 20;
 
                 map[selectedY][selectedX] = newTower.getTowerName();

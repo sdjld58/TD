@@ -3,7 +3,7 @@
 #include <algorithm>
 
 // »ý¼ºÀÚ
-PlacedTower::PlacedTower(const Tower& tower, int posX, int posY)
+PlacedTower::PlacedTower(const Tower& tower, int posX, int posY, int currentTIme)
     : baseTower(tower), x(posX), y(posY),
     currentDamage(tower.getDamage()),
     currentTimePerAttack(tower.getTimePerAttack()) {}

@@ -1194,7 +1194,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
         sf::Time deltaTime = frameClock.restart();
 
         // 키 값 입력 및 공격 웨이브 종료 요청 확인
-        bool endWaveRequested = handleAttackInput(wave.getWaveID());
+        bool endWaveRequested = handleAttackInput(wave.getWaveID(),judgeStage);
 
         // **논리 업데이트 시간 체크**
         lastLogicUpdateTime += deltaTime;
@@ -1285,7 +1285,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 }
 
 
-bool GameManager::handleAttackInput(const int currentWaveID)
+bool GameManager::handleAttackInput(const int currentWaveID,const int judgeStage)
 {
     sf::Event event;
     while (ui.getWindow().pollEvent(event))
@@ -1328,21 +1328,21 @@ bool GameManager::handleAttackInput(const int currentWaveID)
                     break;
                 case sf::Keyboard::Num7:
                     unitId = 0;
-                    if (currentWaveID == 4 || currentWaveID == 6)
+                    if (judgeStage == 2)
                     {
                         unitId = 7;
                     }
                     break;
                 case sf::Keyboard::Num8:
                     unitId = 0;
-                    if (currentWaveID == 6)
+                    if (judgeStage == 3)
                     {
                         unitId = 8;
                     }
                     break;
                 case sf::Keyboard::Num9:
                     unitId = 0;
-                    if (currentWaveID == 6)
+                    if (judgeStage == 3)
                     {
                         unitId = 9;
                     }

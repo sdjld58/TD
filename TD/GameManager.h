@@ -126,7 +126,7 @@ public:
     void updateProjectiles(sf::Time deltaTime);
 
     void startAttackWave(const Wave& wave,int& currentTick);
-    bool handleAttackInput(const int currentWaveID);
+    bool handleAttackInput(const int currentWaveID,const int judgeStage);
     void updateAttackUnits(std::vector<Unit>& activeUnits, int currentTick);
     bool isAttackWaveOver(const std::vector<Unit>& activeUnits);
 

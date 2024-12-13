@@ -603,14 +603,13 @@ void GameManager::startPreparationPhase()
     while (isPreparation)
     {
         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY);
-
-
+        
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
 
             // **TGUI 이벤트 처리 추가**
-            ui.gui.handleEvent(event);
+            ui.gui.handleEvent(event);감
 
             if (event.type == sf::Event::Closed)
             {
@@ -1247,6 +1246,9 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 
     activeUnits.clear(); // 이전 유닛 목록 초기화
     while (!unitProductionQueue.empty()) { unitProductionQueue.pop(); } // 유닛 생산 대기열 초기화
+   
+    // **UI 버튼 생성 * *
+        ui.drawButtons();
 
     while (!waveOver && ui.getWindow().isOpen())
     {
@@ -1347,8 +1349,13 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
 bool GameManager::handleAttackInput(const int currentWaveID,const int judgeStage)
 {
     sf::Event event;
+    
     while (ui.getWindow().pollEvent(event))
     {
+        
+        if (ui.getGui().handleEvent(event)) // TGUI 이벤트 처리
+            continue; // TGUI 이벤트 처리 시 넘어감
+
         if (event.type == sf::Event::Closed)
         {
             ui.getWindow().close();

@@ -365,43 +365,14 @@ void UI::drawButtons()
     {
         // 버튼 생성 및 설정
         gui.setWindow(window);
-
-        // 타워 버튼 생성
-        auto towerButton = tgui::Button::create();
-        towerButton->setSize(110, 110); // 정사각형 크기
-        towerButton->setPosition(400, windowHeight - 100);
-        towerButton->getRenderer()->setBackgroundColor(sf::Color::White); // 배경색 흰색
-        towerButton->getRenderer()->setBorders({ 0 }); // 테두리 설정
-
-        // 타워 버튼 이미지 설정
-        towerButton->getRenderer()->setTexture("resources/images/icons/yellowcheck.png");
-
-        // 타워 버튼 마우스 오버 효과
-        towerButton->onMouseEnter([towerButton]() {
-            towerButton->getRenderer()->setOpacity(0.7f); // 마우스가 올라왔을 때 70% 불투명
-            });
-        towerButton->onMouseLeave([towerButton]() {
-            towerButton->getRenderer()->setOpacity(1.0f); // 마우스가 떠났을 때 100% 불투명
-            });
-
-        // 타워 버튼 클릭 콜백
-        towerButton->onClick([this]() {
-            if (onTowerButtonClicked) {
-                onTowerButtonClicked();
-            }
-            });
-
-        // GUI에 타워 버튼 추가
-        gui.add(towerButton, "towerButton");
-
-       
+        gui.add(infoButton, "infoButton");
 
     }
     else
     {
         gui.setWindow(window);
         tgui::Font font("resources/fonts/BMDOHYEON_ttf.ttf");
-
+        gui.add(infoButton, "infoButton");
        
     }
 }

@@ -238,6 +238,9 @@ public:
     
     std::wstring getInfoText(int index) const;
 
+    tgui::Gui& getGui() {
+        return gui;
+    }
     UI() : infoTexts() {}
 
     //≈ıªÁ√º

@@ -61,7 +61,7 @@ void GameManager::run(const std::string& stageFile)
                 gold += wave.getGold();
             ui.setInfoText({ "타워를 설치하세요!!", "빈 건설 부지입니다..", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
             startPreparationPhase(); // 수비 웨이브 준비
-            ui.setInfoText({ "적들이 몰려오고 있습니다!!", "이 공격을 막지 못하면 끝입니다!", "..." });
+            ui.setInfoText({ "적들이 몰려오고 있습니다!!", "최대한 많은 적을 처치하세요!", "..." });
         }
 
         if (wave.getIsDefence())
@@ -305,7 +305,6 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
         ui.setInfoText({ "유닛을 침투시키세요","[유닛 대기열]\n",queueText});
         
     }
-    else ui.setInfoText({ "유닛을 침투시키세요","대기중인 유닛이 없습니다!\n"," " });
 }
 
 
@@ -625,12 +624,15 @@ void GameManager::startPreparationPhase()
     selectedY = mapWithUnits.size() / 2;
     selectedTowerIndex = -1;  // 초기값 -1로 설정 (선택되지 않음)
     bool first = true;
+
     while (isPreparation)
     {
         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY);
         if (first) {
+           
             showWaveAnimation("Defense Wave!", ui.getWindow(), true); 
             first = false;
+            continue;
         }
         
         sf::Event event;
@@ -1857,6 +1859,8 @@ void GameManager::showGameOverPopup()
     float boxWidth = windowSize.x * 2 / 3.0f;
     float boxHeight = windowSize.y * 2 / 3.0f;
 
+    
+
     // 패널 생성
     auto panel = tgui::Panel::create({ boxWidth, boxHeight });
     panel->setPosition((windowSize.x - boxWidth) / 2.0f, (windowSize.y - boxHeight) / 2.0f);
@@ -1923,6 +1927,7 @@ void GameManager::showGameOverPopup()
 
     // **UI 이벤트 루프**
     while (ui.getWindow().isOpen()) {
+        ui.getWindow().clear(sf::Color::Black);
         sf::Event event;
         while (ui.getWindow().pollEvent(event)) {
             if (event.type == sf::Event::Closed) {

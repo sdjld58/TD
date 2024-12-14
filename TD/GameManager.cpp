@@ -609,7 +609,7 @@ void GameManager::startPreparationPhase()
         {
 
             // **TGUI 이벤트 처리 추가**
-            ui.gui.handleEvent(event);감
+            ui.gui.handleEvent(event);
 
             if (event.type == sf::Event::Closed)
             {
@@ -804,10 +804,10 @@ void GameManager::startPreparationPhase()
                         }
                         else if (selectedOption == 3) // 타워 판매 (3번)
                         {
-                            int refundAmount = 30;
+                            int refundAmount = 20;
                             if (towerIt->getTowerName() == "1")                //기본타워 판매 비용
                             {
-                                refundAmount = 30;
+                                refundAmount = 20;
                             }
                             else if (towerIt->getTowerName() == "2")           //중간단계타워 판매 비용
                             {
@@ -1102,10 +1102,10 @@ void GameManager::attackUnits(std::vector<Unit>& activeUnits, int currentTick, b
                         continue; // 기본 공격 대상은 제외
                     }
 
-                    int aoeDistanceSquared = (target->getPosX() - aoeIt->getPosX()) * (target->getPosX() - aoeIt->getPosX()) +
+                    float aoeDistanceSquared = (target->getPosX() - aoeIt->getPosX()) * (target->getPosX() - aoeIt->getPosX()) +
                         (target->getPosY() - aoeIt->getPosY()) * (target->getPosY() - aoeIt->getPosY());
 
-                    if (aoeDistanceSquared <= 1 * 1)
+                    if (aoeDistanceSquared <= 0.8 * 0.8)
                     { // 범위 공격 거리 1칸
                         const int reducedDamage = damage - 1;
                         int finalAoeDamage = calculateDamage(tower.getIsMagic(), reducedDamage, *aoeIt);

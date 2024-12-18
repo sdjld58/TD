@@ -51,12 +51,12 @@ std::string PlacedTower::uiOptionSelect( const std::vector<Tower>& towerList, in
 
     int upgradeCost = (nextTowerID % 100 == 0) ? 50 : 100;
     int upgradeCost2 = (nextTowerID2 % 100 == 0) ? 50 : 100;
-    int refundAmount = 30; // 초기값 설정
+    int refundAmount = 20; // 초기값 설정
 
     // 옵션 선택시 띄우는 창
     if (num == 0) {
         if (this->getTowerName() == "1") {
-            refundAmount = 30;
+            refundAmount = 20;
 
             if (it != towerList.end()) {
                 return

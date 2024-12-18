@@ -218,13 +218,13 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
                 unitSprite = uip->WolfSprite;
                 unitSprite.setTexture(uip->WolfTexture[0]);
                 unitName = L"[1]: ´Á´ë";
-                unitCost = "10 Gold";
+                unitCost = "20 Gold";
                 break;
             case 2:
                 unitSprite = uip->BatSprite;
                 unitSprite.setTexture(uip->BatTexture[0]);
                 unitName = L"[2]: ¹ÚÁã";
-                unitCost = "10 Gold";
+                unitCost = "20 Gold";
                 scale = 0.8f;
                 yAdjustment = -10.f;
                 xAdjustment = 30.f;
@@ -233,21 +233,21 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
                 unitSprite = uip->BearSprite;
                 unitSprite.setTexture(uip->BearTexture[0]);
                 unitName = L"[3]: °õ";
-                unitCost = "10 Gold";
+                unitCost = "20 Gold";
                 xAdjustment = 40.f;
                 break;
             case 4:
                 unitSprite = uip->PossessedWolfSprite;
                 unitSprite.setTexture(uip->PossessedWolfTexture[0]);
                 unitName = L"[4]: ÀúÁÖ¹ÞÀº´Á´ë";
-                unitCost = "1 Gold";
+                unitCost = "50 Gold";
                 xAdjustment = 90.f;
                 break;
             case 5:
                 unitSprite = uip->MohawkBatSprite;
                 unitSprite.setTexture(uip->MohawkBatTexture[0]);
                 unitName = L"[5]: °¥±Í¹ÚÁã";
-                unitCost = "1 Gold";
+                unitCost = "50 Gold";
                 scale = 0.7f;
                 yAdjustment = -10.f;
                 xAdjustment = 60.f;
@@ -256,7 +256,7 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
                 unitSprite = uip->PossessedBearSprite;
                 unitSprite.setTexture(uip->PossessedBearTexture[0]);
                 unitName = L"[6]: ÀúÁÖ¹ÞÀº°õ";
-                unitCost = "1 Gold";
+                unitCost = "50 Gold";
                 xAdjustment = 70.f;
                 break;
             case 7:
@@ -264,21 +264,21 @@ void UI::TextBox::sideDraw(sf::RenderWindow& window) {
                 unitSprite.setTexture(uip->BlueScorpionTexture[0]);
                 scale = 0.4f;
                 unitName = L"[7]: Çª¸¥»öÀü°¥";
-                unitCost = "1 Gold";
+                unitCost = "100 Gold";
                 xAdjustment = 60.f;
                 break;
             case 8:
                 unitSprite = uip->WinterWolfSprite;
                 unitSprite.setTexture(uip->WinterWolfTexture[0]);
                 unitName = L"[8]: ¼³¿ø´Á´ë";
-                unitCost = "1 Gold";
+                unitCost = "100 Gold";
                 xAdjustment = 40.f;
                 break;
             case 9:
                 unitSprite = uip->WinterBearSprite;
                 unitSprite.setTexture(uip->WinterBearTexture[0]);
                 unitName = L"[9]: ¼³¿ø°õ";
-                unitCost = "1 Gold";
+                unitCost = "100 Gold";
                 xAdjustment = 30.f;
                 break;
             default:

@@ -12,6 +12,8 @@ GameManager::GameManager() : playerLife(10), gold(100), isPreparation(true)
 {
     // UI 초기화
     ui.initialize(map);
+    playerlevel = 1;
+    curMap = 1;
 
     ui.onTowerButtonClicked = [this]()
         {
@@ -301,7 +303,7 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
                 std::cout << "유닛 ID: " << unitId << "\n";
             }
         }
-       
+        
         ui.setInfoText({ "유닛을 침투시키세요","[유닛 대기열]\n",queueText});
         
     }
@@ -1689,7 +1691,7 @@ void GameManager::mapSelected()
     button2->getRenderer()->setTexture("resources/images/stageImgs/dessert.png");
     button2->getRenderer()->setBorders(7);
     button2->getRenderer()->setOpacity(0.5f);
-    button2->onMouseEnter([button2]() { button2->getRenderer()->setOpacity(1.0f); });
+    if (playerlevel > 1) { button2->onMouseEnter([button2]() { button2->getRenderer()->setOpacity(0.5f); }); }
     button2->onMouseLeave([button2]() { button2->getRenderer()->setOpacity(0.5f); });
     gui.add(button2);
 
@@ -1699,7 +1701,7 @@ void GameManager::mapSelected()
     button3->getRenderer()->setTexture("resources/images/stageImgs/winter.png");
     button3->getRenderer()->setBorders(7);
     button3->getRenderer()->setOpacity(0.5f);
-    button3->onMouseEnter([button3]() { button3->getRenderer()->setOpacity(1.0f); });
+    if (playerlevel > 2) { button3->onMouseEnter([button3]() { button3->getRenderer()->setOpacity(1.0f); }); }
     button3->onMouseLeave([button3]() { button3->getRenderer()->setOpacity(0.5f); });
     gui.add(button3);
 
@@ -1775,29 +1777,34 @@ void GameManager::mapSelected()
             selectMapText = Map1Text;
             image = 1;
             judgeStage = 1;
+            curMap = 1;
            
         });
+    if (playerlevel >1) {
+        button2->onClick([&]()
+            {
 
-    button2->onClick([&]()
-        {
-
-            selectedMap = "Map2.csv";
-            stageFile = "Stage2.csv";
-            mapChosen = true;
-            selectMapText = Map2Text;
-            image = 2;
-            judgeStage = 2;
-        });
-
-    button3->onClick([&]()
-        {
-            selectedMap = "Map3.csv";
-            stageFile = "Stage3.csv";
-            mapChosen = true;
-            selectMapText = Map3Text;
-            image = 3;
-            judgeStage = 3;
-        });
+                selectedMap = "Map2.csv";
+                stageFile = "Stage2.csv";
+                mapChosen = true;
+                selectMapText = Map2Text;
+                image = 2;
+                judgeStage = 2;
+                curMap = 2;
+            });
+    }
+    else if (playerlevel >2) {
+        button3->onClick([&]()
+            {
+                selectedMap = "Map3.csv";
+                stageFile = "Stage3.csv";
+                mapChosen = true;
+                selectMapText = Map3Text;
+                image = 3;
+                judgeStage = 3;
+                curMap = 3;
+            });
+    }
     exitButton->onClick([&]()
         {
             gameStart();
@@ -2012,7 +2019,9 @@ void GameManager::showGameClearPopup()
         });
 
     panel->add(mapSelectButton);
-
+    if (playerlevel == curMap) {
+        playerlevel = playerlevel + 1;
+    }
     // GUI에 패널 추가
     ui.gui.add(panel, "gameClearPanel");
 

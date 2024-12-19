@@ -951,11 +951,18 @@ void UI::gameInfoStage() {
     panel->getRenderer()->setBorders({ 10 });                 // 테두리 추가
     panel->getRenderer()->setBorderColor({ 255, 255, 255 });  // 테두리 흰색
     panel->getRenderer()->setRoundedBorderRadius(20);         // 모서리를 둥글게
-
+    
     // 배경 이미지 설정
-    auto backgroundImage = tgui::Picture::create("resources/images/stageimgs/stageInfo.png");
-    backgroundImage->setSize("100%", "100%"); // 패널 크기에 맞게 배경 이미지 설정
-    panel->add(backgroundImage);
+    if (curWaveIsDefense) {
+        auto backgroundImage = tgui::Picture::create("resources/images/stageimgs/stageInfo.png");
+        backgroundImage->setSize("100%", "100%"); // 패널 크기에 맞게 배경 이미지 설정
+        panel->add(backgroundImage);
+    }
+    else {
+        auto backgroundImage = tgui::Picture::create("resources/images/stageimgs/unitmenu1.png");
+        backgroundImage->setSize("100%", "100%"); // 패널 크기에 맞게 배경 이미지 설정
+        panel->add(backgroundImage);
+    }
 
     // 종료 버튼 추가
     auto closeButton = tgui::Button::create("종료");

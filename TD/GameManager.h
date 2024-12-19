@@ -27,6 +27,8 @@ private:
     std::vector<Unit*> aoeTargets;
     std::vector<Unit> activeUnits;
 
+    int playerlevel;
+    int curMap;
     int playerLife;
     int gold;
     bool isPreparation;

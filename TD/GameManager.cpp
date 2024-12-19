@@ -61,7 +61,7 @@ void GameManager::run(const std::string& stageFile)
                 gold += wave.getGold();
             ui.setInfoText({ "타워를 설치하세요!!", "빈 건설 부지입니다..", "1번 : 검사 타워 \n2번 : 궁수 타워 \n3번 : 마법사 타워" });
             startPreparationPhase(); // 수비 웨이브 준비
-            ui.setInfoText({ "적들이 몰려오고 있습니다!!", "이 공격을 막지 못하면 끝입니다!", "..." });
+            ui.setInfoText({ "적들이 몰려오고 있습니다!!", "최대한 많은 적을 처치하세요!", "..." });
         }
 
         if (wave.getIsDefence())
@@ -144,6 +144,7 @@ void GameManager::run(const std::string& stageFile)
         }
         else
         {
+  
             ui.setInfoText({ "침투를 준비하세요!!", "대기중인 유닛이 없습니다!", "..." });
 
             // 공격 웨이브 처리
@@ -156,7 +157,31 @@ void GameManager::run(const std::string& stageFile)
 
     showGameClearPopup();
 }
+void GameManager::showWaveAnimation(const std::string& message, sf::RenderWindow& window, bool isDefense)
+{
+    sf::Font font;
+    if (!font.loadFromFile("resources/fonts/Bangers.ttf")) // 폰트 파일 로드
+    {
+        std::cerr << "폰트를 로드할 수 없습니다.\n";
+        return;
+    }
 
+    sf::Text text(message, font, 300); // 애니메이션 텍스트 설정
+    if (isDefense) text.setFillColor(sf::Color::Blue);
+    else  text.setFillColor(sf::Color::Red);
+    text.setStyle(sf::Text::Bold);
+    text.setPosition(window.getSize().x / 2.0f - text.getGlobalBounds().width / 2.0f,
+        window.getSize().y / 2.0f - text.getGlobalBounds().height / 2.0f-50);
+
+    sf::Clock clock;
+    sf::Time duration = sf::seconds(1); // 애니메이션 지속 시간 (3초)
+
+    while (clock.getElapsedTime() < duration)
+    {
+        window.draw(text); // 텍스트 렌더링
+        window.display();
+    }
+}
 void GameManager::spawnUnits(std::vector<Unit>& activeUnits, std::queue<int>& unitQueue, int currentTick)
 {
     // **스폰 간격 변수**
@@ -280,7 +305,6 @@ void GameManager::updateAndPrintMap(const std::vector<Unit>& activeUnits)
         ui.setInfoText({ "유닛을 침투시키세요","[유닛 대기열]\n",queueText});
         
     }
-    //else ui.setInfoText({ "유닛을 침투시키세요","대기중인 유닛이 없습니다!\n"," " });
 }
 
 
@@ -599,17 +623,22 @@ void GameManager::startPreparationPhase()
     selectedX = mapWithUnits[0].size() / 2;
     selectedY = mapWithUnits.size() / 2;
     selectedTowerIndex = -1;  // 초기값 -1로 설정 (선택되지 않음)
+    bool first = true;
 
     while (isPreparation)
     {
         ui.update({}, placedTowers, playerLife, gold, selectedX, selectedY);
+        if (first) {
+           
+            showWaveAnimation("Defense Wave!", ui.getWindow(), true); 
+            first = false;
+            continue;
+        }
         
         sf::Event event;
         while (ui.getWindow().pollEvent(event))
         {
 
-            // **TGUI 이벤트 처리 추가**
-            ui.gui.handleEvent(event);
 
             if (event.type == sf::Event::Closed)
             {
@@ -1249,7 +1278,7 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
    
     // **UI 버튼 생성 * *
         ui.drawButtons();
-
+        bool first = true;
     while (!waveOver && ui.getWindow().isOpen())
     {
         sf::Time deltaTime = frameClock.restart();
@@ -1291,7 +1320,10 @@ void GameManager::startAttackWave(const Wave& wave, int& currentTick)
             }
             updateAndPrintMap(activeUnits);
             // 대기열 정보를 UI에 표시
-          
+            if (first) {
+                showWaveAnimation("Attack Wave!", ui.getWindow(), false);
+                first = false;
+          }
             
         }
         // 공격 웨이브 종료 조건 확인
@@ -1350,9 +1382,12 @@ bool GameManager::handleAttackInput(const int currentWaveID,const int judgeStage
 {
     sf::Event event;
     
+   
     while (ui.getWindow().pollEvent(event))
     {
-        
+       
+           
+    
         if (ui.getGui().handleEvent(event)) // TGUI 이벤트 처리
             continue; // TGUI 이벤트 처리 시 넘어감
 
@@ -1824,6 +1859,8 @@ void GameManager::showGameOverPopup()
     float boxWidth = windowSize.x * 2 / 3.0f;
     float boxHeight = windowSize.y * 2 / 3.0f;
 
+    
+
     // 패널 생성
     auto panel = tgui::Panel::create({ boxWidth, boxHeight });
     panel->setPosition((windowSize.x - boxWidth) / 2.0f, (windowSize.y - boxHeight) / 2.0f);
@@ -1890,6 +1927,7 @@ void GameManager::showGameOverPopup()
 
     // **UI 이벤트 루프**
     while (ui.getWindow().isOpen()) {
+        ui.getWindow().clear(sf::Color::Black);
         sf::Event event;
         while (ui.getWindow().pollEvent(event)) {
             if (event.type == sf::Event::Closed) {

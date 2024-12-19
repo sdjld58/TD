@@ -114,7 +114,7 @@ public:
     void loadWaves(const std::string& filename);
     void updateAndPrintMap(const std::vector<Unit>& activeUnits);
     void updateUnitPositions(sf::Time deltaTime);
-
+    void showWaveAnimation(const std::string& message, sf::RenderWindow& window, bool isDefense);
     void startPreparationPhase();
     void loadTowerData(const std::string& filename); //타워 로드
     void attackUnits(std::vector<Unit>& activeUnits ,int currentTick, bool currentwaveType); //공격로직
